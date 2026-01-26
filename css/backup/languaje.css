@@ -1,0 +1,111 @@
+/*
+   PFG UNED
+   Fichero : languaje.css
+   Autor   : Jaime Alcalá Galicia
+   Version : 1.0
+   Fecha   : 01/01/2023
+   Descripción: Definición del estilo de la página del lenguaje.
+*/
+
+body {
+    background-color: #fafafa; 
+    font-family: 'Roboto Condensed';
+    min-height: fit-content;
+}
+
+
+.TxtIndice{
+    width : 88%;
+
+    margin: auto;
+    font: oblique bold 90% cursive;
+}
+.TxtIndice ol {
+    counter-reset: item;
+    padding-left: 10px;
+}
+.TxtIndice li {
+    display: block
+}
+.TxtIndice li:before {
+    content: counters(item, ".") ". ";
+    counter-increment: item;
+    color: #4c4e50;
+}
+
+.TxtIndice a:hover {
+    background-color: #cdd0d3;
+}
+
+.TxtIndice a:link {
+    color: #2b668d;
+    text-decoration: none;
+}
+
+.TxtIndice a:visited {
+    color: #2b668d;
+}
+
+
+
+
+
+
+.TxtIndice2{
+    width : 88%;
+
+    margin: auto;
+}
+
+.TxtIndice2 h3{
+    font: oblique bold 120% cursive;
+}
+
+
+
+
+
+.tabla-lenguaje { 
+    border-collapse: collapse; 
+    margin: 25px 0; 
+    font-size: 1em; 
+    font-family: sans-serif 80%; 
+    min-width: 450px; 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+    border-radius: 4px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.tabla-lenguaje th, .tabla-lenguaje td { 
+    padding: 12px 15px; 
+    text-align: left; 
+
+}
+.tabla-lenguaje th{ 
+    background-image:linear-gradient(#42A1EC, #13140d);
+    font: oblique bold 100% cursive;
+    color: #f3f3f3;
+    border-radius: 4px;
+}
+.tabla-lenguaje tbody tr { 
+    border-bottom: 1px solid #dddddd; 
+} 
+.tabla-lenguaje tbody tr:nth-of-type(even) { 
+    background-color: #f3f3f3; } 
+
+
+
+
+
+
+h1, h2, h3, h4, h5, h6 {
+    color: #2b668d;
+    font-size:large;
+}
+
+
+
+p {
+    text-align: justify;
+}
+

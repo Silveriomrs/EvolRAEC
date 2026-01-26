@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>MENU AYUDA</title>
+
+		<link rel="stylesheet" type="text/css" href="css/help.css">     
+		<link rel="stylesheet" type="text/css" href="css/cabecerayfooter.css">
+
+	</head>
+<body>
+
+	<ul class="menu">
+		<li> <a href="http://e-spacio.uned.es/fez/view/bibliuned:grado-ETSIInformatica-II-Jalcala" target="_blank">PFG TLP_EvolRAEC</a></li>						
+		<li> <a href="index.html">Inicio</a></li>
+		<li> <a href="simulator.html">Simulador</a></li>
+		<li> <a href="language.html">Lenguaje</a></li>
+		<li> <span>Ayuda</span></li>
+	</ul>
+
+	<div class="MarcoPrincipal">
+		<div class="TxtAyuda">
+			<h3>Objetivo</h3>
+			<hr class="lineaHR">			
+			<p>
+				Mediante esta aplicación web se puede observar cómo evolucionan los registros de activación y el estado del cómputo según se van ejecutando las diferentes 
+				instrucciones de un programa previamente introducido, con el objetivo de servir de herramienta de aprendizaje.
+
+			</p>
+
+		</div>
+
+		<div class="TxtAyuda">
+			<h3>Generar un programa.</h3>
+			<hr class="lineaHR">			
+			<p>Lo primero que hay que hacer es escribir un programa en lenguaje <span class="text-resaltado">PFGUnedTLP</span>.</p>
+			<p>Para ello se ha habilitado un área donde se puede escribir el código fuente del programa requerido o cargar una serie de ejemplo de programas ya predefinidos
+			   que vienen por defecto en la aplicación. En caso de querer cargar uno de estos programas predefinidos habrá que elegir mediante un desplegable     <img src="img/ElijeUnEjercicio.png"/>				
+			
+			   las diferentes “Actividades” que tiene el sistema, las cuales tienen como título una breve descripción del contenido de las mismas. 
+			</p>
+			<p>
+			   Una vez elegida al opción requerida, mediante el botón 
+			   <img src="img/BtnCargar.png"/>				
+			 
+			 
+			   se elimina todo el contenido que pudiera haber en el área designado para escribir el código fuente 
+			   y se sustituye por el del programa que hemos elegido.
+			</p>
+			<p>
+				<center><img src="img/Fase1.png"/></center>
+			</p>
+
+		</div>
+		
+		<div class="TxtAyuda">
+			<h3>Compilar un programa.</h3>
+			<hr class="lineaHR">			
+			<p>
+				Una vez tenemos escrito el código fuente hay que proceder a compilar el programa. 
+			</p>
+			<p>
+				Para ello lo único que tenemos que hacer es pinchar en el botón <img src="img/BtnCompilar.png"/>  y el sistema realiza el análisis léxico, semántico y sintáctico del programa para comprobar
+				que cumple con los requerimientos del lenguaje <span class="text-resaltado">PFGUnedTLP</span>.
+			</p>
+			<p>
+				Si el compilador encuentra algún problema al compilar el programa nos avisa del mismo dando indicaciones de la línea dónde se ha producido el error y el motivo del 
+				mismo para proceder a su corrección.
+			</p>
+			<p>
+				<center><img src="img/ErrorFase1.png"/></center>
+			</p>
+			<p>
+				Una vez subsanado el error se tiene que volver a compilar el programa hasta que el sistema no encuentre mas errores y dé el programa como válido, en cuyo caso 
+				saldrá un mensaje de que el programa ha sido compilado sin errores y se habilitará la parte de ejecución del programa.
+			</p>
+			<p>
+				<center><img src="img/OKFase1.png"/></center>
+			</p>
+
+		</div>
+
+		<div class="TxtAyuda">
+			<h3>Ejecutar un programa.</h3>
+			<hr class="lineaHR">			
+			<p>
+				Una vez compilado el programa tenemos la posibilidad de ejecutarlo de dos maneras, mediante líneas de código fuente o acercándonos un poco a código máquina, 
+				ejecutando líneas de código intermedio.
+			</p>
+			<p>
+				<center><img src="img/Fase2.png"/></center>
+			</p>
+			<p>
+				Al ir consumiendo líneas o instrucciones según el modo elegido, se va marcando en azul la línea o instrucción que se acaba de procesar, y podemos ver cómo se van 
+				creando y eliminando los registros de activación, y cómo va variando el estado del cómputo. 
+			</p>
+			<p>
+				Los valores se pueden ver reflejados en los desplegables “Pila de llamadas”, “Pila de control” y "Estado del cómputo" que podemos encontrar en la parte izquierda.
+			</p>
+			<p>
+				<center><img src="img/EjecFase2.png"/></center>
+			</p>
+			<p>
+
+				Asimismo, en área “Salida” se puede ir viendo lo que va escribiendo el programa por pantalla.
+			</p>
+			<p>				
+				<b>Opciones.</b>
+			</p>
+			<p>
+				Se han habilitado tres opciones para facilitar el uso de la aplicación.
+				<p><b>•	Mostrar temporales.</b></p>
+				 Si se marca esta opción, en las zonas de "Estado del cómputo" y "Pila de control" se muestran los temporales que usa el programa internamente para poder llegar al resultado. 
+				Estos temporales comienzan todos por T_ y su uso se ve claramente al ir avanzando instrucciones de código intermedio.
+				<p><b>•	Pila Control. Mostrar registro de activación reducido.</b></p> Permite la posibilidad de sólo mostrar tres elementos de cada registro de activación que son “Valor de retorno”, 
+				“Enlace de control” y “Enlace de acceso”. Esta opción tiene preferencia sobre la de "Mostrar temporales", por lo que si está marcada no se mostrarán los temporales aunque esté activa la opción para mostrarlos.
+				</p>
+				<p>	
+					Al activar este modo se crea una pequeña separación visual entre cada registro de activación con motivo de facilitar la distinción de cada registro de activación.
+				</p>
+				<p><b>•	Estado cómputo. Mostrar sólo variables visibles.</b></p> Al marcar esta opción el "Estado del cómputo" solo muestra las variables que son visibles en el momento de ejecución.
+				</p>
+			<p>
+				<center><img src="img/Ejec2Fase2.png"/></center>
+			</p>
+			<p>	
+				Una vez se ejecutan todas las instrucciones se ocultan los botones que permiten consumir instrucciones y se queda todo el código marcado en azul, y					
+				si el programa realiza alguna salida por pantalla podemos verla en el área de texto que emula la salida por pantalla.
+
+			</p>
+			<p>
+				<center><img src="img/FinFase2.png"/></center>
+			</p>
+
+
+			<p>
+			Además, perdemoss una serie de opciones como son el botón <img src="img/BtnEjecucionCompleta.png"/>  , que consume todas las instrucciones disponibles hasta llegar al final de la ejecución.</p>
+			<p>
+			Y en cualquier momento, tanto en fase de compilación como en la de ejecución, podemos pinchar en el botón <img src="img/BtnReiniciar.png"/>que elimina todos los datos y deja el compilador limpio para introducir un nuevo programa.
+			</p>
+			<p>				
+				<b>Ayudas.</b>
+				<p>	Con motivo de facilitar el estudio, se han habilitado una serie de ayudas visuales dentro de la “Pila de llamadas”, “Pila de control” y "Estado del cómputo".
+				</p>
+				<p>	Dentro de la “Pila de llamadas”, si hacemos click en cualquiera de sus registros, nos iluminará en color amarillo los registros de “Pila de control” y "Estado del cómputo" asociados al registro de la "Pila de llamadas" que hemos marcado.
+				<p>
+					<center><img src="img/ClickPilaLLamadas.png"/></center>
+				</p>
+				<p> Del mismo modo, si hacemos click en un registro de la “Pila de control”, nos iluminará en amarillo el registro de la "Pila de llamadas” al que pertenece.
+
+				</p>
+				<p>
+					Si a su vez el registro marcado en un "Enlace de acceso" o "Enlace de control", nos marcará en rojo el registro de la “Pila de llamadas” y de la "Pila de control" a la que apunta.
+				</p>
+				<p>
+					<center><img src="img/ClickPilaControl1.png"/></center>
+				</p>
+				<p>	Si el registro que marcamos en la “Pila de control” pertenece a una variable, parámetro o temporal, además de marcar en la "Pila de llamadas" el registro al que pertenece, ilumina en color amarillo el registro correspondiente del "Estado del cómputo".
+				</p>
+				<p>
+					<center><img src="img/ClickPilaControl2.png"/></center>
+				</p>
+				<p>	Por último, si hacemos click sobre un registro del "Estado del cómputo", nos ilumina en color amarillo el registro de la “Pila de llamadas” al que pertenece y la posición de la “Pila de control” donde está almacenado.
+				</p>
+				<p>
+					<center><img src="img/ClickEstadoComputo.png"/></center>
+				</p>
+				
+			</p>
+
+
+	</div>
+
+
+	<footer>
+        <img id="logoUned" alt="Logotipo UNED" src="img/LogoUned.png"/>
+        <h6 class="h6footer"> PFGrado Jaime Alcalá, 2023.</h6>
+        <h6 class="h6footer"> <em>Dirección: Fernando López Ostenero</em></h6>
+        <h6 class="h6footer"> <a href="https://www.uned.es">www.uned.es</a></h6>
+    </footer>
+
+	
+	
+
+
+</body>
+
+</html>
