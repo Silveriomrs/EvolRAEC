@@ -6,9 +6,8 @@
    Fecha   : 01/01/2023
    Descripción: Manejo compilador y código final.
 */
-//TODO: Changed: import './API.js';
+
 import { intercambioCompilador, pilaLLamada } from './API.js';
-//TODO: Changed: import './parserUned.js';
 import parserUned from './parserUned.js';
 import * as State from './state.js';  //States used in compilator
 import * as View from './viewElements.js'
@@ -29,15 +28,15 @@ View.cajaCodFuente.addEventListener('focusin', () => {
 })
 
 View.opt_mostrarTemp.addEventListener('click', (e) => {
-  View.pintaTablas();
+  pintaTablas();
 })
 
 View.opt_mostrarVisibles.addEventListener('click', (e) => {
-  View.pintaTablas();
+  pintaTablas();
 })
 
 View.opt_mostrarRAReducido.addEventListener('click', (e) => {
-  View.pintaTablas();
+  pintaTablas();
 })
 
 View.btn_compilar.addEventListener('click', (e) => {
@@ -92,6 +91,8 @@ View.btn_compilar.addEventListener('click', (e) => {
     }
 
     state.listaCuadruplas = intermedio;
+    State.resetState();
+    pintaTablas();
     View.crearTablaCodFuenteyCuadruplas([state.listaCuadruplas]);
 
   } catch(error) {
@@ -160,7 +161,7 @@ function backInst(){
     //Firstly we will compile the same code again
     View.btn_compilar.click();
     //Finally give as many steps comsuming instructions as we need.
-    for(var i = 1; i < index; i++){ nextInst(); }
+    for(let i = 1; i < index; i++){ nextInst(); }
     console.log(state.indice);
 }
 
@@ -174,7 +175,7 @@ View.btn_prevInstruccion.addEventListener('click', (e) => {
 View.btn_prevLinea.addEventListener('click', (e) => {
     console.log('Testing Line back function:');
     let index = state.indice;
-    let elementInstruccion = getItemsTable("tablaCuadruplas");
+    let elementInstruccion = View.getItemsTable("tablaCuadruplas");
     let lastLine = extraeLinea(elementInstruccion[state.indice].innerText);
     let continuo = true;
     
@@ -197,7 +198,7 @@ View.btn_prevLinea.addEventListener('click', (e) => {
 
 View.btn_sigLinea.addEventListener('click', (e) => {
   let continuo = true;
-  let elementInstruccion = getItemsTable("tablaCuadruplas");
+  let elementInstruccion = View.getItemsTable("tablaCuadruplas");
   state.lineaActual = extraeLinea(elementInstruccion[state.indice].innerText);
   //TODO: modified, the evaluation continuo === true had not sense at all here.
   while ( isNextInstruction() && continuo  ){
@@ -208,7 +209,7 @@ View.btn_sigLinea.addEventListener('click', (e) => {
   }
 
   if (!isNextInstruction()){
-      coloreaTodasInstrucciones();
+      View.coloreaTodasInstrucciones();
       View.disableControlButtons();
   }
 })
@@ -218,23 +219,305 @@ View.btn_sigLinea.addEventListener('click', (e) => {
  */
 View.btn_ejecucionCompleta.addEventListener('click', (e) => {
   while (isNextInstruction()) {  consumeInstruccion(); }
-  coloreaTodasInstrucciones();
+  View.coloreaTodasInstrucciones();
   View.disableControlButtons();
 })
 
-//TODO: ADDED AUXILIARY FUNCTIONS
+
+//TODO: PINTA ZONE
+
+function traeDescripcionPosicion(pos, dir) {
+  if (state.arrPilaLlamadas.length !=0){
+    for (let i = 0; i <= state.arrPilaLlamadas.length-1; i++) {
+      let voyPor,valRet, EsMaq,EC,EA,ParamDesde,ParamHasta,DireRet,VarDesde,VarHasta,TempDesde,TempHasta,qcorrespondeALlamada;
+      let a = posMem(state.arrPilaLlamadas[i].inicioRA);
+     
+       if (pos <= a){
+        qcorrespondeALlamada = state.arrPilaLlamadas[i].nombreProcOFunc;
+        valRet = posMem(state.arrPilaLlamadas[i].inicioRA);
+        EsMaq = valRet-1;
+        EC = EsMaq - 1;
+        EA = EC - 1;
+        voyPor = EA;
+
+        if (state.arrPilaLlamadas[i].parametros.length !=0) {
+          ParamDesde = voyPor - 1;
+          ParamHasta = ParamDesde - state.arrPilaLlamadas[i].parametros.length + 1;
+          voyPor = ParamHasta;
+        }
+
+        if (i != state.arrPilaLlamadas.length-1){// al del main no le pongo dirección de retorno
+          DireRet = voyPor - 1;
+          voyPor = DireRet;
+        }
+
+        if (state.arrPilaLlamadas[i].numVariables !=0){
+          VarDesde = voyPor -1;
+          VarHasta = VarDesde - state.arrPilaLlamadas[i].numVariables + 1 ;
+          voyPor = VarHasta;
+        }
+
+        if (state.arrPilaLlamadas[i].numTemporales !=0){
+          TempDesde =  voyPor -1;
+          TempHasta = TempDesde - state.arrPilaLlamadas[i].numTemporales + 1;
+          voyPor = TempHasta;
+        }
+
+        if (pos == valRet) {
+            return 'Valor retorno'
+        } else if (pos == EsMaq) {
+            return 'Estado máquina'
+        } else if (pos == EC) {
+          if (state.arrPilaLlamadas[i].inicioRA == 0)
+            return 'Enlace control'
+          else
+            return 'Enlace control --> ' + posMem(dir)
+        } else if (pos == EA) {
+          if (state.arrPilaLlamadas[i].inicioRA == 0)
+            return 'Enlace acceso'
+          else
+            return 'Enlace acceso --> ' + posMem(dir)
+        } else if (  (state.arrPilaLlamadas[i].parametros.length !=0) && (ParamDesde >= pos) && (ParamHasta <= pos) ) {
+            return 'Parámetro --> '  + recuperaVariableArrMem(pos)
+        } else if   (pos == DireRet) {
+            return 'Dir. retorno'
+        } else if (  (state.arrPilaLlamadas[i].numVariables !=0) && (VarDesde >= pos) && (VarHasta <= pos) ) {
+            return 'Variable --> '  + recuperaVariableArrMem(pos)
+        } else if (  (state.arrPilaLlamadas[i].numTemporales !=0) && (TempDesde >= pos ) && (TempHasta <= pos) ) {
+            return 'Temporal --> '  + recuperaVariableArrMem(pos)
+        } else { return ''}
+
+      }
+    }
+  }
+  return '';
+}
+
+function pintaTablas(){
+  pintaTablaPila();
+  pintaTablaVariables();
+  pintaCallStack();
+}
 
 /**
- * The function returns the items into an array from the referenced table.
- *  It doesn't check if the table exists nor a valid one.
- * <p>The functions works only for tables withe elements tagged by name "tr".
- * @param table name of the table.
- * @return items of the referenced table into an array.
- */
-function getItemsTable(table){
-    var items = document.getElementById(table).getElementsByTagName("tr");
-    return items;
+ * Ilumina las posiciones de la pila de control de la llamada que se ha seleccionado
+ * * @param {String} nombreProcOFunc Nombre de la llamada
+ * * @param {Int} dir Direccion inicial del RA de la llamada
+ **/
+function clickPilaLlamadas(nombreProcOFunc, dir) {
+    let encontrado,desdePosPila, hastaPosPila, i;
+    //Lineas pila de llamadas
+    //TODO: This was detected like local var, I have added the var declaration. Be aware in case of error.
+    const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
+      
+      if (elementPilaLlamadas.length >1){
+        i =1;
+        do{
+          if ((elementPilaLlamadas[i].cells[0].innerHTML ==nombreProcOFunc) &&
+              (elementPilaLlamadas[i].cells[2].innerHTML == dir))
+              elementPilaLlamadas[i].style.backgroundColor = colorResalte;
+          i +=1;
+        } while (elementPilaLlamadas.length >i);
+
+      }
+
+      //Lineas pila de control
+      const elementPila = getItemsTable("tablaPila");
+      
+      desdePosPila = 0;
+      hastaPosPila = 0;
+      i = 0;
+      encontrado = false;
+
+      if (state.arrPilaLlamadas.length != 0){
+        do{
+          desdePosPila = hastaPosPila +1;
+          hastaPosPila = posMem(state.arrPilaLlamadas[i].inicioRA);
+
+          if ((state.arrPilaLlamadas[i].nombreProcOFunc == nombreProcOFunc) && (posMem(state.arrPilaLlamadas[i].inicioRA) == dir)){
+              encontrado = true;
+          } else {  i +=1;}
+
+        } while (! encontrado);
+      }
+
+      if (elementPila.length >1){
+        i =1;
+        do{
+            let item = elementPila[i].cells[0].innerHTML;
+            if ((item >=desdePosPila) && (item <=hastaPosPila) && (item != "") ){
+              elementPila[i].style.backgroundColor = colorResalte;
+            }
+            i +=1;
+        } while (elementPila.length >i);
+
+      }
+      //Lineas estado del cómputo
+      const elementTabVariables = getItemsTable("tablaVariables");
+      
+      if (elementTabVariables.length >1){
+        i =1;
+        do{
+            let item = elementTabVariables[i].cells[2].innerHTML;
+            if ((item >=desdePosPila) && (item <=hastaPosPila) && (item != "") ){
+                elementTabVariables[i].style.backgroundColor = colorResalte;
+          }
+          i +=1;
+        } while (elementTabVariables.length >i);
+
+      }
 }
+
+function pintaTablaPila() {
+  let muestroRaReducido = document.getElementById("mostrarRAReducido").checked;
+  let muestroTemporales = document.getElementById("mostrarTemp").checked;
+
+  const miMapa = new Map([...state.mapPila.entries()].sort());
+  View.limpiaTabla("tablaPila");
+  let FlagLinBlanca;
+  
+  //Creation of the Table for Stack.
+  const columns = ['Dir.', 'Valor', 'Descripción'];
+  const tablaPila = View.createTable(columns);
+
+  let cuerpoTabla = document.createElement('tbody');
+  let qDescripcion;
+  for (let [key, value] of miMapa) {
+    qDescripcion = traeDescripcionPosicion(key,value);
+
+    let muestroLinea = false;
+
+    if (!muestroRaReducido || (muestroRaReducido && View.perteneceRAReducido(qDescripcion)))
+        muestroLinea = true;
+
+    if (!muestroTemporales && View.perteneceTemporal(qDescripcion))
+        muestroLinea = false;
+
+    if (muestroLinea){
+        if (qDescripcion == 'Valor retorno') {
+            FlagLinBlanca = false;
+        }
+        //Define cells names.
+        const cells = [key, value, qDescripcion];
+        //Create row
+        const fila = View.createRow(cells);
+        //Add it to the table.
+        cuerpoTabla.appendChild(fila);
+  
+    } else if (!FlagLinBlanca){
+        FlagLinBlanca = true;
+        //Para dejar "Simular" separación del RA en el modo reducido
+        for (let step = 0; step < 4; step++) {
+            //Define cells names.
+            const cells = [' ', '', ''];
+            //Create row
+            const fila = View.createRow(cells);
+            //Add it to the table.
+            cuerpoTabla.appendChild(fila);
+        }
+    }
+  }
+
+  View.setAttTable(tablaPila, "tablaPila", cuerpoTabla, "divpila");
+  //Add event listener.
+  $('#tablaPila tr').on('click', function(){
+    let dato1 = $(this).find('td:first').html();//Dirección
+    let dato2 = $(this).find('td:last').html();//Descripcion dirección
+    if (dato2 != '') {
+        pintaTablas();
+        View.clickTablaPila(dato1,dato2);
+    }
+  });
+}
+
+
+function pintaTablaVariables() {
+  let muestroTemporales = document.getElementById("mostrarTemp").checked;
+  let muestroVisibles = document.getElementById("mostrarVisibles").checked;
+  const locMap = new Map();
+  locMap.clear()
+  View.limpiaTabla("tablaVariables");
+  //Creation of the Table for variables.
+  const columns = ['Variable', 'Valor', 'Dir.', 'Visible'];
+  const tablaVariables = View.createTable(columns);
+  
+
+  let cuerpoTabla = document.createElement('tbody');
+  state.arrMem.forEach((item)=>{
+    let muestroTemp = false;
+      let muestroVis = false;
+      if (muestroTemporales || (!muestroTemporales && ( item[1].slice(0,2) != 'T_' ))){
+          muestroTemp = true;
+      }
+
+      if (!muestroVisibles || (muestroVisibles && !locMap.has(item[1]) ) ){
+          muestroVis = true;
+      }
+
+      if (muestroTemp && muestroVis){
+        const cells = [item[1], state.mapPila.get(posMem(item[0])), posMem(item[0])];
+        //For last cell, it varys its text depending on extra item.
+        let txt3;
+
+        if( !locMap.has(item[1]) ) {
+            locMap.set(item[1],posMem(item[0]));
+            txt3 = 'Si';
+        }else{
+            txt3 = 'No';
+        }
+        //add it to the array to create the whole row.
+        cells.push(txt3);
+        //creating the whole row.
+        const fila = View.createRow(cells);
+        //add the row to the table.
+        cuerpoTabla.appendChild(fila);
+      }
+    })
+  
+  View.setAttTable(tablaVariables, "tablaVariables", cuerpoTabla, "divvariable");
+  //Add event listener.
+  $('#tablaVariables tr').on('click', function(){
+    let dato = $(this).find('td:eq(2)').html();//posicion de la tabla donde se encuentra la dirección
+    pintaTablas();
+    View.clickTablaVariables(dato);
+  });
+}
+
+
+function pintaCallStack() {
+    
+  View.limpiaTabla("tablaPilaLlamadas");
+  
+  if (state.arrPilaLlamadas.length != 0){
+    const columns = ['Llamada proc-fun', 'Inicio RA', 'Dir.'];
+    const tablaPilaLlamadas = View.createTable(columns);
+
+    let cuerpoTabla = document.createElement('tbody');
+    let i = 0;
+    
+    do {
+        //create cells names array
+        const cellsNames = [state.arrPilaLlamadas[i].nombreProcOFunc, state.arrPilaLlamadas[i].inicioRA, posMem(state.arrPilaLlamadas[i].inicioRA)];
+        //create row
+        const fila = View.createRow(cellsNames);
+        //add it to the table
+        cuerpoTabla.appendChild(fila);
+        i += 1;
+    } while (i < state.arrPilaLlamadas.length);
+
+    View.setAttTable(tablaPilaLlamadas, "tablaPilaLlamadas", cuerpoTabla, "divpilaLlamadas");
+    //Add event listener.
+    $('#tablaPilaLlamadas tr').on('click', function(){
+      let dato1 = $(this).find('td:first').html();
+      let dato2 = $(this).find('td:last').html();
+      pintaTablas();
+      clickPilaLlamadas(dato1,dato2);
+    });
+  }
+}
+
+//TODO: ADDED AUXILIARY FUNCTIONS
+
 
 /**
  * Auxiliary procedure that indicates when no more instructions nor lines availables.
@@ -242,7 +525,7 @@ function getItemsTable(table){
  */
 function isNextInstruction(){
     //Firstly get a copy as a local variable from the table
-    const elementInstruccion = getItemsTable("tablaCuadruplas");
+    const elementInstruccion = View.getItemsTable("tablaCuadruplas");
     //Returns the results based on the active index (manipulated in consumeInstruccion() ).
     return elementInstruccion[state.indice].innerText != "[HALT null, null, null]";
 }
@@ -261,8 +544,8 @@ function inicializaFase1() {
   state.listaCuadruplas = [];
   mapaCadenas = [];
   State.resetState();
-  
-  View.resetFirstPart();
+  pintaTablas();
+  View.resetFirstPart(state);
 }
 
 /**
@@ -322,7 +605,7 @@ function recuperaValor(variable) {
       //opcion2
       //Busco en la pila
       //return state.mapPila.get(posMem(memo[0]));
-      var encontradoArrMem = posMem(memo[0]);
+      let encontradoArrMem = posMem(memo[0]);
       return state.mapPila.get(encontradoArrMem);
     }
   }
@@ -334,13 +617,13 @@ function recuperaValor(variable) {
 * @param {int} qPos posicion de memoriavariable
 */
 function recuperaVariableArrMem(qPos) {
-  var xx;
+  let xx;
   let dInd = posPilaDI(qPos);
 
-  for (var i = 0; i < state.arrMem.length; i++) {
-    var index = state.arrMem[i].indexOf(dInd);
+  for (const element of state.arrMem) {
+    let index = element.indexOf(dInd);
     if (index > -1) {
-      xx = state.arrMem[i][1];
+      xx = element[1];
       return xx;
       //TODO: This has not sense after return... FIX IT
       //i = state.arrMem.length;
@@ -352,7 +635,7 @@ function recuperaVariableArrMem(qPos) {
 
 
 function buscoPosicionPorEnlaceAcceso(variable,indice) {
-  var aux, AmbitoElegido, index, pos;
+  let aux, AmbitoElegido, index, pos;
   //busco por EA
   aux = state.arrPilaLlamadas[indice];
   AmbitoElegido = parserUned.yy.tablaAmbitos.get(aux.nombreProcOFunc);
@@ -419,10 +702,10 @@ function recuperaValorCadena(cadena) {
 * @param {String} etiq etiqueta
 */
 function traePosicionEtiqueta(etiq) {
-  var i = 0;
-  var encontrado = false;
+  let i = 0;
+  let encontrado = false;
   //TODO: Added elementInstruccion here, originally it wasn't
-  var elementInstruccion = getItemsTable("tablaCuadruplas");
+  const elementInstruccion = View.getItemsTable("tablaCuadruplas");
   
   //TODO: BUGFIX: bad design, it may enter an infite loop due to while condition.
   do
@@ -441,7 +724,7 @@ function traePosicionEtiqueta(etiq) {
 * @param {String} nombreProcOFunc nombre procedimiento o función
 */
 function traeDireccionRetornoRA(nombreProcOFunc) {
-  var i;
+  let i;
   //TODO: FIXME: this conditional has a asignation instead comparator. I change nombreprocfunc = nombreproc for ... == ...
   if (state.arrPilaLlamadas[0].nombreProcOFunc == nombreProcOFunc){
     i = state.mapPila.get(posMem(state.arrPilaLlamadas[0].inicioRA - State.tamannoFijoRA - state.arrPilaLlamadas[0].parametros.length));
@@ -455,8 +738,7 @@ function traeDireccionRetornoRA(nombreProcOFunc) {
 * Recupera el valor del enlace de Control
 */
 function traeEnlaceDeControl() {
-  var i;
-  i = 0;
+  let i = 0;
   if (state.arrPilaLlamadas.length != 0){
     i = state.arrPilaLlamadas[0].inicioRA;
   }
@@ -468,7 +750,7 @@ function traeEnlaceDeControl() {
 * @param {String} nbProcOFunc nombre procedimiento o función
 */
 function traeEnlaceDeAcceso(nombreProcOFunc) {
-  var i,enlaceAcceso, encontrado;
+  let i,enlaceAcceso, encontrado;
   enlaceAcceso = 0;
   i = 0;
   encontrado = false;
@@ -476,7 +758,7 @@ function traeEnlaceDeAcceso(nombreProcOFunc) {
   if (state.arrPilaLlamadas.length != 0){
     do{
       if (state.arrPilaLlamadas[i].nombreProcOFunc != nombreProcOFunc){
-        AmbitoElegido=  parserUned.yy.tablaAmbitos.get(state.arrPilaLlamadas[i].nombreProcOFunc);
+        AmbitoElegido = parserUned.yy.tablaAmbitos.get(state.arrPilaLlamadas[i].nombreProcOFunc);
         if (AmbitoElegido.simbolos.has(nombreProcOFunc)){
           enlaceAcceso = state.arrPilaLlamadas[i].inicioRA;
           encontrado = true;
@@ -489,13 +771,13 @@ function traeEnlaceDeAcceso(nombreProcOFunc) {
 }
 
 function coloreaInstrucciones(){
-  var qLinea = -1;
+  let qLinea = -1;
   //TODO: Added elementInstruccion here, originally it wasn't.
-  var elementInstruccion = getItemsTable("tablaCuadruplas");
-  var elementLineaCodigoFuente = getItemsTable("tablaCodigoFuente");
+  const elementInstruccion = View.getItemsTable("tablaCuadruplas");
+  const elementLineaCodigoFuente = View.getItemsTable("tablaCodigoFuente");
   
   for (let step = 0; step < elementInstruccion.length; step++) {
-    if (state.indice !=step) {
+    if (state.indice != step) {
       elementInstruccion[step].style.backgroundColor = "transparent";
     } else {
       elementInstruccion[step].style.backgroundColor = "#33CCFF";
@@ -515,31 +797,19 @@ function coloreaInstrucciones(){
 }
 
 
-function coloreaTodasInstrucciones(){
-    //TODO: Added elementInstruccion here, it wasn't previously
-    var elementInstruccion = getItemsTable("tablaCuadruplas");
-    var elementLineaCodigoFuente = getItemsTable("tablaCodigoFuente");
-  //Coloreo todo el intermedio
-  for (let step = 0; step < elementInstruccion.length; step++) {
-      elementInstruccion[step].style.backgroundColor = "#33CCFF";
-  }
-  //Coloreo todo el codigo fuente
-  for (let step = 0; step <  elementLineaCodigoFuente.length; step++) {
-    elementLineaCodigoFuente[step].style.backgroundColor = "#33CCFF";
-  }
-}
+
 
 //TODO: Function extremally big, try to factorize or modularize it.
 
 function consumeInstruccion() {
   var qLinea, qcuadrupla, qOperacion, qp1,qp2,qp3;
 
-  var elementLineaCodigoFuente = getItemsTable("tablaCodigoFuente");
-  var elementInstruccion = getItemsTable("tablaCuadruplas");
+  const elementLineaCodigoFuente = View.getItemsTable("tablaCodigoFuente");
+  const elementInstruccion = View.getItemsTable("tablaCuadruplas");
   
   //TODO: This is too often repeated => it needs a particular function.
   if (!isNextInstruction()){
-      coloreaTodasInstrucciones();
+      View.coloreaTodasInstrucciones();
       View.disableControlButtons();
   } else {
       qcuadrupla = elementInstruccion[state.indice].innerText;
@@ -553,7 +823,7 @@ function consumeInstruccion() {
       //Elimino caracteres no necesarios
       qcuadrupla = qcuadrupla.replace(/[^a-zA-Z 0-9._]+/g,'');
       //divido la cuadrupla
-      var splitstring = qcuadrupla.split(" ");
+      let splitstring = qcuadrupla.split(" ");
       qOperacion = splitstring[0];
       qp1 = splitstring[1];
       qp2 = splitstring[2];
@@ -592,7 +862,7 @@ function consumeInstruccion() {
           break;
         case "PUNTEROGLOBAL":
         case "PUNTEROLOCAL":
-          for (var [key, value] of parserUned.yy.tablaAmbitos) {
+          for (let [key, value] of parserUned.yy.tablaAmbitos) {
 
             if (value.nombre == qp3){
               //Guardo en el ArrMem los parámetros con la posición que les toca
@@ -733,7 +1003,7 @@ function consumeInstruccion() {
             }
 
             //Eliminamos de la pila los valores del RA que cerramos
-            var k = posMem(state.arrPilaLlamadas[0].inicioRA);
+            let k = posMem(state.arrPilaLlamadas[0].inicioRA);
             for (let clave of state.mapPila.keys()) {
               if (clave <= k){
                 state.mapPila.delete(clave);
@@ -749,7 +1019,7 @@ function consumeInstruccion() {
             window.alert('FALTA HACER INSTRUCCION ' + qOperacion);
       }
 
-      View.pintaTablas();
+      pintaTablas();
       coloreaInstrucciones();
       state.indice +=1;
    }
