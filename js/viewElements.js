@@ -58,7 +58,10 @@ export function inicializaFase2() {
   btn_prevInstruccion.style.display = 'inline-block';
   btn_sigLinea.style.display = 'inline-block';
   btn_prevLinea.style.display = 'inline-block';
+  //
   btn_ejecucionCompleta.style.display = 'block';
+  //TODO: Delete if all works fine with the toggle tables (clicking on their titles)
+  //initTableToggles();
 }
 
 //TODO AUX ZONE
@@ -85,13 +88,38 @@ export function perteneceTemporal(qDesc) {
   return qDesc.includes('Temporal');
 }
 
-export function toggleTabla(tablaId) {
+/**
+ * This function roll up/down hidding a table on. If the table is rolled,
+ *  it unroll it, in the other case it rolls it on.
+ * @param tablaId the ID of the table to roll up or down.
+ * @return nothing, just in case the table doesn't exist it execute a return to the previous function.
+ */
+function toggleTabla(tablaId) {
   let tabla = document.getElementById(tablaId);
+  //Check firstly if the table already exists.
+  if(!tabla) return;
+  //If it exists go ahead with the rest.
   if (tabla.style.display === "none") {
     tabla.style.display = "block";
   } else {
     tabla.style.display = "none";
   }
+}
+
+/**
+ * Function to add a listener to the tables to controle the click action on them.
+ *  Basically to show in the web page (HTML) when remark one table or another one.
+ *  This function/listener relays on the function toggleTabla(var) and is only used here and in the HTML.
+ */
+export function initTableToggles() {
+    // Event delegation: escuchar en el documento, ejecutar solo si coincide
+    document.addEventListener('click', (e) => {
+      const toggleElement = e.target.closest('[data-toggle-table]');
+      if (toggleElement) {
+        const tableId = toggleElement.getAttribute('data-toggle-table');
+        toggleTabla(tableId);
+      }
+    });
 }
 
 export function limpiaTabla(qTabla){
@@ -103,13 +131,15 @@ export function limpiaTabla(qTabla){
 /**
  * The function returns the items into an array from the referenced table.
  *  It doesn't check if the table exists nor a valid one.
- * <p>The functions works only for tables withe elements tagged by name "tr".
- * @param table name of the table.
- * @return items of the referenced table into an array.
+ * <p>The functions works only for tables withe elements tagged by name "tr". And in case
+ *  the table doesn't exist or doesn't contains elements yet, it returns null.
+ * @param tableID name of the table.
+ * @return items of the referenced table into an array. Null otherwise
  */
-export function getItemsTable(table){
-    const items = document.getElementById(table).getElementsByTagName("tr");
-    return items;
+export function getItemsTable(tableID){
+    const table = document.getElementById(tableID);
+    //Check if the table exists to returns elements, otherwise abort and return null.
+    return table ? table.getElementsByTagName("tr") : null;
 }
 
 /**
@@ -154,7 +184,7 @@ export function createTable(columns){
     
     columns.forEach(text => {
         const cell = document.createElement('th');
-        cell.txtContent = text;
+        cell.textContent = text;
         row.appendChild(cell);
     });
     
@@ -227,13 +257,14 @@ export function crearTablaCodFuenteyCuadruplas(datosTabla) {
  * Ilumina las posiciones relacionadas con la variable seleccionada
  * * @param {Int} dir Direccion de la variable
  **/
-export function clickTablaVariables(state, dir) {
+export function clickTablaVariables(dir) {
   
   let i;
   //Lineas pila de llamadas
   const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
   
-  if ( elementPilaLlamadas.length >1){
+  //Check if it is not null and contains data to calc. Same for the others.
+  if ( elementPilaLlamadas && elementPilaLlamadas.length >1){
     i =1;
     do{
       if ( elementPilaLlamadas[i].cells[2].innerHTML >= dir) {
@@ -246,8 +277,7 @@ export function clickTablaVariables(state, dir) {
 
   //Lineas pila de control
   const elementPila = getItemsTable("tablaPila");
-
-  if ( elementPila.length >1){
+  if ( elementPila && elementPila.length >1){
     i =1;
     do{
       if ( elementPila[i].cells[0].innerHTML == dir) {
@@ -260,7 +290,8 @@ export function clickTablaVariables(state, dir) {
 
   //Lineas estado del cómputo
   const elementTabVariables = getItemsTable("tablaVariables");
-  if (elementTabVariables.length >1){
+  
+  if ( elementTabVariables && elementTabVariables.length >1){
     i =1;
     do{
       if (elementTabVariables[i].cells[2].innerHTML == dir) {
@@ -282,6 +313,9 @@ export function clickTablaPila(dir, descrip) {
    //It requires a huge refactoring and restructuration.
    let i;
   
+   //TODO: Added checked for paramameters null. By now if any of them is null => return.
+   if(!dir || ! descrip) return;
+   
   //Me quedo con la parte interesante de la descripción
 
   if (descrip.includes('Enlace')){
@@ -295,8 +329,8 @@ export function clickTablaPila(dir, descrip) {
 
   //Lineas pila de llamadas
   const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
-
-    if ( elementPilaLlamadas.length > 1){
+     //Check if it is not null and contains data to calc. Same for the others.
+    if ( elementPilaLlamadas && elementPilaLlamadas.length > 1){
         i = 1;
         do{
           if ( elementPilaLlamadas[i].cells[2].innerHTML >= dir) {
@@ -308,7 +342,7 @@ export function clickTablaPila(dir, descrip) {
         while ( elementPilaLlamadas.length > i);
     }
 
-  if ( elementPilaLlamadas.length > 1){
+  if ( elementPilaLlamadas && elementPilaLlamadas.length > 1){
     i = 1;
     do{
       if (elementPilaLlamadas[i].cells[2].innerHTML >= descrip) {
@@ -322,7 +356,7 @@ export function clickTablaPila(dir, descrip) {
   //Lineas pila de control
   const elementPila = getItemsTable("tablaPila");
 
-  if (elementPila.length > 1){
+  if ( elementPila && elementPila.length > 1){
     i = 1;
     do{
       if (elementPila[i].cells[0].innerHTML == dir){
@@ -339,7 +373,7 @@ export function clickTablaPila(dir, descrip) {
   //Lineas estado del cómputo
   const elementTabVariables = getItemsTable("tablaVariables");
   
-  if (elementTabVariables.length > 1){
+  if ( elementTabVariables && elementTabVariables.length > 1){
     i = 1;
     do{
       if (elementTabVariables[i].cells[2].innerHTML ==dir)

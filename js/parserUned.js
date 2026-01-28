@@ -93,7 +93,8 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 
 //TODO: That is horribly organized, refactor, restructure it and check when necesary for global or local def.
-var Ta,Tb,TamaRA,intCode;
+let TamaRA, intCode;
+let Ta, Tb, La, Lb, lVar;
 
 switch (yystate) {
 case 1:
@@ -346,7 +347,7 @@ case 30:
 							this.$=	{intCode : []};
 							this.$.intCode = this.$.intCode.concat($$[$0-2].intCode );
 							this.$.intCode = this.$.intCode.concat('LIN ' + this._$.last_line + ' [WRITEINT ' + $$[$0-2].varTemp + ', null, null]');
-							
+                            
 break;
 case 31:
 //sentenciaSi : IF expresionLogica THEN BEGIN cuerpoBloque  END  sentenciaSinoOpcional
@@ -635,7 +636,7 @@ parse: function parse(input) {
         lstack.length = lstack.length - n;
     }
     // eslint-disable-next-line no-labels, no-unused-labels
-    _token_stack:
+    //TODO: commented this label since it has not effect but in module ES makes conflicts: _token_stack:
         var lex = function () {
             var token;
             token = lexer.lex() || EOF;

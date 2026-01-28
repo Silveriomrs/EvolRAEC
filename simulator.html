@@ -89,57 +89,61 @@
 	
 	</div>
 
-
 <!-- Area for main bottoms Steping process back and foward -->
 
-    <div id="Fase2B">
+    <div id="Fase2B" class="center">
         <style type="text/css" class="myoutput"> </style>
         <ul class="tabs">
             <li><a href="#tabCodigoFuente">Código Fuente</a></li>
-            <li><a href="#tablaCuadru" >Código intermedio</a></li>
+            <li><a href="#tabTablaCuadruplas" >Código intermedio</a></li>
         </ul>
+        
+        
             <!-- Part of the table to show results of compilation in table format -->
         <div class="divtablaspilavar">
-            <div id="divpilaLlamadas">
-                <h3 class="fondo" onclick="toggleTabla('tablaPilaLlamadas')">Pila de llamadas <span>&#x25BE;</span></h3>
+            <div id="divpilaLlamadas" class="divtabla">
+<!--                 <h3 class="fondo" onclick="toggleTabla('tablaPilaLlamadas')">Pila de llamadas <span>&#x25BE;</span></h3> -->
+                <h3 class="fondo" data-toggle-table="tablaPilaLlamadas" style="cursor: pointer;">Pila de llamadas <span>&#x25BE;</span></h3>
                 <table id="tablaPilaLlamadas" ></table>
             </div>
 
-            <div id="divpila">
-                <h3 class="fondo" onclick="toggleTabla('tablaPila')">Pila de control <span>&#x25BE;</span></h3>
+            <div id="divpila" class="divtabla">
+<!--                 <h3 class="fondo" onclick="toggleTabla('tablaPila')">Pila de control <span>&#x25BE;</span></h3> -->
+                <h3 class="fondo" data-toggle-table="tablaPila" style="cursor: pointer;">Pila de control <span>&#x25BE;</span></h3>
                 <table id="tablaPila" ></table>
             </div>
 
-            <div id="divvariable">
-                <h3 class="fondo" onclick="toggleTabla('tablaVariables')">Estado del cómputo <span>&#x25BE;</span></h3>
+            <div id="divvariable" class="divtabla">
+<!--                 <h3 class="fondo" onclick="toggleTabla('tablaVariables')">Estado del cómputo <span>&#x25BE;</span></h3> -->
+                <h3 class="fondo" data-toggle-table="tablaVariables" style="cursor: pointer;">Estado del cómputo <span>&#x25BE;</span></h3>
                 <table id="tablaVariables" ></table>
             </div>
-        </div>
 
-        <div id="tablaCuadru" class="tab-content">
-            <div id="tabTablaCuadruplas">
-                <br>
-                <button type="button" class="button-15"  id="btn_prevInstruccion"> AnteriorA</button>
-                <button type="button" class="button-15"  id="btn_sigInstruccion"> SiguienteA</button>
-                <br>
-                <table id="tablaCuadruplas" border="1"></table>
+            <div style="display:block;">
+	            <div id="tabTablaCuadruplas" class="tab-content">
+	                <br>
+	                <button type="button" class="button-15"  id="btn_prevInstruccion"> AnteriorA</button>
+	                <button type="button" class="button-15"  id="btn_sigInstruccion"> SiguienteA</button>
+	                <br>
+	                <table id="tablaCuadruplas" border="1"></table>
+	            </div>
+	
+		        <div id="tabCodigoFuente" class="tab-content">
+		            <br>
+		                <button type="button" class="button-15"  id="btn_prevLinea"> AnteriorB</button>
+		                <button type="button" class="button-15"  id="btn_sigLinea"> SiguienteB</button>
+		            <br>
+		            <table id="tablaCodigoFuente" border="1"></table>
+		        </div>
             </div>
         </div>
-
-        <div id="tabCodigoFuente" class="tab-content">
-            <br>
-                <button type="button" class="button-15"  id="btn_prevLinea"> AnteriorB</button>
-                <button type="button" class="button-15"  id="btn_sigLinea"> SiguienteB</button>
-            <br>
-            <table id="tablaCodigoFuente" border="1"></table>
-        </div>
     </div>
-
 
     <footer>
         <img id="logoUned" alt="Logotipo UNED" src="img/LogoUned.png"/>
         <h6 class="h6footer"> PFGrado Jaime Alcalá, 2023.</h6>
         <h6 class="h6footer"> <em>Dirección: Fernando López Ostenero</em></h6>
+        <h6 class="h6footer"> <em>Version: 1.2</em></h6>
         <h6 class="h6footer"> <a href="https://www.uned.es">www.uned.es</a></h6>
     </footer>
 

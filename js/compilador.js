@@ -310,7 +310,7 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
     //TODO: This was detected like local var, I have added the var declaration. Be aware in case of error.
     const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
       
-      if (elementPilaLlamadas.length >1){
+      if ( elementPilaLlamadas && elementPilaLlamadas.length >1){
         i =1;
         do{
           if ((elementPilaLlamadas[i].cells[0].innerHTML ==nombreProcOFunc) &&
@@ -341,7 +341,7 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
         } while (! encontrado);
       }
 
-      if (elementPila.length >1){
+      if (elementPila && elementPila.length >1){
         i =1;
         do{
             let item = elementPila[i].cells[0].innerHTML;
@@ -355,7 +355,7 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
       //Lineas estado del cómputo
       const elementTabVariables = getItemsTable("tablaVariables");
       
-      if (elementTabVariables.length >1){
+      if (elementTabVariables && elementTabVariables.length >1){
         i =1;
         do{
             let item = elementTabVariables[i].cells[2].innerHTML;
@@ -423,7 +423,7 @@ function pintaTablaPila() {
   $('#tablaPila tr').on('click', function(){
     let dato1 = $(this).find('td:first').html();//Dirección
     let dato2 = $(this).find('td:last').html();//Descripcion dirección
-    if (dato2 != '') {
+    if (dato1 && dato2 && dato2 != '') {
         pintaTablas();
         View.clickTablaPila(dato1,dato2);
     }
@@ -704,12 +704,12 @@ function recuperaValorCadena(cadena) {
 function traePosicionEtiqueta(etiq) {
   let i = 0;
   let encontrado = false;
-  //TODO: Added elementInstruccion here, originally it wasn't
+  //TODO: getItemsTable may returns NULL and here is not control about it.
   const elementInstruccion = View.getItemsTable("tablaCuadruplas");
   
   //TODO: BUGFIX: bad design, it may enter an infite loop due to while condition.
   do
-    if (elementInstruccion[i].innerText.includes('INL ' + etiq)) {
+    if (elementInstruccion && elementInstruccion[i].innerText.includes('INL ' + etiq)) {
         encontrado = true;
     } else {
       i +=1;
@@ -758,7 +758,7 @@ function traeEnlaceDeAcceso(nombreProcOFunc) {
   if (state.arrPilaLlamadas.length != 0){
     do{
       if (state.arrPilaLlamadas[i].nombreProcOFunc != nombreProcOFunc){
-        AmbitoElegido = parserUned.yy.tablaAmbitos.get(state.arrPilaLlamadas[i].nombreProcOFunc);
+        let AmbitoElegido = parserUned.yy.tablaAmbitos.get(state.arrPilaLlamadas[i].nombreProcOFunc);
         if (AmbitoElegido.simbolos.has(nombreProcOFunc)){
           enlaceAcceso = state.arrPilaLlamadas[i].inicioRA;
           encontrado = true;
@@ -1064,3 +1064,8 @@ function changeActiveTab(e) {
 
 // Agregar el evento click a cada pestaña
 tabs.forEach(tab => tab.addEventListener('click', changeActiveTab));
+
+// Add the listener to the tables for toggle them on click.
+document.addEventListener('DOMContentLoaded', () => {
+  View.initTableToggles();
+});
