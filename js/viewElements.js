@@ -25,8 +25,9 @@ export const cajaMsjCompilado   = document.getElementById('resultadoCompilacion'
 export const cajaSimbolos       = document.getElementById('cajaSimbolo');
 export const cajaTipos          = document.getElementById('cajaTipo');
 
-const colorResalte = "#FFFF00";
-const colorRojo    = "#ff0000";
+export const colorResalte = "#FFFF00";
+export const colorRojo    = "#ff0000";
+export const NOCOLOR      = '';
 
 
 //Functions
@@ -129,12 +130,32 @@ export function limpiaTabla(qTabla){
 }
 
 /**
- * The function returns the items into an array from the referenced table.
+ * Reset the colors on the table.
+ * The function is key to refresh the marked cells on the table after
+ *  another click on a row or cell. So it allows to repaint it properly
+ *  after the reset.
+ */
+export function resetTableColors(){
+    const tables = ['tablaPila', 'tablaPilaLlamadas', 'tablaVariables'];
+
+    tables.forEach(tableId => {
+      const items = getItemsTable(tableId);
+      if (items) {
+        for (const element of items) {
+          element.style.backgroundColor = NOCOLOR;  // Reset background
+          element.style.color = NOCOLOR;            // Reset text color.
+        }
+      }
+    });
+}
+
+/**
+ * Returns the table rows as an HTMLCollection.
  *  It doesn't check if the table exists nor a valid one.
  * <p>The functions works only for tables withe elements tagged by name "tr". And in case
  *  the table doesn't exist or doesn't contains elements yet, it returns null.
- * @param tableID name of the table.
- * @return items of the referenced table into an array. Null otherwise
+ * @param {string} tableID name of the table.
+ * @return {HTMLCollection|null} items of the referenced table into an array. Null otherwise
  */
 export function getItemsTable(tableID){
     const table = document.getElementById(tableID);
@@ -224,13 +245,20 @@ export function crearTablaCodFuenteyCuadruplas(datosTabla) {
   let tablaCuadrupla = document.createElement('table');
   let cuerpoTablaCuadrupla = document.createElement('tbody');
 
+  let j = 0;
   datosTabla.forEach(function(datosFilas) {
     datosFilas.forEach(function(datosCeldas) {
       let fila = document.createElement('tr');
       let celda = document.createElement('td');
+      //Firstly add the cell on the index column for numbers.
+      celda.appendChild(document.createTextNode(j + '.' ));
+      fila.appendChild(celda);
+      //new cell for the data
+      celda = document.createElement('td');
       celda.appendChild(document.createTextNode(datosCeldas));
       fila.appendChild(celda);
       cuerpoTablaCuadrupla.appendChild(fila);
+      j++;
     });
   });
 
@@ -260,6 +288,11 @@ export function crearTablaCodFuenteyCuadruplas(datosTabla) {
 export function clickTablaVariables(dir) {
   
   let i;
+  //Check if dir == null in such a case do not proceed with the rest.
+  if(!dir) return;
+  //reset previous colors
+  resetTableColors();
+  
   //Lineas pila de llamadas
   const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
   
@@ -314,7 +347,9 @@ export function clickTablaPila(dir, descrip) {
    let i;
   
    //TODO: Added checked for paramameters null. By now if any of them is null => return.
-   if(!dir || ! descrip) return;
+   if(!dir || !descrip) return;
+   //reset previous colors
+   resetTableColors();
    
   //Me quedo con la parte interesante de la descripción
 

@@ -306,23 +306,29 @@ function pintaTablas(){
  **/
 function clickPilaLlamadas(nombreProcOFunc, dir) {
     let encontrado,desdePosPila, hastaPosPila, i;
+    //Check if the arguments are valid.
+    if(!nombreProcOFunc || !dir) return;
+    //reset previous colors
+    View.resetTableColors();
     //Lineas pila de llamadas
     //TODO: This was detected like local var, I have added the var declaration. Be aware in case of error.
-    const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
+    
+    // THE ORDER OF LOOPS MATTERS! do not change it. 
+    const elementPilaLlamadas = View.getItemsTable("tablaPilaLlamadas");
       
       if ( elementPilaLlamadas && elementPilaLlamadas.length >1){
         i =1;
         do{
           if ((elementPilaLlamadas[i].cells[0].innerHTML ==nombreProcOFunc) &&
               (elementPilaLlamadas[i].cells[2].innerHTML == dir))
-              elementPilaLlamadas[i].style.backgroundColor = colorResalte;
+              elementPilaLlamadas[i].style.backgroundColor = View.colorResalte;
           i +=1;
         } while (elementPilaLlamadas.length >i);
 
       }
 
       //Lineas pila de control
-      const elementPila = getItemsTable("tablaPila");
+      const elementPila = View.getItemsTable("tablaPila");
       
       desdePosPila = 0;
       hastaPosPila = 0;
@@ -346,21 +352,22 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
         do{
             let item = elementPila[i].cells[0].innerHTML;
             if ((item >=desdePosPila) && (item <=hastaPosPila) && (item != "") ){
-              elementPila[i].style.backgroundColor = colorResalte;
+              elementPila[i].style.backgroundColor = View.colorResalte;
             }
             i +=1;
         } while (elementPila.length >i);
 
       }
+      
       //Lineas estado del cómputo
-      const elementTabVariables = getItemsTable("tablaVariables");
+      const elementTabVariables = View.getItemsTable("tablaVariables");
       
       if (elementTabVariables && elementTabVariables.length >1){
         i =1;
         do{
             let item = elementTabVariables[i].cells[2].innerHTML;
             if ((item >=desdePosPila) && (item <=hastaPosPila) && (item != "") ){
-                elementTabVariables[i].style.backgroundColor = colorResalte;
+                elementTabVariables[i].style.backgroundColor = View.colorResalte;
           }
           i +=1;
         } while (elementTabVariables.length >i);
@@ -424,7 +431,7 @@ function pintaTablaPila() {
     let dato1 = $(this).find('td:first').html();//Dirección
     let dato2 = $(this).find('td:last').html();//Descripcion dirección
     if (dato1 && dato2 && dato2 != '') {
-        pintaTablas();
+        //TODO: DELETE ME pintaTablas();
         View.clickTablaPila(dato1,dato2);
     }
   });
@@ -438,7 +445,7 @@ function pintaTablaVariables() {
   locMap.clear()
   View.limpiaTabla("tablaVariables");
   //Creation of the Table for variables.
-  const columns = ['Variable', 'Valor', 'Dir.', 'Visible'];
+  const columns = ['Variable', 'Dir.', 'Valor', 'Visible'];
   const tablaVariables = View.createTable(columns);
   
 
@@ -455,18 +462,16 @@ function pintaTablaVariables() {
       }
 
       if (muestroTemp && muestroVis){
-        const cells = [item[1], state.mapPila.get(posMem(item[0])), posMem(item[0])];
+        const cells = [item[1], posMem(item[0]), state.mapPila.get(posMem(item[0]))];
         //For last cell, it varys its text depending on extra item.
-        let txt3;
-
+        //add it to the array to create the whole row.
         if( !locMap.has(item[1]) ) {
             locMap.set(item[1],posMem(item[0]));
-            txt3 = 'Si';
+             cells.push('Si');
         }else{
-            txt3 = 'No';
+             cells.push('No');
         }
-        //add it to the array to create the whole row.
-        cells.push(txt3);
+
         //creating the whole row.
         const fila = View.createRow(cells);
         //add the row to the table.
@@ -478,7 +483,7 @@ function pintaTablaVariables() {
   //Add event listener.
   $('#tablaVariables tr').on('click', function(){
     let dato = $(this).find('td:eq(2)').html();//posicion de la tabla donde se encuentra la dirección
-    pintaTablas();
+    //TODO: DELETE ME pintaTablas();
     View.clickTablaVariables(dato);
   });
 }
@@ -510,7 +515,7 @@ function pintaCallStack() {
     $('#tablaPilaLlamadas tr').on('click', function(){
       let dato1 = $(this).find('td:first').html();
       let dato2 = $(this).find('td:last').html();
-      pintaTablas();
+      //TODO: DELETE ME pintaTablas();
       clickPilaLlamadas(dato1,dato2);
     });
   }
