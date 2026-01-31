@@ -282,6 +282,31 @@ export function crearTablaCodFuenteyCuadruplas(datosTabla) {
 }
 
 /**
+ * It select the referenced tab and deselect the others.
+ *  The efect is a refresh for advance/back bottons.
+ * @param {string} href
+ */
+export function activateTab(href) {
+  // Clear actives tabs
+  document.querySelectorAll('.tabs a').forEach(tab => 
+    tab.classList.remove('active')
+  );
+  
+  // Take the referenced tab and activate it.
+  const tab = document.querySelector(`.tabs a[href="${href}"]`);
+  if (tab) tab.classList.add('active');
+  
+  // Remove each contains (hide).
+  document.querySelectorAll('.tab-content').forEach(content => 
+    content.classList.remove('active')
+  );
+  
+  //Shows the right referenced selector.
+  const content = document.querySelector(href);
+  if (content) content.classList.add('active');
+}
+
+/**
  * Ilumina las posiciones relacionadas con la variable seleccionada
  * * @param {Int} dir Direccion de la variable
  **/

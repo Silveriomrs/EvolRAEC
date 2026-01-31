@@ -12,6 +12,9 @@ Get back from previous refactoring of some functions take them back to compiler.
 
 The view is horrible yet, it requires to analize oficial UNED version since this branch started from another different with deep changes in the view and maybe in other sides.
 
+31.01.26
+Deep bugfixes, restructuring & CSS changes. Let a lot of improvements yet and more bugs. In this change the APP works fine as original one, with the botton back for Instructions steps correct working again. Left button back fix.
+
 ## TODO
 - [X] Decoupling partially the view
 - [X] Back button for 'código intermedio' branch.

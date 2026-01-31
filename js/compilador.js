@@ -137,22 +137,39 @@ View.btn_reiniciar.addEventListener('click', (e) => {
 
 View.btn_sigInstruccion.addEventListener('click', (e) => {
   nextInst();
+  View.activateTab('#tabTablaCuadruplas');
 })
 
 //TEMP function to track decoupling view from control. Tested OK.
 function nextInst(){
-    consumeInstruccion();
+    consumeInstruccion();  
 }
 
+/**
+ * Returns the instruction aimed by the index. The function checks if the index is valid.
+ *  The instruction are located at childre node number 1 into the "tablaCuadruplas" table.
+ * @param {number} index of the instruction into the array.
+ * @return {string|null} the content at that index. Null if there are not instructions.
+ */
+function getIns(index){
+    let ins_array = View.getItemsTable("tablaCuadruplas");
+    //Check if ins_array has elements.
+    if(!ins_array || index >= ins_array.length){
+        return null;
+    }
+    
+    return (ins_array[index].children[1].innerText);
+}
 
 /**
  * The procedure does a call back action, returning to the previous instruction calculated.
+ *  This button is associate to the "Código Intermedio" Tab branch of the view render.
  * <p>
  * This event provoke a restart to the secuence, clearing all previous values from the State and
  *  emulating clicking action on the botton till get the previous instruction using an index.
  */
 function backInst(){
-    console.log('Testing Ins back function:');
+    console.log('Testing Ins backInst function (código Intermedio):');
     let index = state.indice
     //TODO: Once finalized, remove logs lines.
     console.log(index);
@@ -163,6 +180,8 @@ function backInst(){
     //Finally give as many steps comsuming instructions as we need.
     for(let i = 1; i < index; i++){ nextInst(); }
     console.log(state.indice);
+    //Repaint "Código Intermedio" Label
+    View.activateTab('#tabTablaCuadruplas');
 }
 
 
@@ -174,36 +193,48 @@ View.btn_prevInstruccion.addEventListener('click', (e) => {
 //WIP
 View.btn_prevLinea.addEventListener('click', (e) => {
     console.log('Testing Line back function:');
-    let index = state.indice;
-    let elementInstruccion = View.getItemsTable("tablaCuadruplas");
-    let lastLine = extraeLinea(elementInstruccion[state.indice].innerText);
+    let index = state.lineaActual;
+   
+    const lastLine = index;
+    const goLine = lastLine -1;
     let continuo = true;
     
-    console.log(index, lastLine);
+    console.log("Last line: ",index, " , line to go: ", goLine );
     //Reset previous values.
     State.resetState();
     //Firstly we will compile the same code again
     View.btn_compilar.click();
     //Finally give as many steps comsuming instructions as we need.
     while ( isNextInstruction() && continuo ){
-  //   if (state.lineaActual != extraeLinea(elementInstruccion[state.indice].innerText)) {
-       if (state.lineaActual === lastLine) {
+  //   if (state.lineaActual != extraeLinea(getIns(state.indice))) {
+       if (state.lineaActual == goLine) {
+         console.log(state.indice, lastLine);
          continuo = false;
        } else {
-         consumeInstruccion();
+         View.btn_sigLinea.click();
+         console.log(state.indice, lastLine);
        }
     }
-    console.log(state.indice, lastLine);
+    console.log("End: ", state.indice, lastLine);
+    //Remark/activate its tab on the list.
+    View.activateTab('#tabCodigoFuente');
 })
 
 View.btn_sigLinea.addEventListener('click', (e) => {
   let continuo = true;
-  let elementInstruccion = View.getItemsTable("tablaCuadruplas");
-  state.lineaActual = extraeLinea(elementInstruccion[state.indice].innerText);
-  //TODO: modified, the evaluation continuo === true had not sense at all here.
+  const line = extraeLinea(getIns(state.indice));
+  //check if there is a line to work with:
+  if(!line) {
+    View.disableControlButtons();
+    return;
+  } else {
+    state.lineaActual = line;
+  }
+  //A line is componsed by some instructions. So to execute 1 line, all the instructions must be run. 
+  //Loop to run all instruction while they belong to the same line.
   while ( isNextInstruction() && continuo  ){
     consumeInstruccion();
-    if (state.lineaActual != extraeLinea(elementInstruccion[state.indice].innerText)) {
+    if (state.lineaActual != extraeLinea(getIns(state.indice))) {
       continuo = false;
     }
   }
@@ -212,6 +243,8 @@ View.btn_sigLinea.addEventListener('click', (e) => {
       View.coloreaTodasInstrucciones();
       View.disableControlButtons();
   }
+  
+  View.activateTab('#tabCodigoFuente');
 })
 
 /**
@@ -227,8 +260,10 @@ View.btn_ejecucionCompleta.addEventListener('click', (e) => {
 //TODO: PINTA ZONE
 
 function traeDescripcionPosicion(pos, dir) {
-  if (state.arrPilaLlamadas.length !=0){
-    for (let i = 0; i <= state.arrPilaLlamadas.length-1; i++) {
+    let callStackSize = state.arrPilaLlamadas.length;
+    
+  if (callStackSize !=0){
+    for (let i = 0; i <= callStackSize-1; i++) {
       let voyPor,valRet, EsMaq,EC,EA,ParamDesde,ParamHasta,DireRet,VarDesde,VarHasta,TempDesde,TempHasta,qcorrespondeALlamada;
       let a = posMem(state.arrPilaLlamadas[i].inicioRA);
      
@@ -246,7 +281,7 @@ function traeDescripcionPosicion(pos, dir) {
           voyPor = ParamHasta;
         }
 
-        if (i != state.arrPilaLlamadas.length-1){// al del main no le pongo dirección de retorno
+        if (i != callStackSize-1){// al del main no le pongo dirección de retorno
           DireRet = voyPor - 1;
           voyPor = DireRet;
         }
@@ -319,7 +354,7 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
       if ( elementPilaLlamadas && elementPilaLlamadas.length >1){
         i =1;
         do{
-          if ((elementPilaLlamadas[i].cells[0].innerHTML ==nombreProcOFunc) &&
+          if ((elementPilaLlamadas[i].cells[0].innerHTML == nombreProcOFunc) &&
               (elementPilaLlamadas[i].cells[2].innerHTML == dir))
               elementPilaLlamadas[i].style.backgroundColor = View.colorResalte;
           i +=1;
@@ -343,7 +378,6 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
           if ((state.arrPilaLlamadas[i].nombreProcOFunc == nombreProcOFunc) && (posMem(state.arrPilaLlamadas[i].inicioRA) == dir)){
               encontrado = true;
           } else {  i +=1;}
-
         } while (! encontrado);
       }
 
@@ -351,12 +385,11 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
         i =1;
         do{
             let item = elementPila[i].cells[0].innerHTML;
-            if ((item >=desdePosPila) && (item <=hastaPosPila) && (item != "") ){
+            if ((item >= desdePosPila) && (item <= hastaPosPila) && (item != "") ){
               elementPila[i].style.backgroundColor = View.colorResalte;
             }
             i +=1;
         } while (elementPila.length >i);
-
       }
       
       //Lineas estado del cómputo
@@ -366,12 +399,11 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
         i =1;
         do{
             let item = elementTabVariables[i].cells[2].innerHTML;
-            if ((item >=desdePosPila) && (item <=hastaPosPila) && (item != "") ){
+            if ((item >= desdePosPila) && (item <= hastaPosPila) && (item != "") ){
                 elementTabVariables[i].style.backgroundColor = View.colorResalte;
           }
           i +=1;
         } while (elementTabVariables.length >i);
-
       }
 }
 
@@ -531,8 +563,12 @@ function pintaCallStack() {
 function isNextInstruction(){
     //Firstly get a copy as a local variable from the table
     const elementInstruccion = View.getItemsTable("tablaCuadruplas");
+    //Is the index a valid one?
+    if(!elementInstruccion || state.indice >= elementInstruccion.length) {
+        return false;
+    }
     //Returns the results based on the active index (manipulated in consumeInstruccion() ).
-    return elementInstruccion[state.indice].innerText != "[HALT null, null, null]";
+    return getIns(state.indice) != "[HALT null, null, null]";
 }
 
 
@@ -786,7 +822,7 @@ function coloreaInstrucciones(){
       elementInstruccion[step].style.backgroundColor = "transparent";
     } else {
       elementInstruccion[step].style.backgroundColor = "#33CCFF";
-      qLinea = extraeLinea(elementInstruccion[state.indice].innerText)-1;
+      qLinea = extraeLinea(getIns(state.indice))-1;
     }
   }
 
@@ -807,17 +843,14 @@ function coloreaInstrucciones(){
 //TODO: Function extremally big, try to factorize or modularize it.
 
 function consumeInstruccion() {
-  var qLinea, qcuadrupla, qOperacion, qp1,qp2,qp3;
-
-  const elementLineaCodigoFuente = View.getItemsTable("tablaCodigoFuente");
-  const elementInstruccion = View.getItemsTable("tablaCuadruplas");
+  let qLinea, qcuadrupla, qOperacion, qp1,qp2,qp3;
   
   //TODO: This is too often repeated => it needs a particular function.
   if (!isNextInstruction()){
       View.coloreaTodasInstrucciones();
       View.disableControlButtons();
   } else {
-      qcuadrupla = elementInstruccion[state.indice].innerText;
+      qcuadrupla = getIns(state.indice);
       qLinea = 0;
       pintoCodFuente = true;
       if (qcuadrupla.indexOf('[') != 0) {
@@ -1058,6 +1091,7 @@ function changeActiveTab(e) {
 
     // Cambiar la clase active de la pestaña seleccionada
     tabs.forEach(tab => tab.classList.remove('active'));
+    
     e.target.classList.add('active');
 
     // Cambiar la clase active del contenido correspondiente

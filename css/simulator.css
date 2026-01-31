@@ -104,12 +104,11 @@ h1{
 
 #container {
     display: flex;
-  }
+}
 
 svg{
     width: 10px;
- }
- 
+}
   
 .tabs {
   display: flex;
@@ -129,6 +128,7 @@ svg{
 	position: relative;
     left: 30%;
 }
+
 .tabs li {
     flex: 1;
 }
