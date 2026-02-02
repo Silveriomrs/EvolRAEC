@@ -40,10 +40,10 @@ View.opt_mostrarRAReducido.addEventListener('click', (e) => {
 })
 
 View.btn_compilar.addEventListener('click', (e) => {
-  let codigoUsuario;
+  let codigoUsuario = View.cajaCodFuente.value;;
   //Checking empty text box
   //Changed, cajaMsjCompilado is hidded. So it's turned visible when empty box.
-  if (View.cajaCodFuente.value == '') {
+  if (codigoUsuario == '') {
     //This is more complicated, in another part of the code it is hidden autmatically again, so remains hidden. Must be found this other place.
     //New way and return:
     View.cajaMsjCompilado.textContent = 'Error. No hay código fuente. '
@@ -52,8 +52,7 @@ View.btn_compilar.addEventListener('click', (e) => {
     console.log('Error. No hay código fuente. ');
     return;
   }
-
-  codigoUsuario = View.cajaCodFuente.value
+  State.resetState();
   state.listaCuadruplas = '';
   mapaCadenas = [];
 
@@ -62,7 +61,7 @@ View.btn_compilar.addEventListener('click', (e) => {
     parserUned.yy = intercambioCompilador();
     state.listaCuadruplas = parserUned.parse(codigoUsuario);
 
-    state.posLine = 0;
+    //state.posLine = 0;
     View.cajaCodFuente.disabled= true ;
     View.cajaCodFuente.style.backgroundColor =  "#90fbab";
     View.inicializaFase2();
@@ -101,7 +100,7 @@ View.btn_compilar.addEventListener('click', (e) => {
       View.cajaCodFuente.style.backgroundColor= "red";
       View.cajaMsjCompilado.textContent = error;
       View.cajaMsjCompilado.style.backgroundColor= "red";
-      //TODO: Added to see errs by console.
+      //CHANGED: Added to see errs by console.
       showCatchedErr(error);
       if(error.hash && error.hash.loc && error.hash.loc.first_line) {
         state.posLine = error.hash.loc.first_line;
@@ -116,9 +115,7 @@ View.btn_cargaActividad.addEventListener('click', (e) => {
  	inicializaFase1();
  	let valorSelect = document.getElementById('num-ejercicio').value;
 	txtPrograma = loadExercise(valorSelect);
-    //TODO: removing JQuery to unify style.
- 	//$('#cajaCodigoFuente').val(txtPrograma).change();
-    //Alternative
+    //CHANGED: Alternative to $('#cajaCodigoFuente').val(txtPrograma).change();
     View.cajaCodFuente.value = txtPrograma;
     View.cajaCodFuente.dispatchEvent(new Event('change'));
 })
@@ -127,27 +124,15 @@ View.btn_cargaActividad.addEventListener('click', (e) => {
 View.btn_reiniciar.addEventListener('click', (e) => {
   inicializaFase1();
   txtPrograma = "";
-  //TODO: removing JQuery to unify style.
-  //$('#cajaCodigoFuente').val(txtPrograma).change();
-  //Alternative
+  //CHANGED: removing JQuery to unify style. $('#cajaCodigoFuente').val(txtPrograma).change();
   View.cajaCodFuente.value = txtPrograma;
   View.cajaCodFuente.dispatchEvent(new Event('change'));
 
 })
 
-View.btn_sigInstruccion.addEventListener('click', (e) => {
-  nextInst();
-  View.activateTab('#tabTablaCuadruplas');
-})
-
-//TEMP function to track decoupling view from control. Tested OK.
-function nextInst(){
-    consumeInstruccion();  
-}
-
 /**
  * Returns the instruction aimed by the index. The function checks if the index is valid.
- *  The instruction are located at childre node number 1 into the "tablaCuadruplas" table.
+ *  The instruction are located at children node number 1 into the "tablaCuadruplas" table.
  * @param {number} index of the instruction into the array.
  * @return {string|null} the content at that index. Null if there are not instructions.
  */
@@ -161,6 +146,12 @@ function getIns(index){
     return (ins_array[index].children[1].innerText);
 }
 
+
+View.btn_sigInstruccion.addEventListener('click', (e) => {
+  consumeInstruccion();
+  View.activateTab('#tabTablaCuadruplas');
+})
+
 /**
  * The procedure does a call back action, returning to the previous instruction calculated.
  *  This button is associate to the "Código Intermedio" Tab branch of the view render.
@@ -169,18 +160,15 @@ function getIns(index){
  *  emulating clicking action on the botton till get the previous instruction using an index.
  */
 function backInst(){
-    console.log('Testing Ins backInst function (código Intermedio):');
-    let index = state.indice
-    //TODO: Once finalized, remove logs lines.
+    let index = state.indice;
     console.log(index);
-    //Reset previous values.
-    State.resetState();
+    State.showLogState();
+    //Reset previous values (no need since it also is done by compilar function).
     //Firstly we will compile the same code again
     View.btn_compilar.click();
     //Finally give as many steps comsuming instructions as we need.
-    for(let i = 1; i < index; i++){ nextInst(); }
-    console.log(state.indice);
-    //Repaint "Código Intermedio" Label
+    for(let i = 1; i < index; i++){ consumeInstruccion(); }
+    State.showLogState();
     View.activateTab('#tabTablaCuadruplas');
 }
 
@@ -190,39 +178,34 @@ View.btn_prevInstruccion.addEventListener('click', (e) => {
 })
 
 
-//WIP
+/**
+ * This listener is for the button back for the table "Código Fuente" where the execution is
+ *  line by line (not by instructions).
+ */
 View.btn_prevLinea.addEventListener('click', (e) => {
-    console.log('Testing Line back function:');
-    let index = state.lineaActual;
-   
-    const lastLine = index;
-    const goLine = lastLine -1;
-    let continuo = true;
+    const insToGoal = State.getPreviousPosition();
     
-    console.log("Last line: ",index, " , line to go: ", goLine );
-    //Reset previous values.
-    State.resetState();
-    //Firstly we will compile the same code again
-    View.btn_compilar.click();
+    //Check we are not in first line already.
+    if(insToGoal === null){
+        View.btn_compilar.click();                                      //To restore real initial memory state, compile.
+        return;                                                         //End returning control.
+    } else { View.btn_compilar.click();}                                //Firstly we will compile the same code again
     //Finally give as many steps comsuming instructions as we need.
-    while ( isNextInstruction() && continuo ){
-  //   if (state.lineaActual != extraeLinea(getIns(state.indice))) {
-       if (state.lineaActual == goLine) {
-         console.log(state.indice, lastLine);
-         continuo = false;
-       } else {
-         View.btn_sigLinea.click();
-         console.log(state.indice, lastLine);
-       }
+    while ( isNextInstruction() && state.indice <= insToGoal){
+       consumeInstruccion();
     }
-    console.log("End: ", state.indice, lastLine);
+    
+    State.showLogState();
     //Remark/activate its tab on the list.
     View.activateTab('#tabCodigoFuente');
 })
 
+/**
+ * For "Código fuente" button.
+ */
 View.btn_sigLinea.addEventListener('click', (e) => {
   let continuo = true;
-  const line = extraeLinea(getIns(state.indice));
+  const line = getActiveLine();
   //check if there is a line to work with:
   if(!line) {
     View.disableControlButtons();
@@ -233,8 +216,8 @@ View.btn_sigLinea.addEventListener('click', (e) => {
   //A line is componsed by some instructions. So to execute 1 line, all the instructions must be run. 
   //Loop to run all instruction while they belong to the same line.
   while ( isNextInstruction() && continuo  ){
-    consumeInstruccion();
-    if (state.lineaActual != extraeLinea(getIns(state.indice))) {
+    consumeInstruccion();                                              //Since consumeInstruccion() increase +1 after the call
+    if (state.lineaActual != getActiveLine()) {      //When it doesn't match, that means we are in a new line.
       continuo = false;
     }
   }
@@ -244,6 +227,7 @@ View.btn_sigLinea.addEventListener('click', (e) => {
       View.disableControlButtons();
   }
   
+  State.showLogState();
   View.activateTab('#tabCodigoFuente');
 })
 
@@ -408,8 +392,8 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
 }
 
 function pintaTablaPila() {
-  let muestroRaReducido = document.getElementById("mostrarRAReducido").checked;
-  let muestroTemporales = document.getElementById("mostrarTemp").checked;
+  let muestroRaReducido = View.opt_mostrarRAReducido.checked;
+  let muestroTemporales = View.opt_mostrarTemp.checked;
 
   const miMapa = new Map([...state.mapPila.entries()].sort());
   View.limpiaTabla("tablaPila");
@@ -471,8 +455,8 @@ function pintaTablaPila() {
 
 
 function pintaTablaVariables() {
-  let muestroTemporales = document.getElementById("mostrarTemp").checked;
-  let muestroVisibles = document.getElementById("mostrarVisibles").checked;
+  let muestroTemporales = View.opt_mostrarTemp.checked;
+  let muestroVisibles = View.opt_mostrarVisibles.checked;
   const locMap = new Map();
   locMap.clear()
   View.limpiaTabla("tablaVariables");
@@ -515,7 +499,7 @@ function pintaTablaVariables() {
   //Add event listener.
   $('#tablaVariables tr').on('click', function(){
     let dato = $(this).find('td:eq(2)').html();//posicion de la tabla donde se encuentra la dirección
-    //TODO: DELETE ME pintaTablas();
+    //DELETEME: pintaTablas();
     View.clickTablaVariables(dato);
   });
 }
@@ -547,7 +531,7 @@ function pintaCallStack() {
     $('#tablaPilaLlamadas tr').on('click', function(){
       let dato1 = $(this).find('td:first').html();
       let dato2 = $(this).find('td:last').html();
-      //TODO: DELETE ME pintaTablas();
+      //DELETEME: pintaTablas();
       clickPilaLlamadas(dato1,dato2);
     });
   }
@@ -571,18 +555,25 @@ function isNextInstruction(){
     return getIns(state.indice) != "[HALT null, null, null]";
 }
 
-
-function extraeLinea(qCuadr){
-  let linExtraida = '-1';
-  if (qCuadr.indexOf("LIN") == 0){
-    linExtraida = qCuadr.substring(4, qCuadr.indexOf("["))};
-  return(linExtraida);
+/**
+ * This function returns the number line indicated into the string of the current line from the source code.
+ *  When the function cannot determinate the Line number, it returns -1.
+ * <p> Note: This function doesn't take the line from State, cause it's use to update the state.
+ * @return {number} number into the line description. Otherwise: -1.
+ */
+function getActiveLine(){
+    let lineStr = getIns(state.indice)
+    let line = -1;
+    //Comparing with startWith instead indexOf("LIN" == 0) for clearence purpose.
+    if (lineStr.startsWith("LIN")){
+        line = Number.parseInt(lineStr.substring(4, lineStr.indexOf("[")), 10);
+    }
+    return line;
 }
 
 
 function inicializaFase1() {
   intermedio = [];
-  state.listaCuadruplas = [];
   mapaCadenas = [];
   State.resetState();
   pintaTablas();
@@ -748,7 +739,7 @@ function traePosicionEtiqueta(etiq) {
   //TODO: getItemsTable may returns NULL and here is not control about it.
   const elementInstruccion = View.getItemsTable("tablaCuadruplas");
   
-  //TODO: BUGFIX: bad design, it may enter an infite loop due to while condition.
+  //FIXME: bad design, it may enter an infite loop due to while condition.
   do
     if (elementInstruccion && elementInstruccion[i].innerText.includes('INL ' + etiq)) {
         encontrado = true;
@@ -822,11 +813,11 @@ function coloreaInstrucciones(){
       elementInstruccion[step].style.backgroundColor = "transparent";
     } else {
       elementInstruccion[step].style.backgroundColor = "#33CCFF";
-      qLinea = extraeLinea(getIns(state.indice))-1;
+      qLinea = getActiveLine() -1;
     }
   }
 
-  if (pintoCodFuente == true){
+  if (pintoCodFuente){
     for (let step = 0; step < elementLineaCodigoFuente.length; step++) {
       if (qLinea !=step) {
         elementLineaCodigoFuente[step].style.backgroundColor = "transparent";
@@ -846,9 +837,17 @@ function consumeInstruccion() {
   let qLinea, qcuadrupla, qOperacion, qp1,qp2,qp3;
   
   //TODO: This is too often repeated => it needs a particular function.
+  //When get this situation (no more inst) it is due to we have gotten HALT state.
   if (!isNextInstruction()){
       View.coloreaTodasInstrucciones();
       View.disableControlButtons();
+      //
+      state.lineaActual++;
+      state.indice++;
+      State.addLog(state.indice, state.lineaActual);
+      //DELETEME: 
+      State.showLogState();
+      return;                                                                   //stop calculating.
   } else {
       qcuadrupla = getIns(state.indice);
       qLinea = 0;
@@ -1059,7 +1058,10 @@ function consumeInstruccion() {
 
       pintaTablas();
       coloreaInstrucciones();
+      state.lineaActual = getActiveLine();
+      State.addLog(state.indice, state.lineaActual);
       state.indice +=1;
+      //DELETEME: State.showLogState();
    }
 }
 
