@@ -1,404 +1,482 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>MENU LENGUAJE</title>
-		<link rel="stylesheet" type="text/css" href="css/languaje.css">    
-		<link rel="stylesheet" type="text/css" href="css/cabecerayfooter.css">
+<html lang=ES>
 
-	</head>
+<head>
+    <meta charset="utf-8">
+    <title>MENU LENGUAJE</title>
+    <link rel="stylesheet" type="text/css" href="css/languaje.css">
+    <link rel="stylesheet" type="text/css" href="css/cabecerayfooter.css">
+</head>
+
 <body>
 
-	<ul class="menu">
-		<li> <a href="http://e-spacio.uned.es/fez/view/bibliuned:grado-ETSIInformatica-II-Jalcala" target="_blank">PFG TLP_EvolRAEC</a></li>						
-		<li> <a href="index.html">Inicio</a></li>
-		<li> <a href="simulator.html">Simulador</a></li>
-		<li> <span>Lenguaje</span></li>
-		<li> <a href="help.html">Ayuda</a></li>
-	</ul>
-	<div class="TxtIndice">
-		<div>
+    <ul class="menu">
+        <li> <a href="http://e-spacio.uned.es/fez/view/bibliuned:grado-ETSIInformatica-II-Jalcala" target="_blank">PFG
+                TLP_EvolRAEC</a></li>
+        <li> <a href="index.html">Inicio</a></li>
+        <li> <a href="simulator.html">Simulador</a></li>
+        <li> <span>Lenguaje</span></li>
+        <li> <a href="help.html">Ayuda</a></li>
+    </ul>
+    <div class="TxtIndice">
+        <div>
+            <h2>Lenguaje <span class="text-resaltado">PFGUnedTLP</span></h2>
+            <h3>Índice</h3>
+            <ol>
+                <li><a href="#descripcion-del-lenguaje">Descripción del lenguaje.</a></li>
+                <li><a href="#aspectos-lexicos">Aspectos léxicos.</a>
+                    <ol>
+                        <li><a href="#comentarios">Comentarios.</a></li>
+                        <li><a href="#constantes-literales">Constantes literales.</a></li>
+                        <li><a href="#identificadores">Identificadores.</a></li>
+                        <li><a href="#palabras-reservadas">Palabras reservadas.</a></li>
+                        <li><a href="#delimitadores">Delimitadores.</a></li>
+                        <li><a href="#operadores">Operadores.</a></li>
+                    </ol>
+                </li>
+                <li><a href="#aspectos-sintacticos">Aspectos sintácticos</a>
+                    <ol>
+                        <li><a href="#estructura-y-ambito-de-un-programa">Estructura y ámbitos de un programa.</a>
+                        <li><a href="#tipos-primitivos">Tipos primitivos.</a></li>
+                        <li><a href="#declaracion-de-variables">Declaración de variables.</a></li>
+                        <li><a href="#declaracion-de-subprogramas">Declaración de subprogramas.</a>
+                            <ol>
+                                <li><a href="#declaracion-de-procedimientos">Declaración de procedimientos. </a></li>
+                                <li><a href="#declaracion-de-funciones">Declaración de funciones. </a></li>
+                                <li><a href="#paso-de-parametros-a-funciones-y-procedimientos">Paso de parámetros a
+                                        funciones y procedimientos.</a></li>
+                            </ol>
+                        </li>
+                        <li><a href="#sentencias-y-expresiones">Sentencias y Expresiones.</a>
+                            <ol>
+                                <li><a href="#expresiones">Expresiones.</a>
+                                    <ol>
+                                        <li><a href="#expresiones-aritmeticas">Expresiones aritméticas.</a></li>
+                                        <li><a href="#expresiones-logicas">Expresiones lógicas.</a></li>
+                                    </ol>
+                                </li>
+                                <li><a href="#sentencias">Sentencias.</a></li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
 
-			<h2 >Lenguaje <span class="text-resaltado">PFGUnedTLP</span></h2>
-			<h3>Índice</h3>
-			<ol >
-			<li><a href="#descripcion-del-lenguaje">Descripción del lenguaje.</a></li>
-			<li ><a href="#aspectos-lexicos">Aspectos léxicos.</a>
-				<ol>
-				<li><a href="#comentarios">Comentarios.</a></li>
-				<li><a href="#constantes-literales">Constantes literales.</a></li>
-				<li><a href="#identificadores">Identificadores.</a></li>
-				<li><a href="#palabras-reservadas">Palabras reservadas.</a></li>
-				<li><a href="#delimitadores">Delimitadores.</a></li>
-				<li><a href="#operadores">Operadores.</a></li>
-				</ol>
-			</li>
-			<li><a href="#aspectos-sintacticos">Aspectos sintácticos</a></li>
-				<ol>
-				<li><a href="#estructura-y-ambito-de-un-programa">Estructura y ámbitos de un programa.</a>
-				<li><a href="#tipos-primitivos">Tipos primitivos.</a></li>
-				<li><a href="#declaracion-de-variables">Declaración de variables.</a></li>
-				<li><a href="#declaracion-de-subprogramas">Declaración de subprogramas.</a>
-					<ol>
-						<li><a href="#declaracion-de-procedimientos">Declaración de procedimientos. </a></li>
-						<li><a href="#declaracion-de-funciones">Declaración de funciones. </a></li>
-						<li><a href="#paso-de-parametros-a-funciones-y-procedimientos">Paso de parámetros a funciones y procedimientos.</a></li> 
-					</ol>
-				</li>
-				<li><a href="#sentencias-y-expresiones">Sentencias y Expresiones.</a>
-					<ol>
-					<li><a href="#expresiones">Expresiones.</a>
-						<ol>
-						<li><a href="#expresiones-aritmeticas">Expresiones aritméticas.</a></li>
-						<li><a href="#expresiones-logicas">Expresiones lógicas.</a></li>
-						</ol>
-					</li>
-					<li><a href="#sentencias">Sentencias.</a></li>
-					</ol>
-				</li>
-				
-				</ol>
-			</ol>
-		
-		</div>
-	</div>
-	<div class="TxtIndice2">
-		<div >
-			<h3 id="descripcion-del-lenguaje">Descripción del lenguaje.</h3>
-			<hr class="lineaHR">
-			<p>Este apartado es una descripción técnica del lenguaje <span class="text-resaltado">PFGUnedTLP</span>.</p>
-			<p>El lenguaje <span class="text-resaltado">PFGUnedTLP</span> es un lenguaje sencillo, con fines didácticos, que permite expresar declaraciones, que son las
-				estructuras de lenguaje que provocan cambios en la tabla de símbolos.
-			</p>
-			<p>El objetivo del compilador es permitirle familiarizarse con los conceptos relacionados con dicha estructura de datos,
-				fundamental en los procesos de traducción, analizando su evolución y comportamiento en sus programas compilados.</p>
+        </div>
+    </div>
+    <div class="TxtIndice2">
+        <div>
+            <h3 id="descripcion-del-lenguaje">Descripción del lenguaje.</h3>
+            <hr class="lineaHR">
+            <p>Este apartado es una descripción técnica del lenguaje <span class="text-resaltado">PFGUnedTLP</span>.</p>
+            <p>El lenguaje <span class="text-resaltado">PFGUnedTLP</span> es un lenguaje sencillo, con fines didácticos,
+                que permite expresar declaraciones, que son las
+                estructuras de lenguaje que provocan cambios en la tabla de símbolos.
+            </p>
+            <p>El objetivo del compilador es permitirle familiarizarse con los conceptos relacionados con dicha
+                estructura de datos,
+                fundamental en los procesos de traducción, analizando su evolución y comportamiento en sus programas
+                compilados.</p>
 
-		</div>
+        </div>
 
-		<div >
-			<h3 id="aspectos-lexicos">Aspectos léxicos</h3>
-			<hr class="lineaHR">
-			<p>Desde un enfoque léxico, un programa en <span class="text-resaltado">PFGUnedTLP</span> está compuesto por una secuencia de tokens ordenados. 
-			Un token en una entidad léxica indivisible que tiene un sentido único dentro del lenguaje <span class="text-resaltado">PFGUnedTLP</span>.</p>
-			<p>Los tokens se pueden agrupar en varias categorías según su uso, como son los identificadores, palabras reservadas, operadores o los delimitadores. 
-			Estos se irán describiendo en sus respectivos apartados a lo largo del documento.</p>
-		</div>
+        <div>
+            <h3 id="aspectos-lexicos">Aspectos léxicos</h3>
+            <hr class="lineaHR">
+            <p>Desde un enfoque léxico, un programa en <span class="text-resaltado">PFGUnedTLP</span> está compuesto por
+                una secuencia de tokens ordenados.
+                Un token en una entidad léxica indivisible que tiene un sentido único dentro del lenguaje <span
+                    class="text-resaltado">PFGUnedTLP</span>.</p>
+            <p>Los tokens se pueden agrupar en varias categorías según su uso, como son los identificadores, palabras
+                reservadas, operadores o los delimitadores.
+                Estos se irán describiendo en sus respectivos apartados a lo largo del documento.</p>
+        </div>
 
-		<div >
-			<h3 id="comentarios">Comentarios</h3>
-			<hr class="lineaHR">
-			<p>Un comentario es una secuencia de caracteres sobre la cual el compilador no actúa pasándolos al analizador léxico, de tal modo que no interfieren en el 
-				funcionamiento del programa.</p>
-			<p>Estos comentarios son creados por el programador para dar información o un valor añadido de lo que va haciendo el programa a lo largo de todo su código fuente.</p>
-			<p>En <span class="text-resaltado">PFGUnedTLP</span> hay comentarios de dos tipos:</p>
-			<p><b>•	Comentarios de una línea.</b></p>
-			<p> Empiezan por // y consideran como comentario todo lo que haya desde su comienzo hasta el final de la línea.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de comentario de una línea.</p>
-			<pre>
-			<code>// Comentario en una línea.</code>
+        <div>
+            <h3 id="comentarios">Comentarios</h3>
+            <hr class="lineaHR">
+            <p>Un comentario es una secuencia de caracteres sobre la cual el compilador no actúa pasándolos al
+                analizador léxico, de tal modo que no interfieren en el
+                funcionamiento del programa.</p>
+            <p>Estos comentarios son creados por el programador para dar información o un valor añadido de lo que va
+                haciendo el programa a lo largo de todo su código fuente.</p>
+            <p>En <span class="text-resaltado">PFGUnedTLP</span> hay comentarios de dos tipos:</p>
+            <p><b>• Comentarios de una línea.</b></p>
+            <p> Empiezan por // y consideran como comentario todo lo que haya desde su comienzo hasta el final de la
+                línea.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de comentario de una línea.</p>
+            <pre>
+			    <code>// Comentario en una línea.</code>
 			</pre>
-			<p><b>•	Comentarios multilínea.</b></p>
-			<p> Comienza por /* y consideran como comentario todo lo que haya después hasta que aparece el fin de comentario multilínea */.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de comentario multilínea.</p>
-			<pre>
-			<code>/* Esto es un 
-			comentario que 
-			abarca varias líneas*/</code>
+            <p><b>• Comentarios multilínea.</b></p>
+            <p> Comienza por /* y consideran como comentario todo lo que haya después hasta que aparece el fin de
+                comentario multilínea */.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de comentario multilínea.</p>
+            <pre>
+				<code>/* Esto es un 
+				comentario que 
+				abarca varias líneas*/</code>
 			</pre>
-		</div>
-		<div >
-			<h3 id="constantes-literales">Constantes literales.</h3>
-			<hr class="lineaHR">
-			<p>En <span class="text-resaltado">PFGUnedTLP</span> existe la posibilidad del uso de constantes literales para escribir el programa.</p>
-			<p> Estas se dividen principalmente en 2 tipos:</p>
-			<p><b>•	Enteras.</b></p>
-			<p> Las constantes literales enteras sirven para representar valores enteros positivos, por lo que no se permite el uso del operador unario -.</p>
-			<p> Tampoco es posible que una de estas constantes que contenga más de un dígito lleve ceros por la izquierda.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de constante literales enteras.</p>
-			<pre>
-			<code>0, 123, 54</code>
+        </div>
+        <div>
+            <h3 id="constantes-literales">Constantes literales.</h3>
+            <hr class="lineaHR">
+            <p>En <span class="text-resaltado">PFGUnedTLP</span> existe la posibilidad del uso de constantes literales
+                para escribir el programa.</p>
+            <p> Estas se dividen principalmente en 2 tipos:</p>
+            <p><b>• Enteras.</b></p>
+            <p> Las constantes literales enteras sirven para representar valores enteros positivos, por lo que no se
+                permite el uso del operador unario -.</p>
+            <p> Tampoco es posible que una de estas constantes que contenga más de un dígito lleve ceros por la
+                izquierda.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de constante literales enteras.</p>
+            <pre>
+			    <code>0, 123, 54</code>
 			</pre>
-			<p><b>•	Cadenas de caracteres.</b></p>
-			<p>Son una secuencia de caracteres delimitadas por comillas dobles.</p>
-			<p>Se usan para sacar mensajes por pantalla. No se admiten secuencias de escape como \t\n\r (tabulación, salto de línea y retorno de carro) dentro de las mismas.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de cadenas de texto.</p>
-			<pre>
-			<code>“Esto es una cadena”
-			“MENSAJE”</code>
+            <p><b>• Cadenas de caracteres.</b></p>
+            <p>Son una secuencia de caracteres delimitadas por comillas dobles.</p>
+            <p>Se usan para sacar mensajes por pantalla. No se admiten secuencias de escape como \t\n\r (tabulación,
+                salto de línea y retorno de carro) dentro de las mismas.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de cadenas de texto.</p>
+            <pre>
+				<code>“Esto es una cadena”
+				“MENSAJE”</code>
 			</pre>
-		</div>
-		<div >
-			<h3 id="identificadores">Identificadores.</h3>
-			<hr class="lineaHR">
-			<p>Un identificador o símbolo una secuencia de letras y números que sirve para asignar un nombre a las variables, parámetros, funciones y procedimientos que componen el programa.</p>
-			<p> En <span class="text-resaltado">PFGUnedTLP</span> un literal debe de comenzar obligatoriamente por una letra seguida de un número indeterminado de letras o dígitos. </p>
-			<p>No se admite ningún otro tipo de carácter que no sean letras o números.</p>
-			<p>El lenguaje es (case-sensitive), por lo que discrimina mayúsculas y minúsculas.</p>
-			<p>No se pueden usar palabras clave como identificador. </p>
-			<p>No pueden ser declarados dos identificadores con el mismo nombre dentro del mismo ámbito.</p>
-			<p>Los identificadores de las funciones y procedimientos deben de ser únicos por lo que no pueden repetirse el nombre de un procedimiento o función aunque estén en diferentes ámbitos.</p>
-		</div>
-		<div >
-			<h3 id="palabras-reservadas">Palabras reservadas.</h3>
-			<hr class="lineaHR">
-			<p>Las palabras reservadas son un componente del lenguaje con un significado específico dentro del mismo por lo que no pueden ser usadas como identificadores.</p>
-			<p>
-				<table class="tabla-lenguaje">
-				<tr>
-					<th>PALABRA RESERVADA</th>
-					<th>DESCRIPCIÓN</th>
-	   			</tr>
-				<tr>
-					<td>Program</td>
-					<td>Inicio del programa.</td>
-				</tr>
-				<tr>
-					<td>integer</td>
-					<td>Tipo de dato entero.</td>
-				</tr>
-				<tr>
-					<td>function</td>
-					<td>Inicio de una función.</td>
-				</tr>
-				<tr>
-					<td>procedure</td>
-					<td>Inicio de un procedimiento.</td>
-				</tr>
-				<tr>
-					<td>var</td>
-					<td>Inicio de la declaración de variables.</td>
-				</tr>
-				<tr>
-					<td>if</td>
-					<td>Inicio condicional si.</td>
-				</tr>
-				<tr>
-					<td>else</td>
-					<td>Inicio alternativa condicional si.</td>
-				</tr>
-				<tr>
-					<td>then</td>
-					<td>Inicio del cuerpo del bloque condicional si.</td>
-				</tr>
-				<tr>
-					<td>begin</td>
-					<td>Inicio del cuerpo del bloque de sentencias.</td>
-				</tr>
-				<tr>
-					<td>end</td>
-					<td>Fin del cuerpo del bloque de sentencias.</td>
-				</tr>
-				<tr>
-					<td>writeln</td>
-					<td>Procedimiento para escribir por pantalla.</td>
-				</tr>
-				<tr>
-					<td>exit</td>
-					<td>Retorno de función.</td>
-				</tr>
-				</table>	
+        </div>
+        <div>
+            <h3 id="identificadores">Identificadores.</h3>
+            <hr class="lineaHR">
+            <p>Un identificador o símbolo una secuencia de letras y números que sirve para asignar un nombre a las
+                variables, parámetros, funciones y procedimientos que componen el programa.</p>
+            <p> En <span class="text-resaltado">PFGUnedTLP</span> un literal debe de comenzar obligatoriamente por una
+                letra seguida de un número indeterminado de letras o dígitos. </p>
+            <p>No se admite ningún otro tipo de carácter que no sean letras o números.</p>
+            <p>El lenguaje es (case-sensitive), por lo que discrimina mayúsculas y minúsculas.</p>
+            <p>No se pueden usar palabras clave como identificador. </p>
+            <p>No pueden ser declarados dos identificadores con el mismo nombre dentro del mismo ámbito.</p>
+            <p>Los identificadores de las funciones y procedimientos deben de ser únicos por lo que no pueden repetirse
+                el nombre de un procedimiento o función aunque estén en diferentes ámbitos.</p>
+        </div>
+        <div>
+            <h3 id="palabras-reservadas">Palabras reservadas.</h3>
+            <hr class="lineaHR">
+            <p>Las palabras reservadas son un componente del lenguaje con un significado específico dentro del mismo por
+                lo que no pueden ser usadas como identificadores.</p>
+            <div>
+                <table class="tabla-lenguaje">
+                    <tr>
+                        <th>PALABRA RESERVADA</th>
+                        <th>DESCRIPCIÓN</th>
+                    </tr>
+                    <tr>
+                        <td>Program</td>
+                        <td>Inicio del programa.</td>
+                    </tr>
+                    <tr>
+                        <td>integer</td>
+                        <td>Tipo de dato entero.</td>
+                    </tr>
+                    <tr>
+                        <td>function</td>
+                        <td>Inicio de una función.</td>
+                    </tr>
+                    <tr>
+                        <td>procedure</td>
+                        <td>Inicio de un procedimiento.</td>
+                    </tr>
+                    <tr>
+                        <td>var</td>
+                        <td>Inicio de la declaración de variables.</td>
+                    </tr>
+                    <tr>
+                        <td>if</td>
+                        <td>Inicio condicional si.</td>
+                    </tr>
+                    <tr>
+                        <td>else</td>
+                        <td>Inicio alternativa condicional si.</td>
+                    </tr>
+                    <tr>
+                        <td>then</td>
+                        <td>Inicio del cuerpo del bloque condicional si.</td>
+                    </tr>
+                    <tr>
+                        <td>begin</td>
+                        <td>Inicio del cuerpo del bloque de sentencias.</td>
+                    </tr>
+                    <tr>
+                        <td>end</td>
+                        <td>Fin del cuerpo del bloque de sentencias.</td>
+                    </tr>
+                    <tr>
+                        <td>writeln</td>
+                        <td>Procedimiento para escribir por pantalla.</td>
+                    </tr>
+                    <tr>
+                        <td>exit</td>
+                        <td>Retorno de función.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
 
-			</p>
-			
-		</div>
-		
-		<div >
-			<h3 id="delimitadores">Delimitadores.</h3>
-			<hr class="lineaHR">
-			<p>Los delimitadores se usan como su nombre indica para determinar determinadas partes del lenguaje.</p>
-			<p> Los delimitadores utilizados en <span class="text-resaltado">PFGUnedTLP</span> son los siguientes.</p>
-			<p>
-				<table class="tabla-lenguaje" >
-					<tr>
-						<th>DELIMITADOR</th>
-						<th>DESCRIPCIÓN</th>
-					   </tr>
-					<tr>
-						<td>(</td>
-						<td>Delimitador de inicio de expresiones y parámetros.</td>
-					</tr>
-					<tr>
-						<td>)</td>
-						<td>Delimitador de fin de expresiones y parámetros.</td>
-					</tr>					
-					<tr>
-						<td>.</td>
-						<td>Delimitador de final de programa.</td>
-					</tr>
-					<tr>
-						<td>,</td>
-						<td>Delimitador de identificadores.</td>
-					</tr>
-					<tr>
-						<td>;</td>
-						<td>Delimitador de sentencias.</td>
-					</tr>
-					<tr>
-						<td>:</td>
-						<td>Delimitador de tipo en la declaración de variables y parámetros.</td>
-					</tr>
-					<tr>
-						<td>//</td>
-						<td>Delimitador de comentario.</td>
-					</tr>
-					<tr>
-						<td>/*</td>
-						<td>Delimitador de inicio de comentario multilínea.</td>
-					</tr>
-					<tr>
-						<td>*/</td>
-						<td>Delimitador de fin de comentario multilínea.</td>
-					</tr>
-				</table>
-			</p>
-		</div>
-		<div >
-			<h3 id="operadores">Operadores.</h3>
-			<hr class="lineaHR">
-			<p>En <span class="text-resaltado">PFGUnedTLP</span>  también existen diferentes tipos de operadores para poder construir el lenguaje.</p>
-			<p>Los operadores utilizados en <span class="text-resaltado">PFGUnedTLP</span> son los siguientes.</p>
-			<p>
-				<table class="tabla-lenguaje" >
-					<tr>
-						<th>OPERADOR</th>
-						<th>DESCRIPCIÓN</th>
-					   </tr>
-					<tr>
-						<td>+</td>
-						<td>Operador aritmético suma.</td>
-					</tr>
-					<tr>
-						<td>-</td>
-						<td>Operador aritmético resta.</td>
-					</tr>
-					<tr>
-						<td>=</td>
-						<td>Operador relacional igual.</td>
-					</tr>
-					<tr>
-						<td>:=</td>
-						<td>Operador asignación.</td>
-					</tr>
-				
-				</table>
-			</p>
-		</div>
+        <div>
+            <h3 id="delimitadores">Delimitadores.</h3>
+            <hr class="lineaHR">
+            <p>Los delimitadores se usan como su nombre indica para determinar determinadas partes del lenguaje.</p>
+            <p> Los delimitadores utilizados en <span class="text-resaltado">PFGUnedTLP</span> son los siguientes.</p>
+            <div>
+                <table class="tabla-lenguaje">
+                    <tr>
+                        <th>DELIMITADOR</th>
+                        <th>DESCRIPCIÓN</th>
+                    </tr>
+                    <tr>
+                        <td>(</td>
+                        <td>Delimitador de inicio de expresiones y parámetros.</td>
+                    </tr>
+                    <tr>
+                        <td>)</td>
+                        <td>Delimitador de fin de expresiones y parámetros.</td>
+                    </tr>
+                    <tr>
+                        <td>.</td>
+                        <td>Delimitador de final de programa.</td>
+                    </tr>
+                    <tr>
+                        <td>,</td>
+                        <td>Delimitador de identificadores.</td>
+                    </tr>
+                    <tr>
+                        <td>;</td>
+                        <td>Delimitador de sentencias.</td>
+                    </tr>
+                    <tr>
+                        <td>:</td>
+                        <td>Delimitador de tipo en la declaración de variables y parámetros.</td>
+                    </tr>
+                    <tr>
+                        <td>//</td>
+                        <td>Delimitador de comentario.</td>
+                    </tr>
+                    <tr>
+                        <td>/*</td>
+                        <td>Delimitador de inicio de comentario multilínea.</td>
+                    </tr>
+                    <tr>
+                        <td>*/</td>
+                        <td>Delimitador de fin de comentario multilínea.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div>
+            <h3 id="operadores">Operadores.</h3>
+            <hr class="lineaHR">
+            <p>En <span class="text-resaltado">PFGUnedTLP</span> también existen diferentes tipos de operadores para
+                poder construir el lenguaje.</p>
+            <p>Los operadores utilizados en <span class="text-resaltado">PFGUnedTLP</span> son los siguientes.</p>
+            <div>
+                <table class="tabla-lenguaje">
+                    <tr>
+                        <th>OPERADOR</th>
+                        <th>DESCRIPCIÓN</th>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>Operador aritmético suma.</td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td>Operador aritmético resta.</td>
+                    </tr>
+                    <tr>
+                        <td>=</td>
+                        <td>Operador relacional igual.</td>
+                    </tr>
+                    <tr>
+                        <td>:=</td>
+                        <td>Operador asignación.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
 
-
-		
-		<div >
-			<h3 id="aspectos-sintacticos">Aspectos sintácticos</h3>
-			<hr class="lineaHR">
-			<p>Un programa escrito en <span class="text-resaltado">PFGUnedTLP</span> tiene que ceñirse a una estructura preestablecida.</p>
-			<p> A continuación mostramos los detalles de esta estructura desde la estructura general hasta el detalle de cada uno de sus componentes.</p>
-		</div>
-		<div >
-			<h3 id="estructura-y-ambito-de-un-programa">Estructura y ámbitos de un programa.</h3>
-			<hr class="lineaHR">
-			<p>El esquema general de un programa escrito en <span class="text-resaltado">PFGUnedTLP</span> es el siguiente:</p>
-			<pre>
-			<code>
-			<b>Program</b> nombreDelPrograma;
-			  // Sección para la declaración de variables.
-			  // Sección para la declaración de funciones y/o procedimientos.
-			<b>begin</b>   //cuerpo del programa principal.
-			  // Lista de sentencias.
-			<b>end.</b></code>
-			</pre>
-			<p>Un programa escrito en <span class="text-resaltado">PFGUnedTLP</span> comienza siempre por la palabra reservada Programa seguida del identificador que da nombre al programa y un punto y coma “;”.</p>
-			<p>A continuación comienza la sección opcional de declaración de variables, luego la sección opcional de declaración de funciones o procedimientos y por último el bloque del cuerpo del programa principal que comienza con un “begin” seguido de cero o varias sentencias hasta que finaliza el programa principal con la palabra reservada “end” seguida de un punto “.”.</p>
-			<p>Los comentarios se pueden insertar en cualquier parte del programa.</p>
-			<p>Dentro de la sección de declaración de funciones o procedimientos, la estructura es similar a la del programa principal con unas pequeñas variaciones que se verán en la sección correspondiente, permitiendo así la anidación de subprogramas.</p>
-			<p>La visibilidad de cada identificador viene dada por la sección de código donde se ha declarado, siendo solo accesibles aquellos identificadores que hayan sido declaradas previamente dentro de un ámbito que esté abierto, de tal modo que un programa de <span class="text-resaltado">PFGUnedTLP</span>  nos podemos encontrar referencias globales que son las que están declaradas en el programa principal, referencias locales que son los símbolos declarados dentro de una función procedimiento y un tercer tipo de referencias no locales que son símbolos que son accesibles desde un determinado procedimiento o función y que han sido declarados en algún ámbito previo dentro de la estructura de anidamiento de subprogramas.</p>
-			
-		</div>
-		<div >
-			<h3 id="tipos-primitivos">Tipos primitivos.</h3>
-			<hr class="lineaHR">
-			<p>	En <span class="text-resaltado">PFGUnedTLP</span> solo existe un tipo primitivo identificado con la palabra reservada integer que identifica valores numéricos enteros.
-			</p>
-		</div>
-		<div >
-			<h3 id="declaracion-de-variables">Declaración de variables.</h3>
-			<hr class="lineaHR">
-			<p>En <span class="text-resaltado">PFGUnedTLP</span> el uso de variables está supeditado a la declaración previa y de forma correcta de las mismas.</p>
-			<p>Esta declaración comienza por la palabra reservada “var” seguido de una o varias líneas que contengan una lista de uno o más identificadores seguida cada una de ellas del delimitador dos puntos “:”, el tipo al que pertenece que en nuestro lenguaje solo puede ser el identificado por la palabra reservada “integer” y un punto y coma “;”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Un ejemplo de declaración puede ser el siguiente.</p>
-			<pre>
-			<code>
-			<b>var</b> salida  :<b> integer</b>;	
-			    a, b, c : <b>integer</b>;</code>
-			</pre>
-			
-		</div>
-		<div >
-			<h3 id="declaracion-de-subprogramas">Declaración de subprogramas.</h3>
-			<hr class="lineaHR">
-			<p>Con el fin de organizar el programa modularmente, encapsular código, y analizar el comportamiento del registro de activación en llamadas a subprogramas y el estado del cómputo según los diferentes ámbitos, <span class="text-resaltado">PFGUnedTLP</span> permite la declaración de subprogramas.</p>
-			<p>Estos subprogramas dentro del lenguaje <span class="text-resaltado">PFGUnedTLP</span> pueden ser de dos tipos, los procedimientos y las funciones. La estructura de ambos es muy similar existiendo pequeñas diferencias entre ambos que los distinguen. A continuación vemos la estructura de cada una de ellos.</p>
-		</div>
-		<div >
-			<h3 id="declaracion-de-procedimientos">Declaración de procedimientos.</h3>
-			<hr class="lineaHR">
-			<p>Procedimientos son rutinas que realizan una determinada operación.</p>
-			<p>Los procedimientos en <span class="text-resaltado">PFGUnedTLP</span> deben de seguir la siguiente estructura sintáctica:</p>
-			<pre>
-			<code>
-			<b>procedure</b> nombreDelProcedimiento(param1:<b>integer</b>, param2:<b>integer</b>, …, paramN:<b>integer</b>);
-			  // Sección para la declaración de variables locales.
-			  // Sección para la declaración de funciones y/o procedimientos locales al 
-			  //procedimiento.
-			<b>begin</b>  //cuerpo del procedimiento
-			  // Lista de sentencias.
-			<b>end;</b></code>
-			</pre>
-			<p>Comienzan declarando la cabecera del procedimiento con la palabra reservada procedure seguida por el identificador que va a dar nombre al procedimiento, a continuación se usa el delimitador de inicio de parámetros “(“ seguido de una lista de parámetros opcional,  el delimitador de fin de parámetros “)” y un punto y coma “;”.</p>
-			<p>La lista de parámetros que como hemos indicado es opcional, está compuesta por la declaración de los distintos parámetros que tiene el procedimiento separados por coma “,“. Estos parámetros se declaran indicando primero el identificador del parámetro, seguido de dos puntos “:” y el tipo primitivo del parámetro que en <span class="text-resaltado">PFGUnedTLP</span> es siempre “integer”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de declaración de dos parámetros.</p>
-			<pre>
-			<code>x:<b>integer</b>, p:<b>integer</b></code>
-			</pre>
-			<p>A partir de aquí nos encontramos una estructura casi calcada a la del programa principal exceptuando que en símbolo de cierre de procedimiento es un punto y coma “;” en vez de un punto “.”. es decir, podemos encontrar la parte opcional de declaración de variables y subprogramas, que tiene la misma estructura que en el programa principal. Como hemos comentado anteriormente el lenguaje permite anidamiento de subprogramas, por lo que un procedimiento puede tener declarados otros procedimientos y/o funciones locales. </p>
-			<p>Seguidamente, comienza la parte obligatoria del cuerpo del subprograma, encerrada entre los delimitadores de inicio “begin” y fin “end” y un punto y coma “;”. Dentro de estos delimitadores, al igual que en el programa principal podemos encontrar una lista de sentencias que componen el subprograma.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de procedimiento.</p>
-			<pre>
-			<code>
-			<b>procedure</b> decrementa(x:<b>integer</b>);
-			<b>var</b> y:<b>integer</b>;
-			<b>begin</b>
-			  y := x - 1;
-			  <b>writeln</b>("y(2) = ");
-			  <b>writeln</b>(y);
-			<b>end;</b></code>
-			</pre>
-		</div>
-		<div >
-			<h3 id="declaracion-de-funciones">Declaración de funciones.</h3>
-			<hr class="lineaHR">
-			<p>Funciones son rutinas que realizan una determinada operación y que al final devuelven un valor.</p>
-			<p>Las funciones en <span class="text-resaltado">PFGUnedTLP</span> deben de seguir la siguiente estructura sintáctica:</p>
-			<pre>
+        <div>
+            <h3 id="aspectos-sintacticos">Aspectos sintácticos</h3>
+            <hr class="lineaHR">
+            <p>Un programa escrito en <span class="text-resaltado">PFGUnedTLP</span> tiene que ceñirse a una estructura
+                preestablecida.</p>
+            <p> A continuación mostramos los detalles de esta estructura desde la estructura general hasta el detalle de
+                cada uno de sus componentes.</p>
+        </div>
+        <div>
+            <h3 id="estructura-y-ambito-de-un-programa">Estructura y ámbitos de un programa.</h3>
+            <hr class="lineaHR">
+            <p>El esquema general de un programa escrito en <span class="text-resaltado">PFGUnedTLP</span> es el
+                siguiente:</p>
+            <pre>
 				<code>
-			<b>function</b> nombreDeLaFuncion(param1:<b>integer</b>, param2:<b>integer</b>, …, paramN:<b>integer</b>):<b>integer</b>;
-			  // Sección para la declaración de variables locales.
-			  // Sección para la declaración de funciones y/o procedimientos locales a la función.
-			<b>begin</b>    //cuerpo de la función.
-			  // Lista de sentencias.
-			  <b>exit</b>(identificador de retorno);
-			<b>end</b>;
-			</code>
+					<b>Program</b> nombreDelPrograma;
+					  // Sección para la declaración de variables.
+					  // Sección para la declaración de funciones y/o procedimientos.
+					<b>begin</b>   //cuerpo del programa principal.
+					  // Lista de sentencias.
+					<b>end.</b>
+			    </code>
 			</pre>
-			<p>Comienzan declarando la cabecera de la función con la palabra reservada function seguida por el identificador que va a dar nombre a la función, a continuación se usa el delimitador de inicio de parámetros “(“ seguido de una lista de parámetros opcional, el delimitador de fin de parámetros “)” . A continuación se usa el delimitador de tipo “:” y el tipo de retorno de la función que en <span class="text-resaltado">PFGUnedTLP</span> es siempre “integer” y un punto y coma “;”.</p>
-			<p>La lista de parámetros que como hemos indicado es opcional, está compuesta por la declaración de los distintos parámetros que tiene la función separados por coma “,“. Estos parámetros se declaran indicando primero el identificador del parámetro, seguido de dos puntos “:” y el tipo primitivo del parámetro que en <span class="text-resaltado">PFGUnedTLP</span> es siempre “integer”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de declaración de dos parámetros.</p>
-			<pre>
+            <p>Un programa escrito en <span class="text-resaltado">PFGUnedTLP</span> comienza siempre por la palabra
+                reservada Programa seguida del identificador que da nombre al programa y un punto y coma “;”.</p>
+            <p>A continuación comienza la sección opcional de declaración de variables, luego la sección opcional de
+                declaración de funciones o procedimientos y por último el bloque del cuerpo del programa principal que
+                comienza con un “begin” seguido de cero o varias sentencias hasta que finaliza el programa principal con
+                la palabra reservada “end” seguida de un punto “.”.</p>
+            <p>Los comentarios se pueden insertar en cualquier parte del programa.</p>
+            <p>Dentro de la sección de declaración de funciones o procedimientos, la estructura es similar a la del
+                programa principal con unas pequeñas variaciones que se verán en la sección correspondiente, permitiendo
+                así la anidación de subprogramas.</p>
+            <p>La visibilidad de cada identificador viene dada por la sección de código donde se ha declarado, siendo
+                solo accesibles aquellos identificadores que hayan sido declaradas previamente dentro de un ámbito que
+                esté abierto, de tal modo que un programa de <span class="text-resaltado">PFGUnedTLP</span> nos podemos
+                encontrar referencias globales que son las que están declaradas en el programa principal, referencias
+                locales que son los símbolos declarados dentro de una función procedimiento y un tercer tipo de
+                referencias no locales que son símbolos que son accesibles desde un determinado procedimiento o función
+                y que han sido declarados en algún ámbito previo dentro de la estructura de anidamiento de subprogramas.
+            </p>
+
+        </div>
+        <div>
+            <h3 id="tipos-primitivos">Tipos primitivos.</h3>
+            <hr class="lineaHR">
+            <p> En <span class="text-resaltado">PFGUnedTLP</span> solo existe un tipo primitivo identificado con la
+                palabra reservada integer que identifica valores numéricos enteros.
+            </p>
+        </div>
+        <div>
+            <h3 id="declaracion-de-variables">Declaración de variables.</h3>
+            <hr class="lineaHR">
+            <p>En <span class="text-resaltado">PFGUnedTLP</span> el uso de variables está supeditado a la declaración
+                previa y de forma correcta de las mismas.</p>
+            <p>Esta declaración comienza por la palabra reservada “var” seguido de una o varias líneas que contengan una
+                lista de uno o más identificadores seguida cada una de ellas del delimitador dos puntos “:”, el tipo al
+                que pertenece que en nuestro lenguaje solo puede ser el identificado por la palabra reservada “integer”
+                y un punto y coma “;”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Un ejemplo de declaración puede ser el siguiente.</p>
+            <pre>
+				<code>
+					<b>var</b> salida  :<b> integer</b>;	
+					    a, b, c : <b>integer</b>;
+				</code>
+			</pre>
+
+        </div>
+        <div>
+            <h3 id="declaracion-de-subprogramas">Declaración de subprogramas.</h3>
+            <hr class="lineaHR">
+            <p>Con el fin de organizar el programa modularmente, encapsular código, y analizar el comportamiento del
+                registro de activación en llamadas a subprogramas y el estado del cómputo según los diferentes ámbitos,
+                <span class="text-resaltado">PFGUnedTLP</span> permite la declaración de subprogramas.</p>
+            <p>Estos subprogramas dentro del lenguaje <span class="text-resaltado">PFGUnedTLP</span> pueden ser de dos
+                tipos, los procedimientos y las funciones. La estructura de ambos es muy similar existiendo pequeñas
+                diferencias entre ambos que los distinguen. A continuación vemos la estructura de cada una de ellos.</p>
+        </div>
+        <div>
+            <h3 id="declaracion-de-procedimientos">Declaración de procedimientos.</h3>
+            <hr class="lineaHR">
+            <p>Procedimientos son rutinas que realizan una determinada operación.</p>
+            <p>Los procedimientos en <span class="text-resaltado">PFGUnedTLP</span> deben de seguir la siguiente
+                estructura sintáctica:</p>
+            <pre>
+				<code>
+					<b>procedure</b> nombreDelProcedimiento(param1:<b>integer</b>, param2:<b>integer</b>, …, paramN:<b>integer</b>);
+					  // Sección para la declaración de variables locales.
+					  // Sección para la declaración de funciones y/o procedimientos locales al 
+					  //procedimiento.
+					<b>begin</b>  //cuerpo del procedimiento
+					  // Lista de sentencias.
+					<b>end;</b>
+				</code>
+			</pre>
+            <p>Comienzan declarando la cabecera del procedimiento con la palabra reservada procedure seguida por el
+                identificador que va a dar nombre al procedimiento, a continuación se usa el delimitador de inicio de
+                parámetros “(“ seguido de una lista de parámetros opcional, el delimitador de fin de parámetros “)” y un
+                punto y coma “;”.</p>
+            <p>La lista de parámetros que como hemos indicado es opcional, está compuesta por la declaración de los
+                distintos parámetros que tiene el procedimiento separados por coma “,“. Estos parámetros se declaran
+                indicando primero el identificador del parámetro, seguido de dos puntos “:” y el tipo primitivo del
+                parámetro que en <span class="text-resaltado">PFGUnedTLP</span> es siempre “integer”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de declaración de dos parámetros.</p>
+            <pre>
+			    <code>x:<b>integer</b>, p:<b>integer</b></code>
+			</pre>
+            <p>A partir de aquí nos encontramos una estructura casi calcada a la del programa principal exceptuando que
+                en símbolo de cierre de procedimiento es un punto y coma “;” en vez de un punto “.”. es decir, podemos
+                encontrar la parte opcional de declaración de variables y subprogramas, que tiene la misma estructura
+                que en el programa principal. Como hemos comentado anteriormente el lenguaje permite anidamiento de
+                subprogramas, por lo que un procedimiento puede tener declarados otros procedimientos y/o funciones
+                locales. </p>
+            <p>Seguidamente, comienza la parte obligatoria del cuerpo del subprograma, encerrada entre los delimitadores
+                de inicio “begin” y fin “end” y un punto y coma “;”. Dentro de estos delimitadores, al igual que en el
+                programa principal podemos encontrar una lista de sentencias que componen el subprograma.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de procedimiento.</p>
+            <pre>
+				<code>
+					<b>procedure</b> decrementa(x:<b>integer</b>);
+					<b>var</b> y:<b>integer</b>;
+					<b>begin</b>
+					  y := x - 1;
+					  <b>writeln</b>("y(2) = ");
+					  <b>writeln</b>(y);
+					<b>end;</b>
+				</code>
+			</pre>
+        </div>
+        <div>
+            <h3 id="declaracion-de-funciones">Declaración de funciones.</h3>
+            <hr class="lineaHR">
+            <p>Funciones son rutinas que realizan una determinada operación y que al final devuelven un valor.</p>
+            <p>Las funciones en <span class="text-resaltado">PFGUnedTLP</span> deben de seguir la siguiente estructura
+                sintáctica:</p>
+            <pre>
+				<code>
+					<b>function</b> nombreDeLaFuncion(param1:<b>integer</b>, param2:<b>integer</b>, …, paramN:<b>integer</b>):<b>integer</b>;
+					  // Sección para la declaración de variables locales.
+					  // Sección para la declaración de funciones y/o procedimientos locales a la función.
+					<b>begin</b>    //cuerpo de la función.
+					  // Lista de sentencias.
+					  <b>exit</b>(identificador de retorno);
+					<b>end</b>;
+			    </code>
+			</pre>
+            <p>Comienzan declarando la cabecera de la función con la palabra reservada function seguida por el
+                identificador que va a dar nombre a la función, a continuación se usa el delimitador de inicio de
+                parámetros “(“ seguido de una lista de parámetros opcional, el delimitador de fin de parámetros “)” . A
+                continuación se usa el delimitador de tipo “:” y el tipo de retorno de la función que en <span
+                    class="text-resaltado">PFGUnedTLP</span> es siempre “integer” y un punto y coma “;”.</p>
+            <p>La lista de parámetros que como hemos indicado es opcional, está compuesta por la declaración de los
+                distintos parámetros que tiene la función separados por coma “,“. Estos parámetros se declaran indicando
+                primero el identificador del parámetro, seguido de dos puntos “:” y el tipo primitivo del parámetro que
+                en <span class="text-resaltado">PFGUnedTLP</span> es siempre “integer”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de declaración de dos parámetros.</p>
+            <pre>
 			<code>
 			(x:<b>integer</b>, p:<b>integer)</b></code>
 			</pre>
-			<p>A partir de aquí nos encontramos una estructura casi calcada a la del programa principal exceptuando que en símbolo de cierre de función es un punto y coma “;” en vez de un punto “.”. es decir, podemos encontrar la parte opcional de declaración de variables y subprogramas, que tiene la misma estructura que en el programa principal. Como hemos comentado anteriormente el lenguaje permite anidamiento de subprogramas, por lo que una función puede tener declarados otras funciones y/o procedimientos locales.</p>
-			<p>Seguidamente, comienza la parte obligatoria del cuerpo del subprograma, encerrada entre los delimitadores de inicio “begin” y fin “end” y un punto y coma “;”. Dentro de estos delimitadores, al igual que en el programa principal podemos encontrar una lista de sentencias que componen el subprograma. La última sentencia del cuerpo del subprograma que además es obligatoria, es la sentencia de retorno de la función que se identifica con la palabra reservada “exit”, la cual devuelve el valor calculado en la función. El valor que devuelve se tiene que adecuar al tipo declarado para la función que en este lenguaje es siempre “integer”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de declaración de una función el PFGUnedTLP.</p>
-			<pre>
+            <p>A partir de aquí nos encontramos una estructura casi calcada a la del programa principal exceptuando que
+                en símbolo de cierre de función es un punto y coma “;” en vez de un punto “.”. es decir, podemos
+                encontrar la parte opcional de declaración de variables y subprogramas, que tiene la misma estructura
+                que en el programa principal. Como hemos comentado anteriormente el lenguaje permite anidamiento de
+                subprogramas, por lo que una función puede tener declarados otras funciones y/o procedimientos locales.
+            </p>
+            <p>Seguidamente, comienza la parte obligatoria del cuerpo del subprograma, encerrada entre los delimitadores
+                de inicio “begin” y fin “end” y un punto y coma “;”. Dentro de estos delimitadores, al igual que en el
+                programa principal podemos encontrar una lista de sentencias que componen el subprograma. La última
+                sentencia del cuerpo del subprograma que además es obligatoria, es la sentencia de retorno de la función
+                que se identifica con la palabra reservada “exit”, la cual devuelve el valor calculado en la función. El
+                valor que devuelve se tiene que adecuar al tipo declarado para la función que en este lenguaje es
+                siempre “integer”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de declaración de una función el PFGUnedTLP.</p>
+            <pre>
 			<code>
 			<b>function</b> triangular(k:<b>integer</b>):<b>integer</b>;
 			  <b>var</b> salida:<b>integer</b>;
@@ -413,63 +491,70 @@
 			  <b>exit</b>(salida);
 			<b>end;</b></code>
 			</pre>
-		</div>
-		<div >
-			<h3 id="paso-de-parametros-a-funciones-y-procedimientos">Paso de parámetros a funciones y procedimientos.</h3>
-			<hr class="lineaHR">
-			<p>
-				Los parámetros siempre se pasan por valor, y pueden ser Identificadores, literales enteros, o una combinación de sumas y/o restas de los mismos.				
-			</p>
-		</div>
-		<div >
-			<h3 id="sentencias-y-expresiones">Sentencias y Expresiones.</h3>
-			<hr class="lineaHR">
-			<p>
-				Los bloques del cuerpo de programa principal, cuerpo del procedimiento y cuerpo de función están compuestos por sentencias que a su vez contienen expresiones.
-			</p>
-		</div>
-		<div >
-			<h3 id="expresiones">Expresiones.</h3>
-			<hr class="lineaHR">
-			<p>
-				Una expresión es una combinación de elementos del lenguaje que se evalúan y dan como resultado un valor. En <span class="text-resaltado">PFGUnedTLP</span> tenemos de dos tipos.				
-			</p>
-		</div>
-		<div >
-			<h3 id="expresiones-aritmeticas">Expresiones aritméticas.</h3>
-			<hr class="lineaHR">
-			<p>Son aquellas que al ser evaluadas devuelven un valor entero. Para trabajar con estas expresiones asociamos una precedencia y asociatividad entre sus operadores.</p>
+        </div>
+        <div>
+            <h3 id="paso-de-parametros-a-funciones-y-procedimientos">Paso de parámetros a funciones y procedimientos.
+            </h3>
+            <hr class="lineaHR">
+            <p>
+                Los parámetros siempre se pasan por valor, y pueden ser Identificadores, literales enteros, o una
+                combinación de sumas y/o restas de los mismos.
+            </p>
+        </div>
+        <div>
+            <h3 id="sentencias-y-expresiones">Sentencias y Expresiones.</h3>
+            <hr class="lineaHR">
+            <p>
+                Los bloques del cuerpo de programa principal, cuerpo del procedimiento y cuerpo de función están
+                compuestos por sentencias que a su vez contienen expresiones.
+            </p>
+        </div>
+        <div>
+            <h3 id="expresiones">Expresiones.</h3>
+            <hr class="lineaHR">
+            <p>
+                Una expresión es una combinación de elementos del lenguaje que se evalúan y dan como resultado un valor.
+                En <span class="text-resaltado">PFGUnedTLP</span> tenemos de dos tipos.
+            </p>
+        </div>
+        <div>
+            <h3 id="expresiones-aritmeticas">Expresiones aritméticas.</h3>
+            <hr class="lineaHR">
+            <p>Son aquellas que al ser evaluadas devuelven un valor entero. Para trabajar con estas expresiones
+                asociamos una precedencia y asociatividad entre sus operadores.</p>
 
-			<table class="tabla-lenguaje" >
-				<tr>
-					<th>PRECEDENCIA</th>
-					<th>ASOCIATIVIDAD</th>
-				   </tr>
-				<tr>
-					<td>( )</td>
-					<td>Izquierdas.</td>
-				</tr>
-				<tr>
-					<td>+ -</td>
-					<td>Izquierdas.</td>
-				</tr>
-			</table>
+            <table class="tabla-lenguaje">
+                <tr>
+                    <th>PRECEDENCIA</th>
+                    <th>ASOCIATIVIDAD</th>
+                </tr>
+                <tr>
+                    <td>( )</td>
+                    <td>Izquierdas.</td>
+                </tr>
+                <tr>
+                    <td>+ -</td>
+                    <td>Izquierdas.</td>
+                </tr>
+            </table>
 
-			
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de expresiones aritméticas</p>
-			<pre>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de expresiones aritméticas</p>
+            <pre>
 			<code>0 + a;
 			k + funcionX(k-1); //llamada a función
 			x - 1;</code>
 			</pre>
-		</div>
-		<div >
-			<h3 id="expresiones-logicas">Expresiones lógicas.</h3>
-			<hr class="lineaHR">
-			<p>Son aquellas que devuelven un valor de tipo lógico al programa.</p>
-			<p> En lenguaje <span class="text-resaltado">PFGUnedTLP</span> solo se dan al usar el operador relacional “=” y solo pueden usarse en la evaluación de la sentencia if, para entrar dentro del cuerpo del condicional si cumple la expresión o mandarlo a la alternativa del condicional en caso de que esta exista y no cumpla la expresión.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de expresión lógica asociada al if.</p>
-			<pre>
+        </div>
+        <div>
+            <h3 id="expresiones-logicas">Expresiones lógicas.</h3>
+            <hr class="lineaHR">
+            <p>Son aquellas que devuelven un valor de tipo lógico al programa.</p>
+            <p> En lenguaje <span class="text-resaltado">PFGUnedTLP</span> solo se dan al usar el operador relacional
+                “=” y solo pueden usarse en la evaluación de la sentencia if, para entrar dentro del cuerpo del
+                condicional si cumple la expresión o mandarlo a la alternativa del condicional en caso de que esta
+                exista y no cumpla la expresión.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de expresión lógica asociada al if.</p>
+            <pre>
 			<code><b>if</b> k = 0 <b>then</b>
 			<b>begin</b>
 			  //sentencias si cumple el condicional
@@ -478,24 +563,35 @@
 			  //sentencias si no cumple el condicional
 			<b>end;</b></code>
 			</pre>
-		</div>
-		<div >
-			<h3 id="sentencias">Sentencias.</h3>
-			<hr class="lineaHR">
-			<p>Las sentencias en PFGUnedTLP se usan para realizar determinadas operaciones dentro del lenguaje. Hay de varios tipos y todas tienen que acabar por el delimitador de fin de sentencias punto y coma “;”. </p>
-			<p><b>•	Sentencia de asignación.</b></p>
-			<p> Sirven para asignar valores a una variable. La sintaxis es la siguiente. Primero se escribe el nombre del identificador al cual se le quiere asignar el valor seguido del operador de asignación dos puntos igual “:=”, una expresión y el delimitador de fin de sentencias punto y coma “;”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo del uso de sentencias de asignación.</p>
-			<pre>
+        </div>
+        <div>
+            <h3 id="sentencias">Sentencias.</h3>
+            <hr class="lineaHR">
+            <p>Las sentencias en PFGUnedTLP se usan para realizar determinadas operaciones dentro del lenguaje. Hay de
+                varios tipos y todas tienen que acabar por el delimitador de fin de sentencias punto y coma “;”. </p>
+            <p><b>• Sentencia de asignación.</b></p>
+            <p> Sirven para asignar valores a una variable. La sintaxis es la siguiente. Primero se escribe el nombre
+                del identificador al cual se le quiere asignar el valor seguido del operador de asignación dos puntos
+                igual “:=”, una expresión y el delimitador de fin de sentencias punto y coma “;”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo del uso de sentencias de asignación.</p>
+            <pre>
 			<code>
 			salida := 0;
 			salida := 4 + k + 1;
 			salida := triangular(n) + tetraedrico(n-1); //llamadas a función</code>
 			</pre>
-			<p><b>•	Sentencia de flujo condicional if.</b></p>
-			<p> Sirve para condicionar el flujo de la ejecución de un programa de acuerdo al cumplimiento o no de una expresión lógica. La sintaxis tiene que cumplir la siguiente estructura. Comienza por la palabra reservada if seguido de una expresión lógica y a continuación las palabras reservadas then  begin  y el bloque sentencias si cumple la expresión. En este punto pueden ocurrir dos cosas , que no exista el bloque opcional de sentencias cuando no cumple la expresión en cuyo caso terminaría la expresión if con la palabra reservada end seguida de un punto y coma “;”, o que exista la parte opcional de sentencias si no cumple la expresión en cuyo caso vendrían las palabras reservadas end  else begin, el bloque opcional de sentencias si no culpe la condición lógica y terminaríamos con la palabra reservada end seguida de un punto y coma ”;”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de sentencia de flujo condicional if.</p>
-			<pre>
+            <p><b>• Sentencia de flujo condicional if.</b></p>
+            <p> Sirve para condicionar el flujo de la ejecución de un programa de acuerdo al cumplimiento o no de una
+                expresión lógica. La sintaxis tiene que cumplir la siguiente estructura. Comienza por la palabra
+                reservada if seguido de una expresión lógica y a continuación las palabras reservadas then begin y el
+                bloque sentencias si cumple la expresión. En este punto pueden ocurrir dos cosas , que no exista el
+                bloque opcional de sentencias cuando no cumple la expresión en cuyo caso terminaría la expresión if con
+                la palabra reservada end seguida de un punto y coma “;”, o que exista la parte opcional de sentencias si
+                no cumple la expresión en cuyo caso vendrían las palabras reservadas end else begin, el bloque opcional
+                de sentencias si no culpe la condición lógica y terminaríamos con la palabra reservada end seguida de un
+                punto y coma ”;”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de sentencia de flujo condicional if.</p>
+            <pre>
 			<code>
 			<b>if</b> k = 0 <b>then</b>
 			<b>begin</b>
@@ -510,52 +606,56 @@
 			  a = 0;
 			<b>end;</b></code>
 			</pre>
-			<p><b>•	Sentencia de salida.</b></p>
-			<p> Para mostrar mensajes por pantalla o resultados, el lenguaje <span class="text-resaltado">PFGUnedTLP</span> tiene una función predefinida que realiza esta salida por pantalla. La sintaxis de la sentencia comienza por la palabra reservada writeln seguida de la apertura de parentesis “(“, a continuación el mensaje o resultado que se va a mostrar, que puede ser una cadena de texto entrecomillada o una expresión aritmética, y finalizamos con un cierre de paréntesis “)” y un punto y coma “;”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de setencias de salida.</p>
-			<pre>
+            <p><b>• Sentencia de salida.</b></p>
+            <p> Para mostrar mensajes por pantalla o resultados, el lenguaje <span
+                    class="text-resaltado">PFGUnedTLP</span> tiene una función predefinida que realiza esta salida por
+                pantalla. La sintaxis de la sentencia comienza por la palabra reservada writeln seguida de la apertura
+                de parentesis “(“, a continuación el mensaje o resultado que se va a mostrar, que puede ser una cadena
+                de texto entrecomillada o una expresión aritmética, y finalizamos con un cierre de paréntesis “)” y un
+                punto y coma “;”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de setencias de salida.</p>
+            <pre>
 			<code>
 			<b>writeln</b>(a);
 			<b>writeln</b>("Invocación de subprogramas");
 			<b>writeln</b>("Fin.“);</code>
 			</pre>
-			<p><b>•	Llamadas a procedimientos.</b></p>
-			<p> Para llamar a un procedimiento en <span class="text-resaltado">PFGUnedTLP</span> ha de escribirse el identificador con el que se ha declarado el procedimiento y una apertura de paréntesis “(“, dentro de este paréntesis hay que poner los parámetros que vamos a pasarle al procedimiento separados por comas. El número de parámetros tiene que ser el mismo con el que se ha declarado el mismo. Una vez finalizada esa lista de parámetros se introduce el delimitador de fin de sentencias “)” y un punto y coma “;”.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de llamadas a procedimientos.</p>
-			<pre>
+            <p><b>• Llamadas a procedimientos.</b></p>
+            <p> Para llamar a un procedimiento en <span class="text-resaltado">PFGUnedTLP</span> ha de escribirse el
+                identificador con el que se ha declarado el procedimiento y una apertura de paréntesis “(“, dentro de
+                este paréntesis hay que poner los parámetros que vamos a pasarle al procedimiento separados por comas.
+                El número de parámetros tiene que ser el mismo con el que se ha declarado el mismo. Una vez finalizada
+                esa lista de parámetros se introduce el delimitador de fin de sentencias “)” y un punto y coma “;”.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de llamadas a procedimientos.</p>
+            <pre>
 			<code>
 			resta(a,b);
 			decrementa(z);
 			calculaTotales();</code>
 			</pre>
-			<p><b>•	Llamadas a funciones.</b></p>
-			<p> Se podrían englobar en la parte de las expresiones ya que devuelven un resultado. Para llamar a una función en <span class="text-resaltado">PFGUnedTLP</span> ha de escribirse el identificador con el que se ha declarado la función y una apertura de paréntesis “(“, dentro de este paréntesis hay que poner los parámetros que vamos a pasarle a la función separados por comas. El número de parámetros tiene que ser el mismo con el que se ha declarado el mismo. Una vez finalizada esa lista de parámetros se introduce el delimitador de fin de sentencias “)” y un punto y coma “;”. Como no es una sentencia propiamente dicha ya que devuelven un valor no pueden ir solas, sino que van incluidas dentro de otras sentencias.</p>
-			<p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de llamadas a funciones.</p>
-			<pre>
+            <p><b>• Llamadas a funciones.</b></p>
+            <p> Se podrían englobar en la parte de las expresiones ya que devuelven un resultado. Para llamar a una
+                función en <span class="text-resaltado">PFGUnedTLP</span> ha de escribirse el identificador con el que
+                se ha declarado la función y una apertura de paréntesis “(“, dentro de este paréntesis hay que poner los
+                parámetros que vamos a pasarle a la función separados por comas. El número de parámetros tiene que ser
+                el mismo con el que se ha declarado el mismo. Una vez finalizada esa lista de parámetros se introduce el
+                delimitador de fin de sentencias “)” y un punto y coma “;”. Como no es una sentencia propiamente dicha
+                ya que devuelven un valor no pueden ir solas, sino que van incluidas dentro de otras sentencias.</p>
+            <p><span style="color: #2b668d">Ej:</span> Ejemplo de uso de llamadas a funciones.</p>
+            <pre>
 			<code>
 			resultado := suma(a,b);
 			salida := triangular(n)+tetraedrico(n-1);</code>
 			</pre>
-			
-		</div>
-			
-		
+        </div>
 
-
-
-
-
-
-
-
-
-	</div>
-	<footer>
-		<img id="logoUned" alt="Logotipo UNED" src="img/LogoUned.png"/>
-		<h6 class="h6footer"> PFGrado Jaime Alcalá, 2023.</h6>
-		<h6 class="h6footer"> <em>Dirección: Fernando López Ostenero</em></h6>
-		<h6 class="h6footer"> <a href="https://www.uned.es">www.uned.es</a></h6>
-	</footer>
+    </div>
+    <footer>
+        <img id="logoUned" alt="Logotipo UNED" src="img/LogoUned.png" />
+        <h6 class="h6footer"> PFGrado Jaime Alcalá, 2023.</h6>
+        <h6 class="h6footer"> <em>Dirección: Fernando López Ostenero</em></h6>
+        <h6 class="h6footer"> <a href="https://www.uned.es">www.uned.es</a></h6>
+    </footer>
 </body>
 
 </html>

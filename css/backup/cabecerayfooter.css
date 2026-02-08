@@ -8,21 +8,22 @@
 */
 
 
-.menu{
+.menu {
     list-style: none;
     padding: 0;
 
     background-image: linear-gradient(#42A1EC, #13140d);
-    width : 90%;
+    width: 90%;
 
     margin: auto;
     font: oblique bold 120% cursive;
 
     border-radius: 5px;
-   
+
 
 }
-.menu li a{
+
+.menu li a {
     text-decoration: none;
     color: white;
     padding: 20px;
@@ -30,11 +31,11 @@
 
 }
 
-.menu li{
+.menu li {
     display: inline-block;
     text-align: center;
-    
-    
+
+
 }
 
 .menu li a:hover {
@@ -43,38 +44,42 @@
 
 
 
-footer{
+footer {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 0;
-    margin-top:80px;/* Ajusto el valor para separar el footer del contenido anterior*/
+    margin-top: 80px;
+    /* Ajusto el valor para separar el footer del contenido anterior*/
 }
 
-#logoUned{
-    width: 160px;/*Ajusto el valor para el tamaño del logo*/
+#logoUned {
+    width: 160px;
+    /*Ajusto el valor para el tamaño del logo*/
     height: 50px;
-    margin-bottom: 50px;/*Ajusto el valor que separa el logo de la informacion del pie*/
+    margin-bottom: 50px;
+    /*Ajusto el valor que separa el logo de la informacion del pie*/
 }
 
-.h6footer{
+.h6footer {
     margin-top: -21px;
     font: oblique bold 100% cursive;
     color: #2b668d;
 }
 
-.h7footer{
+.h7footer {
     margin-top: -21px;
     font: oblique bold 100% cursive;
     color: #fafafa;
 }
+
 hr.lineaHR {
     border: 1px solid #2b668d;
     border-radius: 5px;
-  }
+}
 
-  
-.text-resaltado{
+
+.text-resaltado {
     font-style: oblique;
 }

@@ -8,7 +8,7 @@
 */
 
 body {
-    background-color: #fafafa; 
+    background-color: #fafafa;
     font-family: 'Roboto Condensed';
     min-height: fit-content;
 }
@@ -18,12 +18,12 @@ body {
 hr.lineaHR {
     border: 1px solid #2b668d;
     border-radius: 5px;
-  }
+}
 
 
-  
-.MarcoPrincipal{
-    width : 88%;
+
+.MarcoPrincipal {
+    width: 88%;
 
     margin: auto;
 
@@ -31,20 +31,25 @@ hr.lineaHR {
 
 
 
-.TxtAyuda{
+.TxtAyuda {
 
-    
+
     margin: auto;
 }
 
-.TxtAyuda h3{
+.TxtAyuda h3 {
     font: oblique bold 120% cursive;
 }
 
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: #2b668d;
-    font-size:large;
+    font-size: large;
 }
 
 
@@ -52,4 +57,3 @@ h1, h2, h3, h4, h5, h6 {
 p {
     text-align: justify;
 }
-

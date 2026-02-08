@@ -5,30 +5,33 @@
  */
 
 // DOM Elements
-export const btn_compilar       = document.getElementById('btn_Compilar');
-export const btn_reiniciar      = document.getElementById('btn_Reiniciar');
+export const btn_compilar = document.getElementById('btn_Compilar');
+export const btn_reiniciar = document.getElementById('btn_Reiniciar');
 export const btn_cargaActividad = document.getElementById('btn_CargaActividad');
 export const btn_sigInstruccion = document.getElementById("btn_sigInstruccion");
 export const btn_prevInstruccion = document.getElementById("btn_prevInstruccion");
-export const btn_prevLinea      = document.getElementById("btn_prevLinea");
-export const btn_sigLinea       = document.getElementById("btn_sigLinea");
+export const btn_prevLinea = document.getElementById("btn_prevLinea");
+export const btn_sigLinea = document.getElementById("btn_sigLinea");
 export const btn_ejecucionCompleta = document.getElementById("btn_ejecucionCompleta")
 
-export const tbl_pilaLlamadas   = document.getElementById('tablaPilaLLamadas');
+export const tbl_pilaLlamadas = document.getElementById('tablaPilaLLamadas');
 
-export const opt_mostrarTemp      = document.getElementById('mostrarTemp');
-export const opt_mostrarVisibles  = document.getElementById('mostrarVisibles');
-export const opt_mostrarRAReducido= document.getElementById('mostrarRAReducido');
+export const opt_mostrarTemp = document.getElementById('mostrarTemp');
+export const opt_mostrarVisibles = document.getElementById('mostrarVisibles');
+export const opt_mostrarRAReducido = document.getElementById('mostrarRAReducido');
 
-export const cajaCodFuente      = document.getElementById('cajaCodigoFuente');
-export const cajaMsjCompilado   = document.getElementById('resultadoCompilacion');
-export const cajaSimbolos       = document.getElementById('cajaSimbolo');
-export const cajaTipos          = document.getElementById('cajaTipo');
+export const cajaCodFuente = document.getElementById('cajaCodigoFuente');
+export const cajaMsjCompilado = document.getElementById('resultadoCompilacion');
+export const cajaSimbolos = document.getElementById('cajaSimbolo');
+export const cajaTipos = document.getElementById('cajaTipo');
 
-export const colorResalte = "#FFFF00";
-export const colorRojo    = "#ff0000";
-export const NOCOLOR      = '';
-
+export const colorRojo = "rgb(255, 255, 0)";         //Rojo
+export const colorResalte = "rgb(255, 255, 0)";         //Amarillo
+export const colorResalte2 = "rgb(0, 255, 0)";           //Verde
+export const colorMalva = "rgb(140, 100, 200)";       //Morado
+export const colorInstruccion = "rgb(51, 204, 255)";        //Celeste
+export const NOCOLOR = '';
+let elementInstruccion = [];
 
 //Functions
 
@@ -37,12 +40,12 @@ export const NOCOLOR      = '';
  *  It particularly reset tables, and controls in the Phase 2 of the compiler view where the results
  *  are shown.
  */
-export function resetFirstPart(){
+export function resetFirstPart() {
     cajaCodFuente.style.backgroundColor = "transparent";
-    cajaCodFuente.disabled= false;
+    cajaCodFuente.disabled = false;
     cajaMsjCompilado.textContent = '';
     //TODO: Removing pintaTablas() From this point to check it it works to decouple this part from control
-    
+
     document.getElementById("ContenedorResultadoCompilacion").style.display = 'none';
     document.getElementById("Fase2A").style.display = 'none';
     document.getElementById("Fase2B").style.display = 'none';
@@ -51,42 +54,42 @@ export function resetFirstPart(){
 }
 
 export function inicializaFase2() {
-  document.getElementById("ContenedorResultadoCompilacion").style.display = 'block';
-  document.getElementById("Fase2A").style.display = 'block';
-  document.getElementById("Fase2B").style.display = 'block';
-  //Buttons
-  btn_sigInstruccion.style.display = 'inline-block';
-  btn_prevInstruccion.style.display = 'inline-block';
-  btn_sigLinea.style.display = 'inline-block';
-  btn_prevLinea.style.display = 'inline-block';
-  //
-  btn_ejecucionCompleta.style.display = 'block';
-  //TODO: Delete if all works fine with the toggle tables (clicking on their titles)
-  //initTableToggles();
+    document.getElementById("ContenedorResultadoCompilacion").style.display = 'block';
+    document.getElementById("Fase2A").style.display = 'block';
+    document.getElementById("Fase2B").style.display = 'block';
+    //Buttons
+    btn_sigInstruccion.style.display = 'inline-block';
+    btn_prevInstruccion.style.display = 'inline-block';
+    btn_sigLinea.style.display = 'inline-block';
+    btn_prevLinea.style.display = 'inline-block';
+    //
+    btn_ejecucionCompleta.style.display = 'block';
+    //TODO: Delete if all works fine with the toggle tables (clicking on their titles)
+    //initTableToggles();
 }
 
 //TODO AUX ZONE
 
-export function coloreaTodasInstrucciones(){
+export function coloreaTodasInstrucciones() {
     //TODO: Added elementInstruccion here, it wasn't previously
     const elementInstruccion = getItemsTable("tablaCuadruplas");
     const elementLineaCodigoFuente = getItemsTable("tablaCodigoFuente");
-  //Coloreo todo el intermedio
-  for (const element of elementInstruccion) {
-      element.style.backgroundColor = "#33CCFF";
-  }
-  //Coloreo todo el codigo fuente
-  for (const element of elementLineaCodigoFuente) {
-    element.style.backgroundColor = "#33CCFF";
-  }
+    //Coloreo todo el intermedio
+    for (const element of elementInstruccion) {
+        element.style.backgroundColor = colorInstruccion;
+    }
+    //Coloreo todo el codigo fuente
+    for (const element of elementLineaCodigoFuente) {
+        element.style.backgroundColor = colorInstruccion;
+    }
 }
 
 export function perteneceRAReducido(qDesc) {
-  return (qDesc == 'Valor retorno' || qDesc.includes('Enlace control') || qDesc.includes('Enlace acceso') );
+    return (qDesc == 'Valor retorno' || qDesc.includes('Enlace control') || qDesc.includes('Enlace acceso'));
 }
 
 export function perteneceTemporal(qDesc) {
-  return qDesc.includes('Temporal');
+    return qDesc.includes('Temporal');
 }
 
 /**
@@ -96,15 +99,15 @@ export function perteneceTemporal(qDesc) {
  * @return nothing, just in case the table doesn't exist it execute a return to the previous function.
  */
 function toggleTabla(tablaId) {
-  let tabla = document.getElementById(tablaId);
-  //Check firstly if the table already exists.
-  if(!tabla) return;
-  //If it exists go ahead with the rest.
-  if (tabla.style.display === "none") {
-    tabla.style.display = "block";
-  } else {
-    tabla.style.display = "none";
-  }
+    let tabla = document.getElementById(tablaId);
+    //Check firstly if the table already exists.
+    if (!tabla) return;
+    //If it exists go ahead with the rest.
+    if (tabla.style.visibility === "hidden") {
+        tabla.style.visibility = "visible";
+    } else {
+        tabla.style.visibility = "hidden";
+    }
 }
 
 /**
@@ -115,18 +118,18 @@ function toggleTabla(tablaId) {
 export function initTableToggles() {
     // Event delegation: escuchar en el documento, ejecutar solo si coincide
     document.addEventListener('click', (e) => {
-      const toggleElement = e.target.closest('[data-toggle-table]');
-      if (toggleElement) {
-        const tableId = toggleElement.getAttribute('data-toggle-table');
-        toggleTabla(tableId);
-      }
+        const toggleElement = e.target.closest('[data-toggle-table]');
+        if (toggleElement) {
+            const tableId = toggleElement.getAttribute('data-toggle-table');
+            toggleTabla(tableId);
+        }
     });
 }
 
-export function limpiaTabla(qTabla){
-  if (document.getElementById(qTabla)){
-     document.getElementById(qTabla).remove();
-  }
+export function limpiaTabla(qTabla) {
+    if (document.getElementById(qTabla)) {
+        document.getElementById(qTabla).remove();
+    }
 }
 
 /**
@@ -135,18 +138,32 @@ export function limpiaTabla(qTabla){
  *  another click on a row or cell. So it allows to repaint it properly
  *  after the reset.
  */
-export function resetTableColors(){
+export function resetTableColors() {
     const tables = ['tablaPila', 'tablaPilaLlamadas', 'tablaVariables'];
 
     tables.forEach(tableId => {
-      const items = getItemsTable(tableId);
-      if (items) {
-        for (const element of items) {
-          element.style.backgroundColor = NOCOLOR;  // Reset background
-          element.style.color = NOCOLOR;            // Reset text color.
+        const items = getItemsTable(tableId);
+        if (items) {
+            for (const element of items) {
+                element.style.backgroundColor = NOCOLOR;  // Reset background
+                element.style.color = NOCOLOR;            // Reset text color.
+            }
         }
-      }
     });
+}
+
+
+//TODO: Imported function... check if I have already implemented. Sounds to me that yes.
+export function resetColoresCodigoIntermedio() {
+    for (const element of elementInstruccion) {
+        let color = element.style.backgroundColor;
+        if (color == colorResalte) {
+            element.style.backgroundColor = "transparent";
+        }
+        if (color == colorResalte2) {
+            element.style.backgroundColor = colorInstruccion;
+        }
+    }
 }
 
 /**
@@ -157,7 +174,7 @@ export function resetTableColors(){
  * @param {string} tableID name of the table.
  * @return {HTMLCollection|null} items of the referenced table into an array. Null otherwise
  */
-export function getItemsTable(tableID){
+export function getItemsTable(tableID) {
     const table = document.getElementById(tableID);
     //Check if the table exists to returns elements, otherwise abort and return null.
     return table ? table.getElementsByTagName("tr") : null;
@@ -167,12 +184,12 @@ export function getItemsTable(tableID){
  * Auxiliary procedure to disable buttons.
  * Main use: When no more instructions/lines to process.
  **/
-export function disableControlButtons(){
+export function disableControlButtons() {
     btn_sigInstruccion.style.display = 'none';
     btn_sigLinea.style.display = 'none';
     btn_ejecucionCompleta.style.display = 'none';
     //TODO: Add controls to keep disable back bottons when we are in line 0.
- 
+
 }
 
 
@@ -185,11 +202,11 @@ export function disableControlButtons(){
  * @param body the body of the table, usually with the cells.
  * @param label identificator into the document (div or another) where to place the table with its attributes.
  */
-export function setAttTable(table, id, body, label){
+export function setAttTable(table, id, body, label) {
     table.setAttribute("border", 2);
     table.setAttribute("id", id);
     table.appendChild(body);
-    document.getElementById(label).appendChild(table);   
+    document.getElementById(label).appendChild(table);
 }
 
 /**
@@ -198,17 +215,17 @@ export function setAttTable(table, id, body, label){
  * @param columns it's an array with the name of each column.
  * @return table the conformed table.
  */
-export function createTable(columns){
+export function createTable(columns) {
     const table = document.createElement('table');
     const thead = document.createElement('thead');
-    const row   = document.createElement('tr');
-    
+    const row = document.createElement('tr');
+
     columns.forEach(text => {
         const cell = document.createElement('th');
         cell.textContent = text;
         row.appendChild(cell);
     });
-    
+
     thead.appendChild(row);
     table.appendChild(thead);
     return table;
@@ -220,65 +237,73 @@ export function createTable(columns){
  * @param rowsList array with each text in order to assign to every cell.
  * @return the row conformed to the requiriments.
  */
-export function createRow(rowsList){
+export function createRow(rowsList) {
     const row = document.createElement('tr');
-    
+
     rowsList.forEach(text => {
         const cell = document.createElement('td');
-        cell.appendChild(document.createTextNode(text));
+        //DELETEME: cell.appendChild(document.createTextNode(text));
+        cell.textContent = text;
         row.appendChild(cell);
     });
-    
+
     return row;
 }
 
 //TODO: CREATE ZONE
 
 export function crearTablaCodFuenteyCuadruplas(datosTabla) {
-  
-  limpiaTabla("tablaCodigoFuente");
-  limpiaTabla("tablaCuadruplas");
-  limpiaTabla("tablaPila");
-  limpiaTabla("tablaVariables");
 
-  //TABLA CUADRUPLAS
-  let tablaCuadrupla = document.createElement('table');
-  let cuerpoTablaCuadrupla = document.createElement('tbody');
+    limpiaTabla("tablaCodigoFuente");
+    limpiaTabla("tablaCuadruplas");
+    limpiaTabla("tablaPila");
+    limpiaTabla("tablaVariables");
 
-  let j = 0;
-  datosTabla.forEach(function(datosFilas) {
-    datosFilas.forEach(function(datosCeldas) {
-      let fila = document.createElement('tr');
-      let celda = document.createElement('td');
-      //Firstly add the cell on the index column for numbers.
-      celda.appendChild(document.createTextNode(j + '.' ));
-      fila.appendChild(celda);
-      //new cell for the data
-      celda = document.createElement('td');
-      celda.appendChild(document.createTextNode(datosCeldas));
-      fila.appendChild(celda);
-      cuerpoTablaCuadrupla.appendChild(fila);
-      j++;
+    //TABLA CUADRUPLAS
+    let tablaCuadrupla = document.createElement('table');
+    let cuerpoTablaCuadrupla = document.createElement('tbody');
+
+    let j = 0;
+    elementInstruccion = [];
+    //
+    datosTabla.forEach(function(datosFilas) {
+        datosFilas.forEach(function(datosCeldas) {
+            let fila = document.createElement('tr');
+            let celda = document.createElement('td');
+            //Firstly add the cell on the index column for numbers.
+            celda.appendChild(document.createTextNode(j + '.'));
+            fila.appendChild(celda);
+            //new cell for the data
+            celda = document.createElement('td');
+            celda.appendChild(document.createTextNode(datosCeldas));
+            fila.appendChild(celda);
+            elementInstruccion.push(fila);                                            //TODO: figure it out, I am not sure the global purpose.
+            cuerpoTablaCuadrupla.appendChild(fila);
+            j++;
+        });
     });
-  });
 
-  setAttTable(tablaCuadrupla, "tablaCuadruplas", cuerpoTablaCuadrupla, "tabTablaCuadruplas");
+    setAttTable(tablaCuadrupla, "tablaCuadruplas", cuerpoTablaCuadrupla, "tabTablaCuadruplas");
 
-  //TABLA COD FUENTE
-  let lines = cajaCodFuente.value.split("\n");
-  let tablaCodigoFuente = document.createElement('table');
-  let cuerpoTablaCodigoFuente = document.createElement('tbody');
+    //TABLA COD FUENTE
+    let lines = cajaCodFuente.value.split("\n");
+    let tablaCodigoFuente = document.createElement('table');
+    let cuerpoTablaCodigoFuente = document.createElement('tbody');
 
-  for(let i = 0; i < lines.length; i++){
-    let fila = document.createElement('tr');
-    let celda = document.createElement('td');
-    celda.appendChild(document.createTextNode(i + 1 + '.' ));
-    celda.appendChild(document.createTextNode(lines[i]));
-    fila.appendChild(celda);
-    cuerpoTablaCodigoFuente.appendChild(fila);
-  }
+    for (let i = 0;i < lines.length;i++) {
+        let fila = document.createElement('tr');
+        // cell for index
+        let cellIndex = document.createElement('td');
+        cellIndex.textContent = (i + 1) + '.';
+        // cell for source code contain.
+        let cellSourceCode = document.createElement('td');
+        cellSourceCode.textContent = lines[i];
+        //
+        fila.append(cellIndex, cellSourceCode);
+        cuerpoTablaCodigoFuente.appendChild(fila);
+    }
 
-  setAttTable(tablaCodigoFuente, "tablaCodigoFuente", cuerpoTablaCodigoFuente, "tabCodigoFuente");
+    setAttTable(tablaCodigoFuente, "tablaCodigoFuente", cuerpoTablaCodigoFuente, "tabCodigoFuente");
 }
 
 /**
@@ -287,23 +312,23 @@ export function crearTablaCodFuenteyCuadruplas(datosTabla) {
  * @param {string} href
  */
 export function activateTab(href) {
-  // Clear actives tabs
-  document.querySelectorAll('.tabs a').forEach(tab => 
-    tab.classList.remove('active')
-  );
-  
-  // Take the referenced tab and activate it.
-  const tab = document.querySelector(`.tabs a[href="${href}"]`);
-  if (tab) tab.classList.add('active');
-  
-  // Remove each contains (hide).
-  document.querySelectorAll('.tab-content').forEach(content => 
-    content.classList.remove('active')
-  );
-  
-  //Shows the right referenced selector.
-  const content = document.querySelector(href);
-  if (content) content.classList.add('active');
+    // Clear actives tabs
+    document.querySelectorAll('.tabs a').forEach(tab =>
+        tab.classList.remove('active')
+    );
+
+    // Take the referenced tab and activate it.
+    const tab = document.querySelector(`.tabs a[href="${href}"]`);
+    if (tab) tab.classList.add('active');
+
+    // Remove each contains (hide).
+    document.querySelectorAll('.tab-content').forEach(content =>
+        content.classList.remove('active')
+    );
+
+    //Shows the right referenced selector.
+    const content = document.querySelector(href);
+    if (content) content.classList.add('active');
 }
 
 /**
@@ -311,54 +336,56 @@ export function activateTab(href) {
  * * @param {Int} dir Direccion de la variable
  **/
 export function clickTablaVariables(dir) {
-  
-  let i;
-  //Check if dir == null in such a case do not proceed with the rest.
-  if(!dir) return;
-  //reset previous colors
-  resetTableColors();
-  
-  //Lineas pila de llamadas
-  const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
-  
-  //Check if it is not null and contains data to calc. Same for the others.
-  if ( elementPilaLlamadas && elementPilaLlamadas.length >1){
-    i =1;
-    do{
-      if ( elementPilaLlamadas[i].cells[2].innerHTML >= dir) {
-          elementPilaLlamadas[i].style.backgroundColor = colorResalte;
-          i = elementPilaLlamadas.length;
-      }
-      i +=1;
-    } while ( elementPilaLlamadas.length > i);
-  }
 
-  //Lineas pila de control
-  const elementPila = getItemsTable("tablaPila");
-  if ( elementPila && elementPila.length >1){
-    i =1;
-    do{
-      if ( elementPila[i].cells[0].innerHTML == dir) {
-        elementPila[i].style.backgroundColor = colorResalte;
-        i = elementPila.length;
-      }
-      i +=1;
-    } while ( elementPila.length >i);
-  }
+    let i;
+    //Check if dir == null in such a case do not proceed with the rest.
+    if (!dir) return;
+    //reset previous colors
+    resetTableColors();
+    //TODO one of those above or behind is or must innecesary
+    resetColoresCodigoIntermedio();
 
-  //Lineas estado del cómputo
-  const elementTabVariables = getItemsTable("tablaVariables");
-  
-  if ( elementTabVariables && elementTabVariables.length >1){
-    i =1;
-    do{
-      if (elementTabVariables[i].cells[2].innerHTML == dir) {
-        elementTabVariables[i].style.backgroundColor = colorResalte;
-        i=elementTabVariables.length;
-      }
-      i +=1;
-    } while (elementTabVariables.length >i);
-  }
+    //Lineas pila de llamadas
+    const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
+
+    //Check if it is not null and contains data to calc. Same for the others.
+    if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
+        i = 1;
+        do {
+            if (Number(elementPilaLlamadas[i].cells[2].innerHTML) >= dir) {
+                elementPilaLlamadas[i].style.backgroundColor = colorResalte;
+                i = elementPilaLlamadas.length;
+            }
+            i += 1;
+        } while (elementPilaLlamadas.length > i);
+    }
+
+    //Lineas pila de control
+    const elementPila = getItemsTable("tablaPila");
+    if (elementPila && elementPila.length > 1) {
+        i = 1;
+        do {
+            if (Number(elementPila[i].cells[0].innerHTML) == dir) {
+                elementPila[i].style.backgroundColor = colorResalte;
+                i = elementPila.length;
+            }
+            i += 1;
+        } while (elementPila.length > i);
+    }
+
+    //Lineas estado del cómputo
+    const elementTabVariables = getItemsTable("tablaVariables");
+
+    if (elementTabVariables && elementTabVariables.length > 1) {
+        i = 1;
+        do {
+            if (Number(elementTabVariables[i].cells[2].innerHTML) == dir) {
+                elementTabVariables[i].style.backgroundColor = colorResalte;
+                i = elementTabVariables.length;
+            }
+            i += 1;
+        } while (elementTabVariables.length > i);
+    }
 }
 
 /**
@@ -366,85 +393,95 @@ export function clickTablaVariables(dir) {
  * * @param {Int} dir Direccion de la variable
  * * @param {String} descrip Descripción de la variable
  **/
-export function clickTablaPila(dir, descrip) {
-   //TODO: This function is a little hard to understand. Many loops repeated
-   //It requires a huge refactoring and restructuration.
-   let i;
-  
-   //TODO: Added checked for paramameters null. By now if any of them is null => return.
-   if(!dir || !descrip) return;
-   //reset previous colors
-   resetTableColors();
-   
-  //Me quedo con la parte interesante de la descripción
+export function clickTablaPila(dir, valor, descrip) {
+    //TODO: This function is a little hard to understand. Many loops repeated
+    //It requires a huge refactoring and restructuration.
+    let i;
 
-  if (descrip.includes('Enlace')){
-    descrip = descrip.replace('Enlace acceso ', '');
-    descrip = descrip.replace('Enlace control ', '');
-    descrip = descrip.replaceAll('-', '');
-    descrip = descrip.replace('>', '');
-    descrip = descrip.replace('&gt; ', '');
-  }
+    //TODO: Added checked for paramameters null. By now if any of them is null => return.
+    if (!dir || !descrip) return;
+    //reset previous colors
+    resetTableColors();
+    //TODO: Added, I think it is not necessary cause implemented somehow. Requires revision.
+    resetColoresCodigoIntermedio();
+
+    //Me quedo con la parte interesante de la descripción
+
+    if (descrip.includes('Enlace')) {
+        descrip = descrip.replace('Enlace acceso ', '');
+        descrip = descrip.replace('Enlace control ', '');
+        descrip = descrip.replaceAll('-', '');
+        descrip = descrip.replace('>', '');
+        descrip = descrip.replace('&gt; ', '');
+    }
 
 
-  //Lineas pila de llamadas
-  const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
-     //Check if it is not null and contains data to calc. Same for the others.
-    if ( elementPilaLlamadas && elementPilaLlamadas.length > 1){
+    //Lineas pila de llamadas
+    const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
+    //Check if it is not null and contains data to calc. Same for the others.
+    if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
         i = 1;
-        do{
-          if ( elementPilaLlamadas[i].cells[2].innerHTML >= dir) {
-              elementPilaLlamadas[i].style.backgroundColor = colorResalte;
-              i = elementPilaLlamadas.length;
-          }
-          i += 1;
+        do {
+            if (Number(elementPilaLlamadas[i].cells[2].innerHTML) >= dir) {
+                elementPilaLlamadas[i].style.backgroundColor = colorResalte;
+                i = elementPilaLlamadas.length;
+            }
+            i += 1;
         }
-        while ( elementPilaLlamadas.length > i);
+        while (elementPilaLlamadas.length > i);
     }
 
-  if ( elementPilaLlamadas && elementPilaLlamadas.length > 1){
-    i = 1;
-    do{
-      if (elementPilaLlamadas[i].cells[2].innerHTML >= descrip) {
-          elementPilaLlamadas[i].style.color = colorRojo;
-          i = elementPilaLlamadas.length;
-      }
-      i += 1;
-    } while (elementPilaLlamadas.length > i);
-  }
-
-  //Lineas pila de control
-  const elementPila = getItemsTable("tablaPila");
-
-  if ( elementPila && elementPila.length > 1){
-    i = 1;
-    do{
-      if (elementPila[i].cells[0].innerHTML == dir){
-        elementPila[i].style.backgroundColor = colorResalte;
-      }
-
-      if (elementPila[i].cells[0].innerHTML == descrip){
-        elementPila[i].style.color = colorRojo;
-      }
-      i += 1;
-    } while (elementPila.length >i);
-  }
-
-  //Lineas estado del cómputo
-  const elementTabVariables = getItemsTable("tablaVariables");
-  
-  if ( elementTabVariables && elementTabVariables.length > 1){
-    i = 1;
-    do{
-      if (elementTabVariables[i].cells[2].innerHTML ==dir)
-      {
-        elementTabVariables[i].style.backgroundColor = colorResalte;
-        i=elementTabVariables.length;
-      }
-      i += 1;
+    if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
+        i = 1;
+        do {
+            if (Number(elementPilaLlamadas[i].cells[2].innerHTML) == descrip) {
+                elementPilaLlamadas[i].style.backgroundColor = colorMalva;
+                i = elementPilaLlamadas.length;
+            }
+            i += 1;
+        } while (elementPilaLlamadas.length > i);
     }
-    while (elementTabVariables.length >i);
 
-  }
+    //Lineas pila de control
+    const elementPila = getItemsTable("tablaPila");
+
+    if (elementPila && elementPila.length > 1) {
+        i = 1;
+        do {
+            if (Number(elementPila[i].cells[0].innerHTML) == dir) {
+                elementPila[i].style.backgroundColor = colorResalte;
+            }
+
+            if (Number(elementPila[i].cells[0].innerHTML) == descrip) {
+                elementPila[i].style.backgroundColor = colorMalva;
+            }
+            i += 1;
+        } while (elementPila.length > i);
+    }
+
+    //Lineas estado del cómputo
+    const elementTabVariables = getItemsTable("tablaVariables");
+
+    if (elementTabVariables && elementTabVariables.length > 1) {
+        i = 1;
+        do {
+            if (Number(elementTabVariables[i].cells[2].innerHTML) == dir) {
+                elementTabVariables[i].style.backgroundColor = colorResalte;
+                i = elementTabVariables.length;
+            }
+            i += 1;
+        } while (elementTabVariables.length > i);
+    }
+
+
+    // Linea codigo intermedio
+    if (descrip == "Dir. retorno") {
+        let color = elementInstruccion[valor].style.backgroundColor;
+        if (color == colorInstruccion || color == colorResalte2) {
+            elementInstruccion[valor].style.backgroundColor = colorResalte2;
+        } else {
+            elementInstruccion[valor].style.backgroundColor = colorResalte;
+        }
+    }
 }
 

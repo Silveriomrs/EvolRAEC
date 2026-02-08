@@ -10,62 +10,80 @@
 */
 
 body {
-    background-color: #fafafa; 
+    background-color: #fafafa;
     font-family: 'Roboto Condensed';
     font-size: 20px;
     min-height: fit-content;
 }
 
-h1{
+h1 {
+    text-align: center;
+}
+
+#cajaCodigoFuente {
+  width: 100%;
+  overflow: auto;
+  font-family: monospace;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.containerZonaA {
+    position: relative;
+    margin: 25px auto;
+    width: 90%;
     text-align: center;
 }
 
 
-.containerZonaA { 
-     position: relative;
-     margin: 25px auto;
-     width: 90%;
-     text-align: center;
-}
-
-
-.containerZonaA p{ 
+.containerZonaA p {
     font: normal bold 120%;
     text-align: center;
 }
 
 
-#resultadoCompilacion{
-    background-color:  #fafafa;
-    text-align:	center;
+#resultadoCompilacion {
+    background-color: #fafafa;
+    text-align: center;
     border-radius: 5px;
     border-width: medium;
-    border-color:  rgba(12, 81, 146, 0.5);
+    border-color: rgba(12, 81, 146, 0.5);
     border-style: groove;
 }
-.resultadoCompilacion{
-    text-align:	left;
+
+.resultadoCompilacion {
+    text-align: left;
     font-style: normal;
 }
 
 
 .myoutput {
-    width:98%;
-    height:100px;
+    width: 98%;
+    height: 100px;
 }
 
-.lineaHorizontal{
+.lineaHorizontal {
     size: 15px;
     height: 3px;
-    background-color:  #111111;
+    background-color: #111111;
 }
 
 
-#consolaSalida{
+#consolaSalida {
     border-radius: 5px;
     border-width: small;
-    background-color:  rgba(12, 81, 146, 0.5);
-    color:#f6f5f4;
+    background-color: rgba(12, 81, 146, 0.5);
+    color: #f6f5f4;
     font-size: 16px;
     font-weight: bold;
     resize: none;
@@ -75,29 +93,29 @@ h1{
 }
 
 
-#Fase2A p{
-	margin-top: 0;
+#Fase2A p {
+    margin-top: 0;
     margin-bottom: 0;
-    text-align:	center;
-    font: normal bold 120%;	
+    text-align: center;
+    font: normal bold 120%;
 }
 
 #Fase2A h3,
 #Fase2A h4 {
-    text-align : left;
+    text-align: left;
     font: normal bold 100%;
     padding-left: 5px;
     margin-bottom: 0;
 }
 
-#Fase2A label{
-    text-align : left;
+#Fase2A label {
+    text-align: left;
     font: normal bold 80%;
     padding-left: 5px;
     margin-bottom: 0;
 }
 
-#marcoConsolaSalida{
+#marcoConsolaSalida {
     margin-bottom: 0;
 }
 
@@ -106,26 +124,26 @@ h1{
     display: flex;
 }
 
-svg{
+svg {
     width: 10px;
 }
-  
+
 .tabs {
-  display: flex;
-  list-style: none;
-  margin: auto;
-  padding: 0;
-  width: 95%;
+    display: flex;
+    list-style: none;
+    margin: auto;
+    padding: 0;
+    width: 95%;
 }
 
-#botoncentrado{
+#botoncentrado {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-#tablaCuadru{
-	position: relative;
+#tablaCuadru {
+    position: relative;
     left: 30%;
 }
 
@@ -134,59 +152,59 @@ svg{
 }
 
 .tabs a {
-	font: normal bold 100%;
-	background-color: #f2f2f2;
-	border: 1px solid #ccc;
-	color: #333;
-	display: block;
-	padding: 10px;
-	text-align: center;
-	text-decoration: none;
-	border-radius: 5px;
-	margin-left: 3px;
+    font: normal bold 100%;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    color: #333;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-left: 3px;
 }
 
 .tabs a:hover {
-    background-color:#3D94D9;
+    background-color: #3D94D9;
 }
 
 .tabs a.active {
-    background-color:#3D94D9;
+    background-color: #3D94D9;
 }
 
 .tab-content {
-  display: none;
-  margin-left: 25px;
-  padding: 10px;
-  font-family: monospace;
+    display: none;
+    margin-left: 25px;
+    padding: 10px;
+    font-family: monospace;
 }
 
 .tab-content.active {
-  display: block;
-  padding: 0;
-  font-family: monospace;
+    display: block;
+    padding: 0;
+    font-family: monospace;
 }
 
 
-.fondo{
-  background-color: #d01453;
-  color: #FFFFFF;
-  width: 220px;
-  font: normal bold 100%;
-  border-radius: 5px;
-  background-image:linear-gradient(#42A1EC, #13140d);
-  padding-left: 5px;
+.fondo {
+    background-color: #d01453;
+    color: #FFFFFF;
+    width: 220px;
+    font: normal bold 100%;
+    border-radius: 5px;
+    background-image: linear-gradient(#42A1EC, #13140d);
+    padding-left: 5px;
 }
 
-.button-15 { 
-    background-image:linear-gradient(#42A1EC, #13140d);
+.button-15 {
+    background-image: linear-gradient(#42A1EC, #13140d);
     border: 1px solid #0077CC;
     border-radius: 4px;
     box-sizing: border-box;
     color: #FFFFFF;
     cursor: pointer;
     direction: ltr;
-    font-family: "SF Pro Text","SF Pro Icons","AOS Icons","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: "SF Pro Text", "SF Pro Icons", "AOS Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 17px;
     font-weight: 400;
     letter-spacing: -.022em;
@@ -243,9 +261,12 @@ th {
     background-color: #c64600;
     color: white;
     font: normal bold 70%;
-    border-radius: 5px;             /* Rounded squares */
-    padding: 2px 5px;               /* Paddings LEFT - RIGHT */
-    text-align: center;             /* heads centered */
+    border-radius: 5px;
+    /* Rounded squares */
+    padding: 2px 5px;
+    /* Paddings LEFT - RIGHT */
+    text-align: center;
+    /* heads centered */
 }
 
 /* Default cell aligns to the left */
@@ -265,21 +286,28 @@ tr:hover {
 
 /* Specific attributes for tables */
 /* Tabla Pila de Control - Dir y Valor centrados, Descripción a la izquierda */
-#tablaPila td:nth-child(1),  /* Dir */
-#tablaPila td:nth-child(2) { /* Valor */
+#tablaPila td:nth-child(1),
+/* Dir */
+#tablaPila td:nth-child(2) {
+    /* Valor */
     text-align: center;
 }
 
 /* Tabla Pila de Llamadas - Inicio RA y Dir centrados, Llamada a la izquierda */
-#tablaPilaLlamadas td:nth-child(2),  /* Inicio RA */
-#tablaPilaLlamadas td:nth-child(3) { /* Dir */
+#tablaPilaLlamadas td:nth-child(2),
+/* Inicio RA */
+#tablaPilaLlamadas td:nth-child(3) {
+    /* Dir */
     text-align: center;
 }
 
 /* Tabla Variables - Valor, Dir y Visible centrados, Variable a la izquierda */
-#tablaVariables td:nth-child(2),  /* Valor */
-#tablaVariables td:nth-child(3),  /* Dir */
-#tablaVariables td:nth-child(4) { /* Visible */
+#tablaVariables td:nth-child(2),
+/* Valor */
+#tablaVariables td:nth-child(3),
+/* Dir */
+#tablaVariables td:nth-child(4) {
+    /* Visible */
     text-align: center;
 }
 
@@ -293,15 +321,16 @@ tr:hover {
     outline: none;
 }
 
-.divtablaspilavar{
-  font: normal bold 80%;
-  position: relative;
-  display: flex;
-  align-items: flex-start;  /* before it was flex-top that doesn't exist*/
+.divtablaspilavar {
+    font: normal bold 80%;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    /* before it was flex-top that doesn't exist*/
 }
 
-.divtabla{
-  margin-left: 10px;
+.divtabla {
+    margin-left: 10px;
 }
 
 
@@ -312,7 +341,8 @@ tr:hover {
         font-size: 16px;
     }
 
-    th, td {
+    th,
+    td {
         display: block;
         text-align: left;
         padding: 8px 6px;
