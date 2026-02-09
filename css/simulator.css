@@ -185,6 +185,10 @@ svg {
     font-family: monospace;
 }
 
+/* Vertical gap between buttons and tables */
+.tab-content table {
+  margin-top: 12px;
+}
 
 .fondo {
     background-color: #d01453;
@@ -194,6 +198,29 @@ svg {
     border-radius: 5px;
     background-image: linear-gradient(#42A1EC, #13140d);
     padding-left: 5px;
+}
+
+/* Icon colour when change the hover */
+.button-15:hover svg.button-icon {
+    opacity: 0.9;
+}
+
+/* Styles for the icons inserted dynamically (runtime) */
+.button-15 svg {
+  height: 1em;
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+  pointer-events: none;
+}
+
+/* Icon colour inherits from button text */
+.button-15 svg path {
+  fill: currentColor;  /* take the current colour from the button */
+}
+
+.button-15:hover svg path {
+  opacity: 0.9;
 }
 
 .button-15 {

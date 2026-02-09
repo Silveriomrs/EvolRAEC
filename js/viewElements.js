@@ -25,11 +25,11 @@ export const cajaMsjCompilado = document.getElementById('resultadoCompilacion');
 export const cajaSimbolos = document.getElementById('cajaSimbolo');
 export const cajaTipos = document.getElementById('cajaTipo');
 
-export const colorRojo = "rgb(255, 255, 0)";         //Rojo
+export const colorRojo = "rgb(255, 255, 0)";            //Rojo
 export const colorResalte = "rgb(255, 255, 0)";         //Amarillo
-export const colorResalte2 = "rgb(0, 255, 0)";           //Verde
-export const colorMalva = "rgb(140, 100, 200)";       //Morado
-export const colorInstruccion = "rgb(51, 204, 255)";        //Celeste
+export const colorResalte2 = "rgb(0, 255, 0)";          //Verde
+export const colorMalva = "rgb(140, 100, 200)";         //Morado
+export const colorInstruccion = "rgb(51, 204, 255)";    //Celeste
 export const NOCOLOR = '';
 let elementInstruccion = [];
 

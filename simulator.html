@@ -31,8 +31,8 @@
             <p>Introduzca aquí el código fuente de su programa.</p>
             <label for="cajaCodigoFuente" class="visually-hidden">Código fuente</label>
             <textarea id="cajaCodigoFuente" rows="12" cols="80" spellcheck="false"></textarea>
-
-            <p class="OptActividad">
+            <br>
+            <div class="OptActividad">
                 <label for="num-ejercicio">Elige un ejercicio </label>
                 <select name="num-ejercicio" id="num-ejercicio">
                     <option value="Actividad1">Actividad 1 - Programa simple.</option>
@@ -45,29 +45,13 @@
                     <option value="Actividad8">Actividad 8 - Anidamientos variables no locales</option>
                 </select>
                 <br>
-                <button class="button-15" id="btn_CargaActividad"> <svg data-v-f6698a44="" aria-hidden="true"
-                        focusable="false" data-prefix="fas" data-icon="file-upload" role="img"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
-                        class="svg-inline--fa fa-file-upload fa-w-12">
-                        <path data-v-f6698a44="" fill="currentColor"
-                            d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm65.18 216.01H224v80c0 8.84-7.16 16-16 16h-32c-8.84 0-16-7.16-16-16v-80H94.82c-14.28 0-21.41-17.29-11.27-27.36l96.42-95.7c6.65-6.61 17.39-6.61 24.04 0l96.42 95.7c10.15 10.07 3.03 27.36-11.25 27.36zM377 105L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9z"
-                            class=""></path>
-                    </svg> Cargar</button>
-                <button class="button-15" id="btn_Compilar"> <svg data-v-f6698a44="" aria-hidden="true"
-                        focusable="false" data-prefix="fas" data-icon="play" role="img"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-play fa-w-14">
-                        <path data-v-f6698a44="" fill="currentColor"
-                            d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
-                            class=""></path>
-                    </svg> Compilar</button>
-                <button class="button-15" id="btn_Reiniciar"> <svg data-v-f6698a44="" aria-hidden="true"
-                        focusable="false" data-prefix="fas" data-icon="play" role="img"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-play fa-w-14">
-                        <path data-v-f6698a44="" fill="currentColor"
-                            d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
-                            class=""></path>
-                    </svg> Reiniciar</button>
-            </p>
+                <!-- Load activity BTN -->
+				<button class="button-15" id="btn_CargaActividad" data-icon="upload">Cargar</button>
+				<!-- Compile BTN -->
+				<button class="button-15" id="btn_Compilar" data-icon="play">Compilar</button>
+				<!-- Reset BTN -->
+				<button class="button-15" id="btn_Reiniciar" data-icon="refresh">Reiniciar</button>
+            </div>
             <div class="resultadoCompilacion" id="ContenedorResultadoCompilacion">
                 <hr>
                 <p> Resultado compilación. </p>
@@ -85,20 +69,12 @@
             <h3>Salida.</h3>
             <div>
                 <label for="consolaSalida" class="visually-hidden">Consola de salida</label>
-                <textarea readonly id="consolaSalida" type="utf-8" class="myoutput"></textarea>
+                <textarea readonly id="consolaSalida" class="myoutput"></textarea>
             </div>
         </div>
         <div id="botoncentrado">
-            <button type="button" class="button-15" id="btn_ejecucionCompleta"><svg data-v-f6698a44=""
-                    aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" role="img"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-play fa-w-14">
-                    <path data-v-f6698a44="" fill="currentColor"
-                        d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
-                        class=""></path>
-                </svg> Ejecución completa</button>
+            <button class="button-15" id="btn_ejecucionCompleta" data-icon="doublePlay">Ejecución completa</button>
         </div>
-
-
 
         <h4>Opciones.</h4>
         <div>
@@ -122,7 +98,6 @@
     <!-- Area for main bottoms Steping process back and foward -->
 
     <div id="Fase2B" class="center">
-        <style type="text/css" class="myoutput"> </style>
         <ul class="tabs">
             <li><a href="#tabCodigoFuente">Código Fuente</a></li>
             <li><a href="#tabTablaCuadruplas">Código intermedio</a></li>
@@ -133,36 +108,35 @@
         <div class="divtablaspilavar">
             <div id="divpilaLlamadas" class="divtabla">
                 <h3 class="fondo" data-toggle-table="tablaPilaLlamadas" style="cursor: pointer;">Pila de llamadas
-                    <span>&#x25BE;</span></h3>
+                    <span>&#x25BE;</span>
+                </h3>
                 <table id="tablaPilaLlamadas"></table>
             </div>
 
             <div id="divpila" class="divtabla">
                 <h3 class="fondo" data-toggle-table="tablaPila" style="cursor: pointer;">Pila de control
-                    <span>&#x25BE;</span></h3>
+                    <span>&#x25BE;</span>
+                </h3>
                 <table id="tablaPila"></table>
             </div>
 
             <div id="divvariable" class="divtabla">
                 <h3 class="fondo" data-toggle-table="tablaVariables" style="cursor: pointer;">Estado del cómputo
-                    <span>&#x25BE;</span></h3>
+                    <span>&#x25BE;</span>
+                </h3>
                 <table id="tablaVariables"></table>
             </div>
 
             <div style="display:block;">
                 <div id="tabTablaCuadruplas" class="tab-content">
-                    <br>
-                    <button type="button" class="button-15" id="btn_prevInstruccion"> AnteriorCI</button>
-                    <button type="button" class="button-15" id="btn_sigInstruccion"> SiguienteCI</button>
-                    <br>
+                    <button class="button-15" id="btn_prevInstruccion" data-icon="prev">Anterior</button>
+                    <button class="button-15" id="btn_sigInstruccion" data-icon="next">Siguiente </button>
                     <table id="tablaCuadruplas" border="1"></table>
                 </div>
 
                 <div id="tabCodigoFuente" class="tab-content">
-                    <br>
-                    <button type="button" class="button-15" id="btn_prevLinea"> AnteriorCF</button>
-                    <button type="button" class="button-15" id="btn_sigLinea"> SiguienteCF</button>
-                    <br>
+                    <button class="button-15" id="btn_prevLinea" data-icon="prev">Anterior</button>
+                    <button class="button-15" id="btn_sigLinea" data-icon="next">Siguiente </button>
                     <table id="tablaCodigoFuente" border="1"></table>
                 </div>
             </div>

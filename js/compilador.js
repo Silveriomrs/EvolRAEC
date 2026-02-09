@@ -9,9 +9,10 @@
 
 import { intercambioCompilador, pilaLLamada } from './API.js';
 import parserUned from './parserUned.js';
-import * as State from './state.js';  //States used in compilator
+import * as State from './state.js';                                            //States used in compilator
 import * as View from './viewElements.js'
 import { loadExercise } from './exercises.js';
+import { initIcons } from './icons.js';                                         //Icons for the icons
 
 const state = State.state;
 
@@ -106,9 +107,7 @@ View.btn_compilar.addEventListener('click', (e) => {
         if (error.hash && error.hash.loc && error.hash.loc.first_line) {
             state.posLine = error.hash.loc.first_line;
         }
-
     }
-
 })
 
 /**
@@ -189,13 +188,11 @@ View.btn_prevInstruccion.addEventListener('click', (e) => {
 function backInst() {
     let index = state.indice;
     console.log(index);
-    //DELETEME: State.showLogState();
     //Reset previous values (no need since it also is done by compilar function).
     //Firstly we will compile the same code again
     View.btn_compilar.click();
     //Finally give as many steps comsuming instructions as we need.
     for (let i = 1;i < index;i++) { calcNextIns(); }
-    //DELETEME: State.showLogState();
     View.activateTab('#tabTablaCuadruplas');
 }
 
@@ -205,18 +202,15 @@ function backInst() {
  */
 View.btn_prevLinea.addEventListener('click', (e) => {
     const insToGoal = State.getPreviousPosition();
-
     //Check we are not in first line already.
     if (insToGoal === null) {
-        View.btn_compilar.click();                                      //To restore real initial memory state, compile.
-        return;                                                         //End returning control.
-    } else { View.btn_compilar.click(); }                                //Firstly we will compile the same code again
+        View.btn_compilar.click();                                              //To restore real initial memory state, compile.
+        return;                                                                 //End returning control.
+    } else { View.btn_compilar.click(); }                                       //Firstly we will compile the same code again
     //Finally give as many steps comsuming instructions as we need.
     while (isNextInstruction() && state.indice <= insToGoal) {
         calcNextIns();
     }
-
-    //DELETEME: State.showLogState();
     //Remark/activate its tab on the list.
     View.activateTab('#tabCodigoFuente');
 })
@@ -237,8 +231,8 @@ View.btn_sigLinea.addEventListener('click', (e) => {
     //A line is componsed by some instructions. So to execute 1 line, all the instructions must be run. 
     //Loop to run all instruction while they belong to the same line.
     while (isNextInstruction() && continuo) {
-        calcNextIns();                                              //Since calcNextIns() increase +1 after the call
-        if (state.lineaActual != getActiveLine()) {                        //When it doesn't match, that means we are in a new line.
+        calcNextIns();                                                          //Since calcNextIns() increase +1 after the call
+        if (state.lineaActual != getActiveLine()) {                             //When it doesn't match, that means we are in a new line.
             continuo = false;
         }
     }
@@ -248,7 +242,6 @@ View.btn_sigLinea.addEventListener('click', (e) => {
         View.disableControlButtons();
     }
 
-    //DELETEME: State.showLogState();
     View.activateTab('#tabCodigoFuente');
 })
 
@@ -471,11 +464,11 @@ function pintaTablaPila() {
     $('#tablaPila tr').on('click', function() {
         let data = $(this).find('td');
         let dir = data[0].innerText;                                              //Address
-        let valor = data[1].innerText;                                              //Value
+        let value = data[1].innerText;                                              //Value
         let desc = data[2].innerText;                                              //Description
 
-        if (dir && value && value != '') {
-            View.clickTablaPila(dir, valor, desc);
+        if (dir && value && value && value != '') {
+            View.clickTablaPila(dir, value, desc);
         }
 
     });
@@ -874,10 +867,7 @@ function consumeInstruccion() {
         //
         state.lineaActual++;
         state.indice++;
-        State.addLog(state.indice, state.lineaActual);
-        //DELETEME: 
-        State.showLogState();
-        return;                                                                   //stop calculating.
+        State.addLog(state.indice, state.lineaActual);                                                               //stop calculating.
     } else {
         qcuadrupla = getIns(state.indice);
         qLinea = 0;
@@ -1141,3 +1131,6 @@ tabs.forEach(tab => tab.addEventListener('click', changeActiveTab));
 document.addEventListener('DOMContentLoaded', () => {
     View.initTableToggles();
 });
+
+//Init the icons (for buttons)
+initIcons();
