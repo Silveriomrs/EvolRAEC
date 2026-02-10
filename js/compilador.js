@@ -425,6 +425,15 @@ function pintaTablaPila() {
     for (let key of Array.from(miMapa.keys()).sort(function(a, b) { return a - b; })) {
         let value = miMapa.get(key);
         qDescripcion = traeDescripcionPosicion(key, value);
+        
+        //DELETEME: debugging NaN bug
+        if (isNaN(value)) {
+            console.error(' NaN detectado en pintaTablaPila!');
+            console.error('  Dirección (key):', key);
+            console.error('  Valor (value):', value, 'tipo:', typeof value);
+            console.error('  Descripción:', qDescripcion);
+            console.error('  state.mapPila completo:', Array.from(state.mapPila.entries()));
+        }
 
         let muestroLinea = false;
 
@@ -467,7 +476,7 @@ function pintaTablaPila() {
         let value = data[1].innerText;                                              //Value
         let desc = data[2].innerText;                                              //Description
 
-        if (dir && value && value && value != '') {
+        if (dir && desc && value && value != '') {
             View.clickTablaPila(dir, value, desc);
         }
 
@@ -910,7 +919,7 @@ function consumeInstruccion() {
                 break;
             //case "VARGLOBAL":
             case "VAR":
-                state.mapPila.set(state.regSP, parseInt(qp2));
+                state.mapPila.set(state.regSP, Number.parseInt(qp2,10));
                 state.arrMem.unshift([posPila(), qp1]);
                 State.decSP();
                 break;
@@ -954,13 +963,12 @@ function consumeInstruccion() {
                 //Ej: T_1-->-8
                 //;Quadruple - [MV T_1, 5, null]
                 //MOVE #5, #-8[.IX]
-                if (!Number.isNaN(qp2)) {
-                    state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), Number.parseInt(qp2));
-                }
-                else {
-                    state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), recuperaValor(qp2));
-                }
-                break;
+                { const n = Number.parseInt(qp2, 10);
+                    state.mapPila.set(
+                        posMem(recuperaPosicionMemoria(qp1)),
+                        Number.isNaN(n) ? recuperaValor(qp2) : n
+                    );
+                break; }
             case "MVA":
                 //Ej: T_0-->-7,
                 //;Quadruple - [MVA T_0, A, null]
@@ -1053,7 +1061,7 @@ function consumeInstruccion() {
             //  break;
             case "DEVCALL":
                 //Eliminamos de state.arrMem los valores del RA que cerramos
-                state.arrMem = state.arrMem.filter(reg => reg[0] > state.arrPilaLlamadas[0].inicioRA);
+                { state.arrMem = state.arrMem.filter(reg => reg[0] > state.arrPilaLlamadas[0].inicioRA);
 
                 //Guardamos en temporal el valor de la salida del RA
                 if (qp2 != "null") {
@@ -1071,7 +1079,7 @@ function consumeInstruccion() {
                 state.regSP = posMem(state.arrPilaLlamadas[0].inicioRA);
                 //Eliminamos la llamada de la pila de llamadas
                 state.arrPilaLlamadas.shift();
-                break;
+                break; }
             default:
                 //COMPROBACION DE QUE TODAS LAS INSTRUCCIONES ESTAN HECHAS
                 alert('FALTA HACER INSTRUCCION ' + qOperacion);
