@@ -64,8 +64,6 @@ export function inicializaFase2() {
     btn_prevLinea.style.display = 'inline-block';
     //
     btn_ejecucionCompleta.style.display = 'block';
-    //TODO: Delete if all works fine with the toggle tables (clicking on their titles)
-    //initTableToggles();
 }
 
 //TODO AUX ZONE
@@ -331,13 +329,66 @@ export function activateTab(href) {
     if (content) content.classList.add('active');
 }
 
+
+/**
+ * The function remarks the address (dir) or values in the referenced table that
+ *  match the value parameter. This function requires the Column in the table where the
+ *  column of data (add/val/dir) is placed.
+ *  The functon doesn't check if the parameters are valid.
+ * @param {string} tableName name of the table to explore to remarks lines.
+ * @param {number} col column number of the table that reflects the address value (dir).
+ * @param {number} value address number or value to match to remark on the table.
+ * @param {color} color Color to use to remark the line.
+ */
+function remarkAddress(tableName, col, value, color){
+    //Get elements for the table
+    const elements = getItemsTable(tableName);
+    //Explore the elements array and remarks whose elements match the DIR (address).
+    if (elements && elements.length > 1) {
+        let i = 1;
+        do {
+            if (Number(elements[i].cells[col].innerHTML) == value) {
+                elements[i].style.backgroundColor = color;
+                i = elements.length;
+            }
+            i += 1;
+        } while (elements.length > i);
+    }
+}
+
+
+/**
+ * The function remarks the addresses (dirs) in the referenced table that are Equal or Greater
+ *  than the referenced value. This function requires the Column in the table where the
+ *  address (dir) are placed.
+ *  The functon doesn't check if the parameters are valid.
+ * @param {string} tableName name of the table to explore to remarks lines.
+ * @param {number} col column number of the table that reflects the address value (dir).
+ * @param {number} dir address number to match to remark on the table. 
+ */
+function remarkAddressEG(tableName, col, dir){
+    //Get elements for the table
+    const elements = getItemsTable(tableName);
+    //Check if it is not null and contains data to calc. Same for the others.
+    //Explore the elements array and remarks whose elements match the DIR (address).
+    if (elements && elements.length > 1) {
+        let i = 1;
+        do {
+            if (Number(elements[i].cells[col].innerHTML) >= dir) {
+                elements[i].style.backgroundColor = colorResalte;
+                i = elements.length;
+            }
+            i += 1;
+        } while (elements.length > i);
+    }
+}
+
+
 /**
  * Ilumina las posiciones relacionadas con la variable seleccionada
  * * @param {Int} dir Direccion de la variable
  **/
 export function clickTablaVariables(dir) {
-
-    let i;
     //Check if dir == null in such a case do not proceed with the rest.
     if (!dir) return;
     //reset previous colors
@@ -346,46 +397,13 @@ export function clickTablaVariables(dir) {
     resetColoresCodigoIntermedio();
 
     //Lineas pila de llamadas
-    const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
-
-    //Check if it is not null and contains data to calc. Same for the others.
-    if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
-        i = 1;
-        do {
-            if (Number(elementPilaLlamadas[i].cells[2].innerHTML) >= dir) {
-                elementPilaLlamadas[i].style.backgroundColor = colorResalte;
-                i = elementPilaLlamadas.length;
-            }
-            i += 1;
-        } while (elementPilaLlamadas.length > i);
-    }
+    remarkAddressEG("tablaPilaLlamadas", 2, dir);
 
     //Lineas pila de control
-    const elementPila = getItemsTable("tablaPila");
-    if (elementPila && elementPila.length > 1) {
-        i = 1;
-        do {
-            if (Number(elementPila[i].cells[0].innerHTML) == dir) {
-                elementPila[i].style.backgroundColor = colorResalte;
-                i = elementPila.length;
-            }
-            i += 1;
-        } while (elementPila.length > i);
-    }
+    remarkAddress("tablaPila", 0, dir, colorResalte);
 
     //Lineas estado del cómputo
-    const elementTabVariables = getItemsTable("tablaVariables");
-
-    if (elementTabVariables && elementTabVariables.length > 1) {
-        i = 1;
-        do {
-            if (Number(elementTabVariables[i].cells[2].innerHTML) == dir) {
-                elementTabVariables[i].style.backgroundColor = colorResalte;
-                i = elementTabVariables.length;
-            }
-            i += 1;
-        } while (elementTabVariables.length > i);
-    }
+    remarkAddress("tablaVariables", 2, dir, colorResalte);
 }
 
 /**
@@ -416,62 +434,19 @@ export function clickTablaPila(dir, valor, descrip) {
     }
 
 
-    //Lineas pila de llamadas
-    const elementPilaLlamadas = getItemsTable("tablaPilaLlamadas");
-    //Check if it is not null and contains data to calc. Same for the others.
-    if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
-        i = 1;
-        do {
-            if (Number(elementPilaLlamadas[i].cells[2].innerHTML) >= dir) {
-                elementPilaLlamadas[i].style.backgroundColor = colorResalte;
-                i = elementPilaLlamadas.length;
-            }
-            i += 1;
-        }
-        while (elementPilaLlamadas.length > i);
-    }
+    //Lines for Call Stack (pila de llamadas)
+    remarkAddressEG("tablaPilaLlamadas", 2, dir);
+    // Now remark description match
+    remarkAddress("tablaPilaLlamadas", 2, descrip, colorMalva);
 
-    if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
-        i = 1;
-        do {
-            if (Number(elementPilaLlamadas[i].cells[2].innerHTML) == descrip) {
-                elementPilaLlamadas[i].style.backgroundColor = colorMalva;
-                i = elementPilaLlamadas.length;
-            }
-            i += 1;
-        } while (elementPilaLlamadas.length > i);
-    }
-
-    //Lineas pila de control
-    const elementPila = getItemsTable("tablaPila");
-
-    if (elementPila && elementPila.length > 1) {
-        i = 1;
-        do {
-            if (Number(elementPila[i].cells[0].innerHTML) == dir) {
-                elementPila[i].style.backgroundColor = colorResalte;
-            }
-
-            if (Number(elementPila[i].cells[0].innerHTML) == descrip) {
-                elementPila[i].style.backgroundColor = colorMalva;
-            }
-            i += 1;
-        } while (elementPila.length > i);
-    }
+    //Lines for Control Stack (Pila de control)
+    remarkAddress("tablaPila", 0, dir, colorResalte);
+    //
+    remarkAddress("tablaPila", 0, descrip, colorMalva);
+    
 
     //Lineas estado del cómputo
-    const elementTabVariables = getItemsTable("tablaVariables");
-
-    if (elementTabVariables && elementTabVariables.length > 1) {
-        i = 1;
-        do {
-            if (Number(elementTabVariables[i].cells[2].innerHTML) == dir) {
-                elementTabVariables[i].style.backgroundColor = colorResalte;
-                i = elementTabVariables.length;
-            }
-            i += 1;
-        } while (elementTabVariables.length > i);
-    }
+    remarkAddress("tablaVariables", 2, dir, colorResalte);
 
 
     // Linea codigo intermedio
