@@ -1,60 +1,52 @@
 /**
  * File containing the main exercises for students.
- * Activities stored and function to load it.
  * 
- * This module depends on compilador.js, thus it must be imported there.
- * 
+ * This module is used by viewElements.js, thus it must be imported there.
  */
 
+//MAIN FUNTIONS FOR SELECT IN DOM
 
 
-//AUXILIARY FUNCTIONS
-
-/**
- * It returns the referenced exercise.
- */
-export function loadExercise() {
-    //Var to return the value
-    const v = document.getElementById('num-ejercicio').value;
-    let txtCode = "";
-
-    switch (v) {
-        case "Actividad1":
-            txtCode = cargaActividad1();
-            break;
-        case "Actividad2":
-            txtCode = cargaActividad2();
-            break;
-        case "Actividad3":
-            txtCode = cargaActividad3();
-            break;
-        case "Actividad4":
-            txtCode = cargaActividad4();
-            break;
-        case "Actividad5":
-            txtCode = cargaActividad5();
-            break;
-        case "Actividad6":
-            txtCode = cargaActividad6();
-            break;
-        case "Actividad7":
-            txtCode = cargaActividad7();
-            break;
-        case "Actividad8":
-            txtCode = cargaActividad8();
-            break;
-        default:
-            alert('ERROR. Opción no contemplada ' + v);
-    }
-
-    return txtCode;
-}
+export const exercises = {
+    Actividad1: {
+        title: "Actividad 1 - Programa simple.",
+        code: getActividad1()
+    },
+    Actividad2: {
+        title: "Actividad 2 - Prueba de IF.",
+        code: getActividad2()
+    },
+    Actividad3: {
+        title: "Actividad 3 - Invocación a subprograma.",
+        code: getActividad3()
+    },
+    Actividad4: {
+        title: "Actividad 4 - Llamada a función.",
+        code: getActividad4()
+    },
+    Actividad5: {
+        title: "Actividad 5 - Recursividad Procedimientos.",
+        code: getActividad5()
+    },
+    Actividad6: {
+        title: "Actividad 6 - Recursividad Funciones. Prog. Tetraédrico",
+        code: getActividad6()
+    },
+    Actividad7: {
+        title: "Actividad 7 - Recursividad Funciones. Prog. Fibonacci",
+        code: getActividad7()
+    },
+    Actividad8: {
+        title: "Actividad 8 - Anidamientos variables no locales",
+        code: getActividad8()
+    }  
+};
 
 
 //ZONE FOR EXCERSISES
 
 
-function cargaActividad1() {
+function getActividad1() {
     return (
         '// Actividad 1\r\r' +
         '/* \r' +
@@ -70,7 +62,7 @@ function cargaActividad1() {
     )
 }
 
-function cargaActividad2() {
+function getActividad2() {
     return (
         '// Actividad 2\r\r' +
         '/* \r' +
@@ -95,7 +87,7 @@ function cargaActividad2() {
     )
 }
 
-function cargaActividad3() {
+function getActividad3() {
     //
     return (
         '// Actividad 3\r\r' +
@@ -121,7 +113,7 @@ function cargaActividad3() {
     )
 }
 
-function cargaActividad4() {
+function getActividad4() {
     return (
         '// Actividad 4\r\r' +
         '/* \r' +
@@ -144,7 +136,7 @@ function cargaActividad4() {
     )
 }
 
-function cargaActividad5() {
+function getActividad5() {
     return (
         '// Actividad 5\r\r' +
         '/* \r' +
@@ -175,7 +167,7 @@ function cargaActividad5() {
     )
 }
 
-function cargaActividad6() {
+function getActividad6() {
     return (
         '// Actividad 6\r\r' +
         '/* \r' +
@@ -213,7 +205,7 @@ function cargaActividad6() {
     )
 }
 
-function cargaActividad7() {
+function getActividad7() {
     return (
         '// Actividad 7\r\r' +
         '/* \r' +
@@ -256,7 +248,7 @@ function cargaActividad7() {
     )
 }
 
-function cargaActividad8() {
+function getActividad8() {
     return (
         '// Actividad 8\r\r' +
         '/* \r' +

@@ -37,6 +37,75 @@ const logState = [];
 
 /** ====== new imported functions ====== */
 
+export function traeDescripcionPosicion(pos, dir) {
+    let callStackSize = state.arrPilaLlamadas.length;
+
+    if (callStackSize != 0) {
+        for (let i = 0;i <= callStackSize - 1;i++) {
+            let voyPor, valRet, EsMaq, EC, EA, ParamDesde, ParamHasta, DireRet, VarDesde, VarHasta, TempDesde, TempHasta, qcorrespondeALlamada;
+            let a = posMem(state.arrPilaLlamadas[i].inicioRA);
+
+            if (pos <= a) {
+                qcorrespondeALlamada = state.arrPilaLlamadas[i].nombreProcOFunc;
+                valRet = posMem(state.arrPilaLlamadas[i].inicioRA);
+                EsMaq = valRet - 1;
+                EC = EsMaq - 1;
+                EA = EC - 1;
+                voyPor = EA;
+
+                if (state.arrPilaLlamadas[i].parametros.length != 0) {
+                    ParamDesde = voyPor - 1;
+                    ParamHasta = ParamDesde - state.arrPilaLlamadas[i].parametros.length + 1;
+                    voyPor = ParamHasta;
+                }
+
+                if (i != callStackSize - 1) {// al del main no le pongo dirección de retorno
+                    DireRet = voyPor - 1;
+                    voyPor = DireRet;
+                }
+
+                if (state.arrPilaLlamadas[i].numVariables != 0) {
+                    VarDesde = voyPor - 1;
+                    VarHasta = VarDesde - state.arrPilaLlamadas[i].numVariables + 1;
+                    voyPor = VarHasta;
+                }
+
+                if (state.arrPilaLlamadas[i].numTemporales != 0) {
+                    TempDesde = voyPor - 1;
+                    TempHasta = TempDesde - state.arrPilaLlamadas[i].numTemporales + 1;
+                    //DELETEME: This last assignation has no sense. It is no more used.
+                    voyPor = TempHasta;
+                }
+
+                if (pos == valRet) {
+                    return 'Valor retorno'
+                } else if (pos == EsMaq) {
+                    return 'Estado máquina'
+                } else if (pos == EC) {
+                    if (state.arrPilaLlamadas[i].inicioRA == 0)
+                        return 'Enlace control'
+                    else
+                        return 'Enlace control --> ' + posMem(dir)
+                } else if (pos == EA) {
+                    if (state.arrPilaLlamadas[i].inicioRA == 0)
+                        return 'Enlace acceso'
+                    else
+                        return 'Enlace acceso --> ' + posMem(dir)
+                } else if ((state.arrPilaLlamadas[i].parametros.length != 0) && (ParamDesde >= pos) && (ParamHasta <= pos)) {
+                    return 'Parámetro --> ' + recuperaVariableArrMem(pos)
+                } else if (pos == DireRet) {
+                    return 'Dir. retorno'
+                } else if ((state.arrPilaLlamadas[i].numVariables != 0) && (VarDesde >= pos) && (VarHasta <= pos)) {
+                    return 'Variable --> ' + recuperaVariableArrMem(pos)
+                } else if ((state.arrPilaLlamadas[i].numTemporales != 0) && (TempDesde >= pos) && (TempHasta <= pos)) {
+                    return 'Temporal --> ' + recuperaVariableArrMem(pos)
+                } else { return '' }
+
+            }
+        }
+    }
+    return '';
+}
 
 export function perteneceRAReducido(qDesc) {
     return (qDesc == 'Valor retorno' || qDesc.includes('Enlace control') || qDesc.includes('Enlace acceso'));

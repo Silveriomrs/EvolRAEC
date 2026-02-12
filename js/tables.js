@@ -6,6 +6,8 @@
 export const colorRojo = "rgb(255, 255, 0)";            //Rojo
 export const colorResalte = "rgb(255, 255, 0)";         //Amarillo
 export const colorResalte2 = "rgb(0, 255, 0)";          //Verde
+
+export const COLOR_LIGHTGREEN = "rgb(144, 251, 171)";  //"#90fbab"; //Light green
 export const colorMalva = "rgb(140, 100, 200)";         //Morado
 export const colorInstruccion = "rgb(51, 204, 255)";    //Celeste
 export const NOCOLOR = '';
@@ -280,7 +282,30 @@ export function crearTablaCodFuenteyCuadruplas(datosTabla, cajaCodFuente) {
     setAttTable(tablaCodigoFuente, "tablaCodigoFuente", cuerpoTablaCodigoFuente, "tabCodigoFuente");
 }
 
+/**
+ * Auxiliar to remark elements that belongs to a column into a table from a point to another one with a specific colour.
+ *  Mainly the col (column) parameter store an address (dir), but it may vary on need.
+ * @param {string} table table name to operate with.
+ * @param {number} col number of the colum where the searching filter must be applied.
+ * @param {number} from position on the table (row) to start the operation.
+ * @param {number} to last position on the table (row) to apply the operation.
+ * @param {color} color color to use in the remark (from available in Tables.js) 
+ */
+export function remarkElement(table, col, from, to, color){
+    //Lineas estado del cómputo
+    const elements = Tables.getItemsTable(table);
 
+    if (elements && elements.length > 1) {
+        let i = 1;
+        do {
+            let item = elements[i].cells[col].innerHTML;
+            if ((item >= from) && (item <= to) && (item != "")) {
+                elements[i].style.backgroundColor = color;
+            }
+            i += 1;
+        } while (elements.length > i);
+    }
+}
 
 /**
  * The function remarks the address (dir) or values in the referenced table that

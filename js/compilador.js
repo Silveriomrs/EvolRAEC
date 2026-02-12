@@ -12,22 +12,17 @@ import parserUned from './parserUned.js';
 import * as State from './state.js';                                            //States used in compilator
 import * as Tables from './tables.js';
 import * as View from './viewElements.js'
-import { loadExercise } from './exercises.js';
 import { initIcons } from './icons.js';                                         //Icons for the icons
 
 const state = State.state;
 
-let txtPrograma;
 let intermedio = [];
 let mapaCadenas = [];
 
 
+//
 inicializaFase1();
 
-
-View.cajaCodFuente.addEventListener('focusin', () => {
-    View.cajaCodFuente.style.backgroundColor = "transparent";
-})
 
 View.opt_mostrarTemp.addEventListener('click', (e) => {
     pintaTablas();
@@ -66,12 +61,12 @@ View.btn_compilar.addEventListener('click', (e) => {
 
         //state.posLine = 0;
         View.cajaCodFuente.disabled = true;
-        View.cajaCodFuente.style.backgroundColor = "#90fbab";
+        View.cajaCodFuente.style.backgroundColor = Tables.COLOR_LIGHTGREEN;
         View.inicializaFase2();
         //TODO: Find where is consolaSalida declarated cause it seems that is not here, so where?
         consolaSalida.textContent = '';
         View.cajaMsjCompilado.textContent = 'El programa se ha compilado sin errores. '
-        View.cajaMsjCompilado.style.backgroundColor = "#90fbab";
+        View.cajaMsjCompilado.style.backgroundColor = Tables.COLOR_LIGHTGREEN;
 
         const tabs2 = document.querySelectorAll('.tabs a');
         tabs2.forEach(tab => tab.classList.remove('active'));
@@ -111,34 +106,6 @@ View.btn_compilar.addEventListener('click', (e) => {
     }
 })
 
-/**
- * This function load the source code pased by paramenters into the Source code box,
- *  also init the first part of the APP and finally add the listener to the box.
- * @param {string} source 
- */
-function loadSourceBox(source) {
-    inicializaFase1();
-    txtPrograma = source;
-    View.cajaCodFuente.value = txtPrograma;
-    View.cajaCodFuente.dispatchEvent(new Event('change'));
-}
-
-/**
- * Listener for load activity function.
- *  It loads the selected activity into the CajaCodFuente box.
- *  This function doesn't check if the text box has a valid text.
- */
-View.btn_cargaActividad.addEventListener('click', (e) => {
-    loadSourceBox(loadExercise());
-})
-
-/**
- * Listener for clear the source code box.
- *  It clears the CajaCodFuente box.
- */
-View.btn_reiniciar.addEventListener('click', (e) => {
-    loadSourceBox("");
-})
 
 /**
  * Returns the instruction aimed by the index. The function checks if the index is valid.
@@ -253,77 +220,8 @@ View.btn_ejecucionCompleta.addEventListener('click', (e) => {
     View.disableControlButtons();
 })
 
-
 //TODO: PINTA ZONE
 
-function traeDescripcionPosicion(pos, dir) {
-    let callStackSize = state.arrPilaLlamadas.length;
-
-    if (callStackSize != 0) {
-        for (let i = 0;i <= callStackSize - 1;i++) {
-            let voyPor, valRet, EsMaq, EC, EA, ParamDesde, ParamHasta, DireRet, VarDesde, VarHasta, TempDesde, TempHasta, qcorrespondeALlamada;
-            let a = State.posMem(state.arrPilaLlamadas[i].inicioRA);
-
-            if (pos <= a) {
-                qcorrespondeALlamada = state.arrPilaLlamadas[i].nombreProcOFunc;
-                valRet = State.posMem(state.arrPilaLlamadas[i].inicioRA);
-                EsMaq = valRet - 1;
-                EC = EsMaq - 1;
-                EA = EC - 1;
-                voyPor = EA;
-
-                if (state.arrPilaLlamadas[i].parametros.length != 0) {
-                    ParamDesde = voyPor - 1;
-                    ParamHasta = ParamDesde - state.arrPilaLlamadas[i].parametros.length + 1;
-                    voyPor = ParamHasta;
-                }
-
-                if (i != callStackSize - 1) {// al del main no le pongo dirección de retorno
-                    DireRet = voyPor - 1;
-                    voyPor = DireRet;
-                }
-
-                if (state.arrPilaLlamadas[i].numVariables != 0) {
-                    VarDesde = voyPor - 1;
-                    VarHasta = VarDesde - state.arrPilaLlamadas[i].numVariables + 1;
-                    voyPor = VarHasta;
-                }
-
-                if (state.arrPilaLlamadas[i].numTemporales != 0) {
-                    TempDesde = voyPor - 1;
-                    TempHasta = TempDesde - state.arrPilaLlamadas[i].numTemporales + 1;
-                    voyPor = TempHasta;
-                }
-
-                if (pos == valRet) {
-                    return 'Valor retorno'
-                } else if (pos == EsMaq) {
-                    return 'Estado máquina'
-                } else if (pos == EC) {
-                    if (state.arrPilaLlamadas[i].inicioRA == 0)
-                        return 'Enlace control'
-                    else
-                        return 'Enlace control --> ' + State.posMem(dir)
-                } else if (pos == EA) {
-                    if (state.arrPilaLlamadas[i].inicioRA == 0)
-                        return 'Enlace acceso'
-                    else
-                        return 'Enlace acceso --> ' + State.posMem(dir)
-                } else if ((state.arrPilaLlamadas[i].parametros.length != 0) && (ParamDesde >= pos) && (ParamHasta <= pos)) {
-                    return 'Parámetro --> ' + State.recuperaVariableArrMem(pos)
-                } else if (pos == DireRet) {
-                    return 'Dir. retorno'
-                } else if ((state.arrPilaLlamadas[i].numVariables != 0) && (VarDesde >= pos) && (VarHasta <= pos)) {
-                    return 'Variable --> ' + State.recuperaVariableArrMem(pos)
-                } else if ((state.arrPilaLlamadas[i].numTemporales != 0) && (TempDesde >= pos) && (TempHasta <= pos)) {
-                    return 'Temporal --> ' + State.recuperaVariableArrMem(pos)
-                } else { return '' }
-
-            }
-        }
-    }
-    return '';
-}
 
 function pintaTablas() {
     pintaTablaPila();
@@ -337,21 +235,23 @@ function pintaTablas() {
  * * @param {Int} dir Direccion inicial del RA de la llamada
  **/
 function clickPilaLlamadas(nombreProcOFunc, dir) {
-    let encontrado, desdePosPila, hastaPosPila, i;
+    let encontrado = false;
+    let desdePosPila = 0;
+    let hastaPosPila = 0; 
+
     //Check if the arguments are valid.
     if (!nombreProcOFunc || !dir) return;
     //reset previous colors
     Tables.resetTableColors();
-    //TODO one of those above or behind is or must innecesary
     Tables.resetColoresCodigoIntermedio();
+    //TODO: one of those above or behind could be innecesary
+    
     //Lineas pila de llamadas
-    //TODO: This was detected like local var, I have added the var declaration. Be aware in case of error.
-
     // THE ORDER OF LOOPS MATTERS! do not change it. 
     const elementPilaLlamadas = Tables.getItemsTable("tablaPilaLlamadas");
 
     if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
-        i = 1;
+        let i = 1;
         do {
             if ((elementPilaLlamadas[i].cells[0].innerHTML == nombreProcOFunc) &&
                 (elementPilaLlamadas[i].cells[2].innerHTML == dir))
@@ -360,16 +260,10 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
         } while (elementPilaLlamadas.length > i);
 
     }
-
-    //Lineas pila de control
-    const elementPila = Tables.getItemsTable("tablaPila");
-
-    desdePosPila = 0;
-    hastaPosPila = 0;
-    i = 0;
-    encontrado = false;
-
+    
+    //Calc points FROM and TO of Call Stack and Vars table to be filtered.
     if (state.arrPilaLlamadas.length != 0) {
+        let i = 0;
         do {
             desdePosPila = hastaPosPila + 1;
             hastaPosPila = State.posMem(state.arrPilaLlamadas[i].inicioRA);
@@ -380,31 +274,14 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
         } while (!encontrado);
     }
 
-    if (elementPila && elementPila.length > 1) {
-        i = 1;
-        do {
-            let item = elementPila[i].cells[0].innerHTML;
-            if ((item >= desdePosPila) && (item <= hastaPosPila) && (item != "")) {
-                elementPila[i].style.backgroundColor = Tables.colorResalte;
-            }
-            i += 1;
-        } while (elementPila.length > i);
-    }
+    //Lineas pila de control
+    Tables.remarkElement("tablaPila", 0, desdePosPila, hastaPosPila, Tables.colorResalte);
 
     //Lineas estado del cómputo
-    const elementTabVariables = Tables.getItemsTable("tablaVariables");
-
-    if (elementTabVariables && elementTabVariables.length > 1) {
-        i = 1;
-        do {
-            let item = elementTabVariables[i].cells[2].innerHTML;
-            if ((item >= desdePosPila) && (item <= hastaPosPila) && (item != "")) {
-                elementTabVariables[i].style.backgroundColor = Tables.colorResalte;
-            }
-            i += 1;
-        } while (elementTabVariables.length > i);
-    }
+    Tables.remarkElement("tablaVariables", 2, desdePosPila, hastaPosPila, Tables.colorResalte);
+    
 }
+
 
 function pintaTablaPila() {
     let muestroRaReducido = View.opt_mostrarRAReducido.checked;
@@ -423,7 +300,7 @@ function pintaTablaPila() {
 
     for (let key of Array.from(miMapa.keys()).sort(function(a, b) { return a - b; })) {
         let value = miMapa.get(key);
-        qDescripcion = traeDescripcionPosicion(key, value);
+        qDescripcion = State.traeDescripcionPosicion(key, value);
 
         let muestroLinea = false;
 
@@ -598,7 +475,7 @@ function inicializaFase1() {
     mapaCadenas = [];
     State.resetState();
     pintaTablas();
-    View.resetFirstPart(state);
+    //DELETEME: View.resetFirstPart(state);
     Tables.limpiaTabla("tablaCodigoFuente");
     Tables.limpiaTabla("tablaCuadruplas");
 }

@@ -4,10 +4,13 @@
  *  to set, inicialize and change their attributes and listeners.
  */
 
+import * as Exercises from './exercises.js';
+
+
 // DOM Elements
 export const btn_compilar = document.getElementById('btn_Compilar');
-export const btn_reiniciar = document.getElementById('btn_Reiniciar');
-export const btn_cargaActividad = document.getElementById('btn_CargaActividad');
+const btn_reiniciar = document.getElementById('btn_Reiniciar');
+const btn_cargaActividad = document.getElementById('btn_CargaActividad');
 export const btn_sigInstruccion = document.getElementById("btn_sigInstruccion");
 export const btn_prevInstruccion = document.getElementById("btn_prevInstruccion");
 export const btn_prevLinea = document.getElementById("btn_prevLinea");
@@ -19,13 +22,61 @@ export const opt_mostrarVisibles = document.getElementById('mostrarVisibles');
 export const opt_mostrarRAReducido = document.getElementById('mostrarRAReducido');
 
 export const cajaCodFuente = document.getElementById('cajaCodigoFuente');
+
+const selector = document.getElementById("num-ejercicio");
 export const cajaMsjCompilado = document.getElementById('resultadoCompilacion');
 export const cajaSimbolos = document.getElementById('cajaSimbolo');
 export const cajaTipos = document.getElementById('cajaTipo');
 
+// Start to load the exercises option into the selector.
+initSelectorOptions();
 
 
-//Functions
+/**
+ * Initiate the properties and assing IDs and Values to each option defined (exercise)
+ *  into exercises.js.
+ */
+function initSelectorOptions(){
+       Object.entries(Exercises.exercises).forEach(([id, data]) => {
+           const option = document.createElement("option");
+           option.value = id;                                                   //Add the ID for the excersise
+           option.textContent = data.title;                                     //Add the title to be read in the selector
+           selector.appendChild(option);
+       });
+}
+
+/**
+ * This function load the source code pased by paramenters into the Source code box,
+ *  also init the first part of the APP and finally add the listener to the box.
+ * @param {string} source 
+ */
+function loadSourceBox(source) {
+    resetFirstPart();
+    cajaCodFuente.value = source;
+    cajaCodFuente.dispatchEvent(new Event('change'));
+}
+
+/**
+ * Listener for load activity function.
+ *  It loads the selected activity into the CajaCodFuente box.
+ *  This function doesn't check if the text box has a valid text.
+ */
+btn_cargaActividad.addEventListener('click', (e) => {
+    const scode = Exercises.exercises[selector.value];
+    loadSourceBox(scode.code);
+})
+
+/**
+ * Listener for clear the source code box.
+ *  It clears the CajaCodFuente box.
+ */
+btn_reiniciar.addEventListener('click', (e) => {
+    loadSourceBox("");
+})
+
+cajaCodFuente.addEventListener('focusin', () => {
+    cajaCodFuente.style.backgroundColor = "transparent";
+})
 
 /**
  * The procedure restart main components from the fist part of the main Window view.
