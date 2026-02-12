@@ -10,13 +10,13 @@
 import { intercambioCompilador, pilaLLamada } from './API.js';
 import parserUned from './parserUned.js';
 import * as State from './state.js';                                            //States used in compilator
+import * as Tables from './tables.js';
 import * as View from './viewElements.js'
 import { loadExercise } from './exercises.js';
 import { initIcons } from './icons.js';                                         //Icons for the icons
 
 const state = State.state;
 
-let pintoCodFuente = true;
 let txtPrograma;
 let intermedio = [];
 let mapaCadenas = [];
@@ -54,6 +54,7 @@ View.btn_compilar.addEventListener('click', (e) => {
         console.log('Error. No hay código fuente. ');
         return;
     }
+    
     State.resetState();
     state.listaCuadruplas = '';
     mapaCadenas = [];
@@ -94,7 +95,7 @@ View.btn_compilar.addEventListener('click', (e) => {
         state.listaCuadruplas = intermedio;
         State.resetState();
         pintaTablas();
-        View.crearTablaCodFuenteyCuadruplas([state.listaCuadruplas]);
+        Tables.crearTablaCodFuenteyCuadruplas([state.listaCuadruplas], View.cajaCodFuente);
 
     } catch (error) {
         document.getElementById("ContenedorResultadoCompilacion").style.display = 'block';
@@ -118,7 +119,6 @@ View.btn_compilar.addEventListener('click', (e) => {
 function loadSourceBox(source) {
     inicializaFase1();
     txtPrograma = source;
-    //CHANGED: Alternative to $('#cajaCodigoFuente').val(txtPrograma).change();
     View.cajaCodFuente.value = txtPrograma;
     View.cajaCodFuente.dispatchEvent(new Event('change'));
 }
@@ -147,7 +147,7 @@ View.btn_reiniciar.addEventListener('click', (e) => {
  * @return {string|null} the content at that index. Null if there are not instructions.
  */
 function getIns(index) {
-    let ins_array = View.getItemsTable("tablaCuadruplas");
+    let ins_array = Tables.getItemsTable("tablaCuadruplas");
     //Check if ins_array has elements.
     if (!ins_array || index >= ins_array.length) {
         return null;
@@ -164,7 +164,7 @@ function calcNextIns() {
     try {
         consumeInstruccion();
     } catch (e) {
-        muestraErrorEjecucion(e);
+        showCatchedErr(e);
     }
 }
 
@@ -187,7 +187,6 @@ View.btn_prevInstruccion.addEventListener('click', (e) => {
  */
 function backInst() {
     let index = state.indice;
-    console.log(index);
     //Reset previous values (no need since it also is done by compilar function).
     //Firstly we will compile the same code again
     View.btn_compilar.click();
@@ -238,7 +237,7 @@ View.btn_sigLinea.addEventListener('click', (e) => {
     }
 
     if (!isNextInstruction()) {
-        View.coloreaTodasInstrucciones();
+        Tables.coloreaTodasInstrucciones();
         View.disableControlButtons();
     }
 
@@ -250,7 +249,7 @@ View.btn_sigLinea.addEventListener('click', (e) => {
  */
 View.btn_ejecucionCompleta.addEventListener('click', (e) => {
     while (isNextInstruction()) { calcNextIns(); }
-    View.coloreaTodasInstrucciones();
+    Tables.coloreaTodasInstrucciones();
     View.disableControlButtons();
 })
 
@@ -263,11 +262,11 @@ function traeDescripcionPosicion(pos, dir) {
     if (callStackSize != 0) {
         for (let i = 0;i <= callStackSize - 1;i++) {
             let voyPor, valRet, EsMaq, EC, EA, ParamDesde, ParamHasta, DireRet, VarDesde, VarHasta, TempDesde, TempHasta, qcorrespondeALlamada;
-            let a = posMem(state.arrPilaLlamadas[i].inicioRA);
+            let a = State.posMem(state.arrPilaLlamadas[i].inicioRA);
 
             if (pos <= a) {
                 qcorrespondeALlamada = state.arrPilaLlamadas[i].nombreProcOFunc;
-                valRet = posMem(state.arrPilaLlamadas[i].inicioRA);
+                valRet = State.posMem(state.arrPilaLlamadas[i].inicioRA);
                 EsMaq = valRet - 1;
                 EC = EsMaq - 1;
                 EA = EC - 1;
@@ -304,20 +303,20 @@ function traeDescripcionPosicion(pos, dir) {
                     if (state.arrPilaLlamadas[i].inicioRA == 0)
                         return 'Enlace control'
                     else
-                        return 'Enlace control --> ' + posMem(dir)
+                        return 'Enlace control --> ' + State.posMem(dir)
                 } else if (pos == EA) {
                     if (state.arrPilaLlamadas[i].inicioRA == 0)
                         return 'Enlace acceso'
                     else
-                        return 'Enlace acceso --> ' + posMem(dir)
+                        return 'Enlace acceso --> ' + State.posMem(dir)
                 } else if ((state.arrPilaLlamadas[i].parametros.length != 0) && (ParamDesde >= pos) && (ParamHasta <= pos)) {
-                    return 'Parámetro --> ' + recuperaVariableArrMem(pos)
+                    return 'Parámetro --> ' + State.recuperaVariableArrMem(pos)
                 } else if (pos == DireRet) {
                     return 'Dir. retorno'
                 } else if ((state.arrPilaLlamadas[i].numVariables != 0) && (VarDesde >= pos) && (VarHasta <= pos)) {
-                    return 'Variable --> ' + recuperaVariableArrMem(pos)
+                    return 'Variable --> ' + State.recuperaVariableArrMem(pos)
                 } else if ((state.arrPilaLlamadas[i].numTemporales != 0) && (TempDesde >= pos) && (TempHasta <= pos)) {
-                    return 'Temporal --> ' + recuperaVariableArrMem(pos)
+                    return 'Temporal --> ' + State.recuperaVariableArrMem(pos)
                 } else { return '' }
 
             }
@@ -342,28 +341,28 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
     //Check if the arguments are valid.
     if (!nombreProcOFunc || !dir) return;
     //reset previous colors
-    View.resetTableColors();
+    Tables.resetTableColors();
     //TODO one of those above or behind is or must innecesary
-    View.resetColoresCodigoIntermedio();
+    Tables.resetColoresCodigoIntermedio();
     //Lineas pila de llamadas
     //TODO: This was detected like local var, I have added the var declaration. Be aware in case of error.
 
     // THE ORDER OF LOOPS MATTERS! do not change it. 
-    const elementPilaLlamadas = View.getItemsTable("tablaPilaLlamadas");
+    const elementPilaLlamadas = Tables.getItemsTable("tablaPilaLlamadas");
 
     if (elementPilaLlamadas && elementPilaLlamadas.length > 1) {
         i = 1;
         do {
             if ((elementPilaLlamadas[i].cells[0].innerHTML == nombreProcOFunc) &&
                 (elementPilaLlamadas[i].cells[2].innerHTML == dir))
-                elementPilaLlamadas[i].style.backgroundColor = View.colorResalte;
+                elementPilaLlamadas[i].style.backgroundColor = Tables.colorResalte;
             i += 1;
         } while (elementPilaLlamadas.length > i);
 
     }
 
     //Lineas pila de control
-    const elementPila = View.getItemsTable("tablaPila");
+    const elementPila = Tables.getItemsTable("tablaPila");
 
     desdePosPila = 0;
     hastaPosPila = 0;
@@ -373,9 +372,9 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
     if (state.arrPilaLlamadas.length != 0) {
         do {
             desdePosPila = hastaPosPila + 1;
-            hastaPosPila = posMem(state.arrPilaLlamadas[i].inicioRA);
+            hastaPosPila = State.posMem(state.arrPilaLlamadas[i].inicioRA);
 
-            if ((state.arrPilaLlamadas[i].nombreProcOFunc == nombreProcOFunc) && (posMem(state.arrPilaLlamadas[i].inicioRA) == dir)) {
+            if ((state.arrPilaLlamadas[i].nombreProcOFunc == nombreProcOFunc) && (State.posMem(state.arrPilaLlamadas[i].inicioRA) == dir)) {
                 encontrado = true;
             } else { i += 1; }
         } while (!encontrado);
@@ -386,21 +385,21 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
         do {
             let item = elementPila[i].cells[0].innerHTML;
             if ((item >= desdePosPila) && (item <= hastaPosPila) && (item != "")) {
-                elementPila[i].style.backgroundColor = View.colorResalte;
+                elementPila[i].style.backgroundColor = Tables.colorResalte;
             }
             i += 1;
         } while (elementPila.length > i);
     }
 
     //Lineas estado del cómputo
-    const elementTabVariables = View.getItemsTable("tablaVariables");
+    const elementTabVariables = Tables.getItemsTable("tablaVariables");
 
     if (elementTabVariables && elementTabVariables.length > 1) {
         i = 1;
         do {
             let item = elementTabVariables[i].cells[2].innerHTML;
             if ((item >= desdePosPila) && (item <= hastaPosPila) && (item != "")) {
-                elementTabVariables[i].style.backgroundColor = View.colorResalte;
+                elementTabVariables[i].style.backgroundColor = Tables.colorResalte;
             }
             i += 1;
         } while (elementTabVariables.length > i);
@@ -412,12 +411,12 @@ function pintaTablaPila() {
     let muestroTemporales = View.opt_mostrarTemp.checked;
     //TODO: Changed map syntax. Observe it.
     const miMapa = new Map(state.mapPila.entries());
-    View.limpiaTabla("tablaPila");
+    Tables.limpiaTabla("tablaPila");
     let FlagLinBlanca;
 
     //Creation of the Table for Stack.
     const columns = ['Dir.', 'Valor', 'Descripción'];
-    const tablaPila = View.createTable(columns);
+    const tablaPila = Tables.createTable(columns);
 
     let cuerpoTabla = document.createElement('tbody');
     let qDescripcion;
@@ -425,22 +424,13 @@ function pintaTablaPila() {
     for (let key of Array.from(miMapa.keys()).sort(function(a, b) { return a - b; })) {
         let value = miMapa.get(key);
         qDescripcion = traeDescripcionPosicion(key, value);
-        
-        //DELETEME: debugging NaN bug
-        if (isNaN(value)) {
-            console.error(' NaN detectado en pintaTablaPila!');
-            console.error('  Dirección (key):', key);
-            console.error('  Valor (value):', value, 'tipo:', typeof value);
-            console.error('  Descripción:', qDescripcion);
-            console.error('  state.mapPila completo:', Array.from(state.mapPila.entries()));
-        }
 
         let muestroLinea = false;
 
-        if (!muestroRaReducido || (muestroRaReducido && View.perteneceRAReducido(qDescripcion)))
+        if (!muestroRaReducido || (muestroRaReducido && State.perteneceRAReducido(qDescripcion)))
             muestroLinea = true;
 
-        if (!muestroTemporales && View.perteneceTemporal(qDescripcion))
+        if (!muestroTemporales && State.perteneceTemporal(qDescripcion))
             muestroLinea = false;
 
         if (muestroLinea) {
@@ -450,7 +440,7 @@ function pintaTablaPila() {
             //Define cells names.
             const cells = [key, value, qDescripcion];
             //Create row
-            const fila = View.createRow(cells);
+            const fila = Tables.createRow(cells);
             //Add it to the table.
             cuerpoTabla.appendChild(fila);
 
@@ -461,14 +451,14 @@ function pintaTablaPila() {
                 //Define cells names.
                 const cells = [' ', '', ''];
                 //Create row
-                const fila = View.createRow(cells);
+                const fila = Tables.createRow(cells);
                 //Add it to the table.
                 cuerpoTabla.appendChild(fila);
             }
         }
     }
 
-    View.setAttTable(tablaPila, "tablaPila", cuerpoTabla, "divpila");
+    Tables.setAttTable(tablaPila, "tablaPila", cuerpoTabla, "divpila");
     //Add event listener.
     $('#tablaPila tr').on('click', function() {
         let data = $(this).find('td');
@@ -477,7 +467,7 @@ function pintaTablaPila() {
         let desc = data[2].innerText;                                              //Description
 
         if (dir && desc && value && value != '') {
-            View.clickTablaPila(dir, value, desc);
+            Tables.clickTablaPila(dir, value, desc);
         }
 
     });
@@ -489,10 +479,10 @@ function pintaTablaVariables() {
     let muestroVisibles = View.opt_mostrarVisibles.checked;
     const locMap = new Map();
     locMap.clear()
-    View.limpiaTabla("tablaVariables");
+    Tables.limpiaTabla("tablaVariables");
     //Creation of the Table for variables.
     const columns = ['Variable', 'Dir.', 'Valor', 'Visible'];
-    const tablaVariables = View.createTable(columns);
+    const tablaVariables = Tables.createTable(columns);
 
 
     let cuerpoTabla = document.createElement('tbody');
@@ -508,29 +498,29 @@ function pintaTablaVariables() {
         }
 
         if (muestroTemp && muestroVis) {
-            const cells = [item[1], posMem(item[0]), state.mapPila.get(posMem(item[0]))];
+            const cells = [item[1], State.posMem(item[0]), state.mapPila.get(State.posMem(item[0]))];
             //For last cell, it varys its text depending on extra item.
             //add it to the array to create the whole row.
             if (!locMap.has(item[1])) {
-                locMap.set(item[1], posMem(item[0]));
+                locMap.set(item[1], State.posMem(item[0]));
                 cells.push('Si');
             } else {
                 cells.push('No');
             }
 
             //creating the whole row.
-            const fila = View.createRow(cells);
+            const fila = Tables.createRow(cells);
             //add the row to the table.
             cuerpoTabla.appendChild(fila);
         }
     })
 
-    View.setAttTable(tablaVariables, "tablaVariables", cuerpoTabla, "divvariable");
+    Tables.setAttTable(tablaVariables, "tablaVariables", cuerpoTabla, "divvariable");
     //Add event listener.
     $('#tablaVariables tr').on('click', function() {
         let dato = $(this).find('td:eq(2)').html();//posicion de la tabla donde se encuentra la dirección
         //DELETEME: pintaTablas();
-        View.clickTablaVariables(dato);
+        Tables.clickTablaVariables(dato);
     });
 }
 
@@ -538,26 +528,26 @@ function pintaTablaVariables() {
 
 function pintaCallStack() {
 
-    View.limpiaTabla("tablaPilaLlamadas");
+    Tables.limpiaTabla("tablaPilaLlamadas");
 
     if (state.arrPilaLlamadas.length != 0) {
         const columns = ['Llamada proc-fun', 'Inicio RA', 'Dir.'];
-        const tablaPilaLlamadas = View.createTable(columns);
+        const tablaPilaLlamadas = Tables.createTable(columns);
 
         let cuerpoTabla = document.createElement('tbody');
         let i = 0;
 
         do {
             //create cells names array
-            const cellsNames = [state.arrPilaLlamadas[i].nombreProcOFunc, state.arrPilaLlamadas[i].inicioRA, posMem(state.arrPilaLlamadas[i].inicioRA)];
+            const cellsNames = [state.arrPilaLlamadas[i].nombreProcOFunc, state.arrPilaLlamadas[i].inicioRA, State.posMem(state.arrPilaLlamadas[i].inicioRA)];
             //create row
-            const fila = View.createRow(cellsNames);
+            const fila = Tables.createRow(cellsNames);
             //add it to the table
             cuerpoTabla.appendChild(fila);
             i += 1;
         } while (i < state.arrPilaLlamadas.length);
 
-        View.setAttTable(tablaPilaLlamadas, "tablaPilaLlamadas", cuerpoTabla, "divpilaLlamadas");
+        Tables.setAttTable(tablaPilaLlamadas, "tablaPilaLlamadas", cuerpoTabla, "divpilaLlamadas");
         //Add event listener.
         $('#tablaPilaLlamadas tr').on('click', function() {
             let dato1 = $(this).find('td:first').html();
@@ -577,7 +567,7 @@ function pintaCallStack() {
  */
 function isNextInstruction() {
     //Firstly get a copy as a local variable from the table
-    const elementInstruccion = View.getItemsTable("tablaCuadruplas");
+    const elementInstruccion = Tables.getItemsTable("tablaCuadruplas");
     //Is the index a valid one?
     if (!elementInstruccion || state.indice >= elementInstruccion.length) {
         return false;
@@ -609,92 +599,10 @@ function inicializaFase1() {
     State.resetState();
     pintaTablas();
     View.resetFirstPart(state);
+    Tables.limpiaTabla("tablaCodigoFuente");
+    Tables.limpiaTabla("tablaCuadruplas");
 }
 
-/**
- * Calcula la "posición" de la en la pila respecto a state.regSP
- **/
-function posPila() {
-    return state.regSP - State.maxAddress;
-}
-
-/**
- * Calcula la "posición" de la en la pila respecto a pos
- * * @param {Int} pos Dir ind
- **/
-function posPilaDI(pos) {
-    return pos - State.maxAddress;
-}
-
-/**
- * Calcula la "posición" del parametro en la pila respecto al inicio de su RA
- * * @param {Int} pos Posicion
- **/
-function posParametro(pos) {
-    return pos - State.tamannoFijoRA;
-}
-
-/**
-* @param {Int} pos Posicion
-*/
-function posMem(pos) {
-    return State.maxAddress + pos;
-}
-
-/**
-* Recupera la posición de memoria que ocupa la variable que se le pasa como parámetro
-* @param {String} variable variable
-*/
-function recuperaPosicionMemoria(variable) {
-    for (const memo of state.arrMem) {
-        if (memo[1] == variable) { return memo[0] }
-    }
-    throw new Error('Error variable no encontrada');//aqui no debería llegar nunca
-}
-
-/**
-* Recupera el valor de la variable que se le pasa como parámetro
-* @param {String} variable variable
-*/
-function recuperaValor(variable) {
-    for (const memo of state.arrMem) {
-        if (memo[1] == variable) {
-
-            //opcion1
-            //busco por Enlace de acceso
-            //encontradoEA = buscoPosicionPorEnlaceAcceso(variable,0);
-            //if (encontradoEA != memo[0]) alert('variable  ' + variable + ' ' + encontradoEA +  '--' + memo[0]);
-
-            //opcion2
-            //Busco en la pila
-            //return state.mapPila.get(posMem(memo[0]));
-            let encontradoArrMem = posMem(memo[0]);
-            return state.mapPila.get(encontradoArrMem);
-        }
-    }
-    throw new Error('Error variable no encontrada');//aqui no debería llegar nunca
-}
-
-/**
-* Recupera la variable de la direccion de memoria que se le pasa como parámetro
-* @param {int} qPos posicion de memoriavariable
-*/
-function recuperaVariableArrMem(qPos) {
-    let xx;
-    let dInd = posPilaDI(qPos);
-
-    for (const element of state.arrMem) {
-        let index = element.indexOf(dInd);
-        if (index > -1) {
-            xx = element[1];
-            return xx;
-            //TODO: This has not sense after return... FIX IT
-            //i = state.arrMem.length;
-        }
-    }
-
-    throw new Error('Error variable no encontrada');//aqui no debería llegar nunca
-}
 
 
 function buscoPosicionPorEnlaceAcceso(variable, indice) {
@@ -763,53 +671,6 @@ function recuperaValorCadena(cadena) {
     return mapaCadenas.get(cadena);
 }
 
-/**
-* Recupera el valor de la variable que se le pasa como parámetro
-* @param {String} etiq etiqueta
-*/
-function traePosicionEtiqueta(etiq) {
-    let i = 0;
-    let encontrado = false;
-    //TODO: getItemsTable may returns NULL and here is not control about it.
-    const elementInstruccion = View.getItemsTable("tablaCuadruplas");
-
-    //FIXME: bad design, it may enter an infite loop due to while condition.
-    do
-        if (elementInstruccion && elementInstruccion[i].innerText.includes('INL ' + etiq)) {
-            encontrado = true;
-        } else {
-            i += 1;
-        }
-    while (!encontrado);
-    return i;
-}
-
-/**
-* Recupera el valor de la dirección de retorno del RA
-* Donde habíamos guardado la línea de código desde la cual se había hecho la llamada
-* @param {String} nombreProcOFunc nombre procedimiento o función
-*/
-function traeDireccionRetornoRA(nombreProcOFunc) {
-    let i;
-    //TODO: FIXME: this conditional has a asignation instead comparator. I change nombreprocfunc = nombreproc for ... == ...
-    if (state.arrPilaLlamadas[0].nombreProcOFunc == nombreProcOFunc) {
-        i = state.mapPila.get(posMem(state.arrPilaLlamadas[0].inicioRA - State.tamannoFijoRA - state.arrPilaLlamadas[0].parametros.length));
-    } else {
-        throw new Error('Error al traer dir. retorno RA.');//aqui no debería llegar nunca
-    }
-    return i;
-}
-
-/**
-* Recupera el valor del enlace de Control
-*/
-function traeEnlaceDeControl() {
-    let i = 0;
-    if (state.arrPilaLlamadas.length != 0) {
-        i = state.arrPilaLlamadas[0].inicioRA;
-    }
-    return i;
-}
 
 /**
 * Recupera el valor del enlace de Acceso
@@ -836,31 +697,7 @@ function traeEnlaceDeAcceso(nombreProcOFunc) {
     return enlaceAcceso;
 }
 
-function coloreaInstrucciones() {
-    let qLinea = -1;
-    //TODO: Added elementInstruccion here, originally it wasn't.
-    const elementInstruccion = View.getItemsTable("tablaCuadruplas");
-    const elementLineaCodigoFuente = View.getItemsTable("tablaCodigoFuente");
 
-    for (let step = 0;step < elementInstruccion.length;step++) {
-        if (state.indice != step) {
-            elementInstruccion[step].style.backgroundColor = "transparent";
-        } else {
-            elementInstruccion[step].style.backgroundColor = View.colorInstruccion;
-            qLinea = getActiveLine() - 1;
-        }
-    }
-
-    if (pintoCodFuente) {
-        for (let step = 0;step < elementLineaCodigoFuente.length;step++) {
-            if (qLinea != step) {
-                elementLineaCodigoFuente[step].style.backgroundColor = "transparent";
-            } else {
-                elementLineaCodigoFuente[step].style.backgroundColor = View.colorInstruccion;
-            }
-        }
-    }
-}
 
 
 //TODO: Function extremally big, try to factorize or modularize it.
@@ -871,7 +708,7 @@ function consumeInstruccion() {
     //TODO: This is too often repeated => it needs a particular function.
     //When get this situation (no more inst) it is due to we have gotten HALT state.
     if (!isNextInstruction()) {
-        View.coloreaTodasInstrucciones();
+        Tables.coloreaTodasInstrucciones();
         View.disableControlButtons();
         //
         state.lineaActual++;
@@ -880,7 +717,7 @@ function consumeInstruccion() {
     } else {
         qcuadrupla = getIns(state.indice);
         qLinea = 0;
-        pintoCodFuente = true;
+        Tables.setPaintSourceCode(true);
         //FIXME: Here is a bug when transformed into startWith function instead indexOf with jQuery. I guess it may be a bug in JQuery ver
         if (qcuadrupla.indexOf('[') != 0) {
             //Extraigo la parte de la línea si existe
@@ -903,7 +740,7 @@ function consumeInstruccion() {
             case "STARTSUBPROGRAMAP":
             case "STARTSUBPROGRAMAF":
                 //MOVE .SP,.R0
-                state.regR0 = posPila();
+                state.regR0 = State.posPila();
                 //PUSH #-1 VALOR RETORNO
                 state.mapPila.set(state.regSP, -1);
                 State.decSP();
@@ -920,11 +757,11 @@ function consumeInstruccion() {
             //case "VARGLOBAL":
             case "VAR":
                 state.mapPila.set(state.regSP, Number.parseInt(qp2,10));
-                state.arrMem.unshift([posPila(), qp1]);
+                state.arrMem.unshift([State.posPila(), qp1]);
                 State.decSP();
                 break;
             case "PARAM":
-                state.mapPila.set(state.regSP, recuperaValor(qp1));
+                state.mapPila.set(state.regSP, State.recuperaValor(qp1));
                 State.decSP();
                 break;
             case "PUNTEROGLOBAL":
@@ -936,7 +773,7 @@ function consumeInstruccion() {
                         //El valor en state.mapPila ya se lo metí con PARAM
                         if (value.parametros.length != 0) {
                             for (let i = 0;i < value.parametros.length;i++) {
-                                state.arrMem.unshift([posParametro(state.regR0 - i), value.parametros[i]]);
+                                state.arrMem.unshift([State.posParametro(state.regR0 - i), value.parametros[i]]);
                             }
                         }
 
@@ -944,17 +781,17 @@ function consumeInstruccion() {
                         if (value.temporales.length != 0) {
                             for (const element of value.temporales) {
                                 state.mapPila.set(state.regSP, 0);
-                                state.arrMem.unshift([posPila(), element]);
+                                state.arrMem.unshift([State.posPila(), element]);
                                 State.decSP();
                             }
                         }
 
                         //Creo una llamada en la pila de llamadas
-                        state.arrPilaLlamadas.unshift(new pilaLLamada(qp3, state.regR0, value.parametros, traeEnlaceDeControl(), traeEnlaceDeAcceso(qp3), value.numVariables, value.temporales.length));
+                        state.arrPilaLlamadas.unshift(new pilaLLamada(qp3, state.regR0, value.parametros, State.traeEnlaceDeControl(), traeEnlaceDeAcceso(qp3), value.numVariables, value.temporales.length));
                         //Relleno el enlace de control en la pila  pos EC  #-2[.IX]
-                        state.mapPila.set(posMem(state.arrPilaLlamadas[0].inicioRA - 2), state.arrPilaLlamadas[0].EnlaceControl);
+                        state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA - 2), state.arrPilaLlamadas[0].EnlaceControl);
                         //Relleno el enlace de acceso en la pila  pos EC  #-3[.IX]
-                        state.mapPila.set(posMem(state.arrPilaLlamadas[0].inicioRA - 3), state.arrPilaLlamadas[0].EnlaceAcceso);
+                        state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA - 3), state.arrPilaLlamadas[0].EnlaceAcceso);
 
                     }
                 }
@@ -965,8 +802,8 @@ function consumeInstruccion() {
                 //MOVE #5, #-8[.IX]
                 { const n = Number.parseInt(qp2, 10);
                     state.mapPila.set(
-                        posMem(recuperaPosicionMemoria(qp1)),
-                        Number.isNaN(n) ? recuperaValor(qp2) : n
+                        State.posMem(State.recuperaPosicionMemoria(qp1)),
+                        Number.isNaN(n) ? State.recuperaValor(qp2) : n
                     );
                 break; }
             case "MVA":
@@ -974,47 +811,47 @@ function consumeInstruccion() {
                 //;Quadruple - [MVA T_0, A, null]
                 //SUB .IX, #4
                 //MOVE .A, #-7[.IX]
-                state.regA = state.regIX + recuperaPosicionMemoria(qp2);
-                state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), state.regA);
+                state.regA = state.regIX + State.recuperaPosicionMemoria(qp2);
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
                 break;
             case "STP":
                 //Ej:T_0 -->-7, T_1-->-8
                 //;Quadruple - [STP T_0, T_1, null]
                 //MOVE #-7[.IX], .R1
                 //MOVE #-8[.IX], [.R1]
-                state.regR1 = recuperaValor(qp1);
-                state.mapPila.set(posMem(state.regR1), recuperaValor(qp2));
+                state.regR1 = State.recuperaValor(qp1);
+                state.mapPila.set(State.posMem(state.regR1), State.recuperaValor(qp2));
                 break;
             case "MVP":
                 //r  01  02
                 //EJ:
                 //"MOVE " + o1 + "," + ".R0\n"
                 //"MOVE [.R0]," + r
-                state.regR1 = recuperaValor(qp2);
-                state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), state.regR1);
+                state.regR1 = State.recuperaValor(qp2);
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regR1);
                 break;
             case "ADD":
                 //EJ:
                 //ADD T_8, T_6, T_7]
                 //ADD #-18[.IX], #-19[.IX]
                 //MOVE .A,#-20[.IX]
-                state.regA = recuperaValor(qp2) + recuperaValor(qp3);
-                state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), state.regA);
+                state.regA = State.recuperaValor(qp2) + State.recuperaValor(qp3);
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
                 break;
             case "SUB":
                 //EJ:
                 //[SUB T_8, T_6, T_7]
                 //SUB #-18[.IX], #-19[.IX]
                 //MOVE .A,#-20[.IX]
-                state.regA = recuperaValor(qp2) - recuperaValor(qp3);
-                state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), state.regA);
+                state.regA = State.recuperaValor(qp2) - State.recuperaValor(qp3);
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
                 break;
             case "EQ": //comprara los valores del 2º y 3º parámetro. Si son iguales le asigno un 1 al primer parámetro y sino un 0.
-                if (recuperaValor(qp2) == recuperaValor(qp3)) {
-                    state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), 1);
+                if (State.recuperaValor(qp2) == State.recuperaValor(qp3)) {
+                    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 1);
                 }
                 else {
-                    state.mapPila.set(posMem(recuperaPosicionMemoria(qp1)), 0);
+                    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 0);
                 }
                 break;
             case "BRF":
@@ -1023,19 +860,19 @@ function consumeInstruccion() {
                 //Si el valor del primer parámetro es cero salto a la posición de la etiqueta que viene en el segundo parámetro
                 //CMP #0, #-26[.IX]
                 //BZ /L_1
-                if (recuperaValor(qp1) == 0) {
-                    state.indice = traePosicionEtiqueta(qp2); //Salto a la linea donde esté la etiqueta del segundo parametro
+                if (State.recuperaValor(qp1) == 0) {
+                    state.indice = Tables.traePosicionEtiqueta(qp2); //Salto a la linea donde esté la etiqueta del segundo parametro
                 }
                 break;
             case "BR":
                 //[BR L_1, null, null]
-                state.indice = traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
+                state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
                 break;
             case "INL":
                 //No hace nada, solo para indicar etiquetas a donde saltar
                 break;
             case "WRITEINT":
-                consolaSalida.textContent = consolaSalida.textContent + recuperaValor(qp1) + String.fromCharCode(13);
+                consolaSalida.textContent = consolaSalida.textContent + State.recuperaValor(qp1) + String.fromCharCode(13);
                 break;
             case "WRITETXT":
                 //.slice(1, -1) --> quito el primer y último caracter de la cadena que son las comillas ""
@@ -1046,18 +883,18 @@ function consumeInstruccion() {
                 //DIRECCION DE RETORNO
                 state.mapPila.set(state.regSP, state.indice);
                 State.decSP();
-                state.indice = traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
-                pintoCodFuente = false;
+                state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
+                Tables.setPaintSourceCode(false);
                 break;
             case "FINSUBPROGRAMA":
-                state.indice = traeDireccionRetornoRA(qp1);  //Salto a la linea de la "Direción de retorno" del RA.
+                state.indice = State.traeDireccionRetornoRA(qp1);  //Salto a la linea de la "Direción de retorno" del RA.
                 break;
             case "EXIT":
-                state.mapPila.set(posMem(state.arrPilaLlamadas[0].inicioRA), recuperaValor(qp1));
+                state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA), State.recuperaValor(qp1));
                 break;
             //case "RETORNO":
             //    alert('AQUI NO ENTRA. NO SE USA ESTA INSTRUCCION');
-            //    state.mapPila.set(posMem(recuperaPosicionMemoria(qp2)),  state.mapPila.get(posMem(state.arrPilaLlamadas[0].inicioRA)) );
+            //    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)),  state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)) );
             //  break;
             case "DEVCALL":
                 //Eliminamos de state.arrMem los valores del RA que cerramos
@@ -1065,18 +902,18 @@ function consumeInstruccion() {
 
                 //Guardamos en temporal el valor de la salida del RA
                 if (qp2 != "null") {
-                    state.mapPila.set(posMem(recuperaPosicionMemoria(qp2)), state.mapPila.get(posMem(state.arrPilaLlamadas[0].inicioRA)));
+                    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)), state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)));
                 }
 
                 //Eliminamos de la pila los valores del RA que cerramos
-                let k = posMem(state.arrPilaLlamadas[0].inicioRA);
+                let k = State.posMem(state.arrPilaLlamadas[0].inicioRA);
                 for (let clave of state.mapPila.keys()) {
                     if (clave <= k) {
                         state.mapPila.delete(clave);
                     }
                 };
 
-                state.regSP = posMem(state.arrPilaLlamadas[0].inicioRA);
+                state.regSP = State.posMem(state.arrPilaLlamadas[0].inicioRA);
                 //Eliminamos la llamada de la pila de llamadas
                 state.arrPilaLlamadas.shift();
                 break; }
@@ -1086,11 +923,11 @@ function consumeInstruccion() {
         }
 
         pintaTablas();
-        coloreaInstrucciones();
+        //TODO: Check if order matters to reduce lines (activeLine)
+        Tables.coloreaInstrucciones(state.indice, getActiveLine());
         state.lineaActual = getActiveLine();
         State.addLog(state.indice, state.lineaActual);
         state.indice += 1;
-        //DELETEME: State.showLogState();
     }
 }
 
@@ -1106,7 +943,8 @@ function showCatchedErr(error) {
     console.log('Full Error:', error);
 }
 
-//Manejo del DOM
+/** ===== DOM MANAGEMENT ZONE ===== */
+
 //Para activar las líneas del textarea del código fuente (cajaCodFuente)
 $('#cajaCodigoFuente').numberedtextarea();
 
@@ -1137,7 +975,7 @@ tabs.forEach(tab => tab.addEventListener('click', changeActiveTab));
 
 // Add the listener to the tables for toggle them on click.
 document.addEventListener('DOMContentLoaded', () => {
-    View.initTableToggles();
+    Tables.initTableToggles();
 });
 
 //Init the icons (for buttons)

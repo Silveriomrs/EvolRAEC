@@ -35,6 +35,130 @@ const logState = [];
 
 //Functions.
 
+/** ====== new imported functions ====== */
+
+
+export function perteneceRAReducido(qDesc) {
+    return (qDesc == 'Valor retorno' || qDesc.includes('Enlace control') || qDesc.includes('Enlace acceso'));
+}
+
+
+export function perteneceTemporal(qDesc) {
+    return qDesc.includes('Temporal');
+}
+
+/**
+ * Calcula la "posición" de la en la pila respecto a state.regSP
+ **/
+export function posPila() {
+    return state.regSP - maxAddress;
+}
+
+/**
+ * Calcula la "posición" de la en la pila respecto a pos
+ * * @param {Int} pos Dir ind
+ **/
+export function posPilaDI(pos) {
+    return pos - maxAddress;
+}
+
+/**
+ * Calcula la "posición" del parametro en la pila respecto al inicio de su RA
+ * * @param {Int} pos Posicion
+ **/
+export function posParametro(pos) {
+    return pos - tamannoFijoRA;
+}
+
+/**
+* @param {Int} pos Posicion
+*/
+export function posMem(pos) {
+    return maxAddress + pos;
+}
+
+/**
+* Recupera la posición de memoria que ocupa la variable que se le pasa como parámetro
+* @param {String} variable variable
+*/
+export function recuperaPosicionMemoria(variable) {
+    for (const memo of state.arrMem) {
+        if (memo[1] == variable) { return memo[0] }
+    }
+    throw new Error('Error variable no encontrada');//aqui no debería llegar nunca
+}
+
+/**
+* Recupera el valor de la variable que se le pasa como parámetro
+* @param {String} variable variable
+*/
+export function recuperaValor(variable) {
+    for (const memo of state.arrMem) {
+        if (memo[1] == variable) {
+
+            //opcion1
+            //busco por Enlace de acceso
+            //encontradoEA = buscoPosicionPorEnlaceAcceso(variable,0);
+            //if (encontradoEA != memo[0]) alert('variable  ' + variable + ' ' + encontradoEA +  '--' + memo[0]);
+
+            //opcion2
+            //Busco en la pila
+            //return state.mapPila.get(posMem(memo[0]));
+            let encontradoArrMem = posMem(memo[0]);
+            return state.mapPila.get(encontradoArrMem);
+        }
+    }
+    throw new Error('Error variable no encontrada');//aqui no debería llegar nunca
+}
+
+/**
+* Recupera la variable de la direccion de memoria que se le pasa como parámetro
+* @param {int} qPos posicion de memoriavariable
+*/
+export function recuperaVariableArrMem(qPos) {
+    let xx;
+    let dInd = posPilaDI(qPos);
+
+    for (const element of state.arrMem) {
+        let index = element.indexOf(dInd);
+        if (index > -1) {
+            xx = element[1];
+            return xx;
+        }
+    }
+
+    throw new Error('Error variable no encontrada');//aqui no debería llegar nunca
+}
+
+/**
+* Recupera el valor del enlace de Control
+*/
+export function traeEnlaceDeControl() {
+    let i = 0;
+    if (state.arrPilaLlamadas.length != 0) {
+        i = state.arrPilaLlamadas[0].inicioRA;
+    }
+    return i;
+}
+
+/**
+* Recupera el valor de la dirección de retorno del RA
+* Donde habíamos guardado la línea de código desde la cual se había hecho la llamada
+* @param {String} nombreProcOFunc nombre procedimiento o función
+*/
+export function traeDireccionRetornoRA(nombreProcOFunc) {
+    let i;
+    //TODO: FIXME: this conditional has a asignation instead comparator. I change nombreprocfunc = nombreproc for ... == ...
+    if (state.arrPilaLlamadas[0].nombreProcOFunc == nombreProcOFunc) {
+        i = state.mapPila.get(posMem(state.arrPilaLlamadas[0].inicioRA - tamannoFijoRA - state.arrPilaLlamadas[0].parametros.length));
+    } else {
+        throw new Error('Error al traer dir. retorno RA.');//aqui no debería llegar nunca
+    }
+    return i;
+}
+
+/** ====== Others ====== */
+
 export function insertaArrMem(value) {
     let pos = 0;
     let seguir = true;

@@ -20,11 +20,11 @@ The original project belongs to the author Ing. Jaime Alcalá and its director D
 - [X] Back button for 'código intermedio' branch.
 - [X] Decoupling and encapsulating partially the model from 'compilador.js'
 - [X] Unify view with the official one
-- [ ] Decoupling Table methods from compiler isolating them into table.js
+- [X] Decoupling Table methods from compiler isolating them into table.js
 - [ ] Encapsulate some attributes for tables.
 - [X] Implement back buttom for 'Código Fuente' branch
-- [ ] Finish decoupling for the View.
-- [ ] Finish decoupling for the Model (tables).
+- [X] Finish decoupling for the View.
+- [X] Finish decoupling for the Model (tables).
 - [ ] Restructure the logic into an object arquitecture.
 - [ ] Implement full STATE encapsulation.
 - [ ] Implement snapshoot navigation instead step to step one.
@@ -36,6 +36,9 @@ The original project belongs to the author Ing. Jaime Alcalá and its director D
 - [ ] Deep final tests.
 
 ## Changelog:
+
+**12.02.26**
+Created Table.js to host all attributes and functions related with the tables. Also moved many functions related with status module. First check and it works fine, it requires more refactoring, descriptions (doc) and improvements but big part of the work is done.
 
 **11.02.26**
 Decoupling functions, refactors. Preparing the functions to be translated into tables.js.
