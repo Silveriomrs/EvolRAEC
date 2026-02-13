@@ -56,6 +56,8 @@ function loadSourceBox(source) {
     cajaCodFuente.dispatchEvent(new Event('change'));
 }
 
+/** ===== LISTENERS ===== */
+
 /**
  * Listener for load activity function.
  *  It loads the selected activity into the CajaCodFuente box.
@@ -77,6 +79,8 @@ btn_reiniciar.addEventListener('click', (e) => {
 cajaCodFuente.addEventListener('focusin', () => {
     cajaCodFuente.style.backgroundColor = "transparent";
 })
+
+/** ====== EXTERNALIZED FUNTIONS ====== */
 
 /**
  * The procedure restart main components from the fist part of the main Window view.
@@ -105,19 +109,25 @@ export function inicializaFase2() {
     btn_prevLinea.style.display = 'inline-block';
     //
     btn_ejecucionCompleta.style.display = 'block';
+    //
+    enableControlButtons(true,false);
 }
 
 
 /**
- * Auxiliary procedure to disable buttons.
+ * Auxiliary procedure to set the browser buttons as enable or disable.
  * Main use: When no more instructions/lines to process.
+ * @param {boolean} enFwd True to enable the Fordward buttons, otherwise False.
+ * @param {boolean} enBck True to enable the Back buttons, otherwise False.
+ * 
  **/
-export function disableControlButtons() {
-    btn_sigInstruccion.style.display = 'none';
-    btn_sigLinea.style.display = 'none';
-    btn_ejecucionCompleta.style.display = 'none';
+export function enableControlButtons(enFwd,enBck) {
+    btn_sigInstruccion.disabled = !enFwd;
+    btn_sigLinea.disabled = !enFwd;
+    btn_ejecucionCompleta.disabled = !enFwd;
     //TODO: Add controls to keep disable back bottons when we are in line 0.
-
+    btn_prevInstruccion.disabled = !enBck;
+    btn_prevLinea.disabled = !enBck;
 }
 
 /**

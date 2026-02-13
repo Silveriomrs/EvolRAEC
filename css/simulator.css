@@ -200,28 +200,9 @@ svg {
     padding-left: 5px;
 }
 
-/* Icon colour when change the hover */
-.button-15:hover svg.button-icon {
-    opacity: 0.9;
-}
-
-/* Styles for the icons inserted dynamically (runtime) */
-.button-15 svg {
-  height: 1em;
-  width: auto;
-  margin-right: 8px;
-  vertical-align: middle;
-  pointer-events: none;
-}
-
-/* Icon colour inherits from button text */
-.button-15 svg path {
-  fill: currentColor;  /* take the current colour from the button */
-}
-
-.button-15:hover svg path {
-  opacity: 0.9;
-}
+/* ========================================
+              BASIC ATTR BUTTONS
+   ======================================== */
 
 .button-15 {
     background-image: linear-gradient(#42A1EC, #13140d);
@@ -248,27 +229,60 @@ svg {
     white-space: nowrap;
 }
 
-.button-15:disabled {
-    cursor: default;
-    opacity: .3;
-}
+/* ========================================
+              BUTTONS -> STATES
+   ======================================== */
 
-.button-15:hover {
+/** hover when it is not disabled */
+.button-15:hover:not(:disabled) {
     background-image: linear-gradient(#51A9EE, #147BCD);
     border-color: #1482D0;
-    text-decoration: none;
 }
 
-.button-15:active {
+.button-15:active:not(:disabled) {
     background-image: linear-gradient(#3D94D9, #0067B9);
     border-color: #006DBC;
-    outline: none;
 }
 
 .button-15:focus {
-    box-shadow: rgba(131, 192, 253, 0.5) 0 0 0 3px;
-    outline: none;
+	outline: none;                                                              /* take out the default outline */
+    box-shadow: rgba(131, 192, 253, 0.5) 0 0 0 3px;                             /* specific replacement for outline */  
 }
+
+.button-15:disabled {
+    background-image: none;
+    background-color: #cccccc;
+    border-color: #aaaaaa;
+    color: #000000;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* ========================================
+            BUTTONS -> SVG ICONS
+   ======================================== */
+
+
+/* Styles for the icons inserted dynamically (runtime) */
+.button-15 svg {
+  height: 1em;
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+  pointer-events: none;                                                         /* doesn't acts with clicks*/
+}
+
+/* Icon colour extends from button text */
+.button-15 svg path {
+  fill: currentColor;  /* take the current colour from the button */
+}
+
+/* Icon colour when change the hover and is NOT disabled */
+.button-15:hover:not(:disabled) svg path {
+    opacity: 0.9;
+}
+
+
 
 /* =========== TABLE ZONE =========== */
 

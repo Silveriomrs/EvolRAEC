@@ -41,7 +41,9 @@ View.btn_compilar.addEventListener('click', (e) => {
     //Checking empty text box
     //Changed, cajaMsjCompilado is hidded. So it's turned visible when empty box.
     if (codigoUsuario == '') {
-        //This is more complicated, in another part of the code it is hidden autmatically again, so remains hidden. Must be found this other place.
+        //FIXME: This is more complicated, in another part of the code it is hidden autmatically again,
+        // so remains hidden. Must be found this other place. The place is inicializaFase1
+        // it doesn't get active till all is compiled from the SourceCode.
         //New way and return:
         View.cajaMsjCompilado.textContent = 'Error. No hay código fuente. '
         View.cajaMsjCompilado.style.backgroundColor = "red";
@@ -143,6 +145,7 @@ View.btn_sigInstruccion.addEventListener('click', (e) => {
 
 View.btn_prevInstruccion.addEventListener('click', (e) => {
     backInst();
+    View.activateTab('#tabTablaCuadruplas');
 })
 
 /**
@@ -158,8 +161,7 @@ function backInst() {
     //Firstly we will compile the same code again
     View.btn_compilar.click();
     //Finally give as many steps comsuming instructions as we need.
-    for (let i = 1;i < index;i++) { calcNextIns(); }
-    View.activateTab('#tabTablaCuadruplas');
+    for (let i = 1; i < index; i++) { calcNextIns(); }
 }
 
 /**
@@ -167,14 +169,14 @@ function backInst() {
  *  line by line (not by instructions).
  */
 View.btn_prevLinea.addEventListener('click', (e) => {
+    //FIXME!
     const insToGoal = State.getPreviousPosition();
     //Check we are not in first line already.
-    if (insToGoal === null) {
-        View.btn_compilar.click();                                              //To restore real initial memory state, compile.
-        return;                                                                 //End returning control.
-    } else { View.btn_compilar.click(); }                                       //Firstly we will compile the same code again
+    if (insToGoal === null) { return; }
+    //compile to reset counters.
+    View.btn_compilar.click();
     //Finally give as many steps comsuming instructions as we need.
-    while (isNextInstruction() && state.indice <= insToGoal) {
+    while (state.indice <= insToGoal) {
         calcNextIns();
     }
     //Remark/activate its tab on the list.
@@ -185,15 +187,16 @@ View.btn_prevLinea.addEventListener('click', (e) => {
  * For "Código fuente" button.
  */
 View.btn_sigLinea.addEventListener('click', (e) => {
+    //FIXME!
     let continuo = true;
     const line = getActiveLine();
     //check if there is a line to work with:
-    if (!line) {
-        View.disableControlButtons();
-        return;
-    } else {
-        state.lineaActual = line;
-    }
+    if (line === -1) {
+        console.log("btn_sigLinea got line: ", line);
+        return; 
+     } 
+        
+    state.lineaActual = line;
     //A line is componsed by some instructions. So to execute 1 line, all the instructions must be run. 
     //Loop to run all instruction while they belong to the same line.
     while (isNextInstruction() && continuo) {
@@ -201,11 +204,6 @@ View.btn_sigLinea.addEventListener('click', (e) => {
         if (state.lineaActual != getActiveLine()) {                             //When it doesn't match, that means we are in a new line.
             continuo = false;
         }
-    }
-
-    if (!isNextInstruction()) {
-        Tables.coloreaTodasInstrucciones();
-        View.disableControlButtons();
     }
 
     View.activateTab('#tabCodigoFuente');
@@ -216,8 +214,6 @@ View.btn_sigLinea.addEventListener('click', (e) => {
  */
 View.btn_ejecucionCompleta.addEventListener('click', (e) => {
     while (isNextInstruction()) { calcNextIns(); }
-    Tables.coloreaTodasInstrucciones();
-    View.disableControlButtons();
 })
 
 //TODO: PINTA ZONE
@@ -284,8 +280,8 @@ function clickPilaLlamadas(nombreProcOFunc, dir) {
 
 
 function pintaTablaPila() {
-    let muestroRaReducido = View.opt_mostrarRAReducido.checked;
-    let muestroTemporales = View.opt_mostrarTemp.checked;
+    const muestroRaReducido = View.opt_mostrarRAReducido.checked;
+    const muestroTemporales = View.opt_mostrarTemp.checked;
     //TODO: Changed map syntax. Observe it.
     const miMapa = new Map(state.mapPila.entries());
     Tables.limpiaTabla("tablaPila");
@@ -324,7 +320,7 @@ function pintaTablaPila() {
         } else if (!FlagLinBlanca) {
             FlagLinBlanca = true;
             //Para dejar "Simular" separación del RA en el modo reducido
-            for (let step = 0;step < 4;step++) {
+            for (let step = 0; step < 4; step++) {
                 //Define cells names.
                 const cells = [' ', '', ''];
                 //Create row
@@ -396,7 +392,6 @@ function pintaTablaVariables() {
     //Add event listener.
     $('#tablaVariables tr').on('click', function() {
         let dato = $(this).find('td:eq(2)').html();//posicion de la tabla donde se encuentra la dirección
-        //DELETEME: pintaTablas();
         Tables.clickTablaVariables(dato);
     });
 }
@@ -429,7 +424,6 @@ function pintaCallStack() {
         $('#tablaPilaLlamadas tr').on('click', function() {
             let dato1 = $(this).find('td:first').html();
             let dato2 = $(this).find('td:last').html();
-            //DELETEME: pintaTablas();
             clickPilaLlamadas(dato1, dato2);
         });
     }
@@ -475,7 +469,8 @@ function inicializaFase1() {
     mapaCadenas = [];
     State.resetState();
     pintaTablas();
-    //DELETEME: View.resetFirstPart(state);
+    //FIXME: Somehow it is needed to do not show browser buttons at begginig. Solve it to remove this line.
+    View.resetFirstPart();
     Tables.limpiaTabla("tablaCodigoFuente");
     Tables.limpiaTabla("tablaCuadruplas");
 }
@@ -581,16 +576,16 @@ function traeEnlaceDeAcceso(nombreProcOFunc) {
 
 function consumeInstruccion() {
     let qLinea, qcuadrupla, qOperacion, qp1, qp2, qp3;
-
-    //TODO: This is too often repeated => it needs a particular function.
+    //We need an extra control for more lines due otherwise it
+    //  stops when !isNextInstruction is false. So disabled buttons ocurrs too soon.
+    let more = true;
     //When get this situation (no more inst) it is due to we have gotten HALT state.
     if (!isNextInstruction()) {
         Tables.coloreaTodasInstrucciones();
-        View.disableControlButtons();
-        //
         state.lineaActual++;
         state.indice++;
-        State.addLog(state.indice, state.lineaActual);                                                               //stop calculating.
+        State.addLog(state.indice, state.lineaActual);
+        more = false;                                                               //stop calculating.
     } else {
         qcuadrupla = getIns(state.indice);
         qLinea = 0;
@@ -806,6 +801,8 @@ function consumeInstruccion() {
         State.addLog(state.indice, state.lineaActual);
         state.indice += 1;
     }
+    //Disable the browsing buttons that correspond with the index in process.
+    View.enableControlButtons(more,(state.indice != 0));
 }
 
 /**
