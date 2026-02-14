@@ -16,9 +16,7 @@ import { initIcons } from './icons.js';                                         
 
 const state = State.state;
 
-let intermedio = [];
 let mapaCadenas = [];
-
 
 //
 inicializaFase1();
@@ -65,8 +63,8 @@ View.btn_compilar.addEventListener('click', (e) => {
         View.cajaCodFuente.disabled = true;
         View.cajaCodFuente.style.backgroundColor = Tables.COLOR_LIGHTGREEN;
         View.inicializaFase2();
-        //TODO: Find where is consolaSalida declarated cause it seems that is not here, so where?
-        consolaSalida.textContent = '';
+        //
+        View.txtAreaConsolaSalida.textContent = '';
         View.cajaMsjCompilado.textContent = 'El programa se ha compilado sin errores. '
         View.cajaMsjCompilado.style.backgroundColor = Tables.COLOR_LIGHTGREEN;
 
@@ -74,68 +72,33 @@ View.btn_compilar.addEventListener('click', (e) => {
         tabs2.forEach(tab => tab.classList.remove('active'));
 
         //EMPEZAMOS EL INTERMEDIO
-        intermedio = [];
-        intermedio.push("LIN 1 [STARTGLOBAL null, null, null]"); //"addQuadruple("STARTGLOBAL");"
-
+        State.intermedioInit();
         state.listaCuadruplas = state.listaCuadruplas.filter(Boolean);//eliminamos los undefined del array listaacuadruplas que viene del parseruned
 
         state.listaCuadruplas.forEach(function(i) {  //y meto los valores en el array intermedio
-            intermedio.push(i);
+            State.intermedioPush(i);
         });
 
-        //Meto las cadenas de de texto en el array de intermedio
+        //Meto las cadenas de texto en el array de intermedio
         mapaCadenas = parserUned.yy.cadenasTxt;
         for (let [key, value] of parserUned.yy.cadenasTxt) {
-            intermedio.push("[CADENA, " + value + ', ' + key + ", null]");
+            State.intermedioPush("[CADENA, " + value + ', ' + key + ", null]");
         }
 
-        state.listaCuadruplas = intermedio;
+        state.listaCuadruplas = State.getIntermedio();
         State.resetState();
         pintaTablas();
         Tables.crearTablaCodFuenteyCuadruplas([state.listaCuadruplas], View.cajaCodFuente);
 
     } catch (error) {
-        document.getElementById("ContenedorResultadoCompilacion").style.display = 'block';
-        View.cajaCodFuente.disabled = false;
-        View.cajaCodFuente.style.backgroundColor = "red";
-        View.cajaMsjCompilado.textContent = error;
-        View.cajaMsjCompilado.style.backgroundColor = "red";
-        //CHANGED: Added to see errs by console.
-        showCatchedErr(error);
-        if (error.hash && error.hash.loc && error.hash.loc.first_line) {
+        View.showMSGCompilerBox(error);
+        if (error.hash?.loc?.first_line) {
             state.posLine = error.hash.loc.first_line;
         }
     }
 })
 
 
-/**
- * Returns the instruction aimed by the index. The function checks if the index is valid.
- *  The instruction are located at children node number 1 into the "tablaCuadruplas" table.
- * @param {number} index of the instruction into the array.
- * @return {string|null} the content at that index. Null if there are not instructions.
- */
-function getIns(index) {
-    let ins_array = Tables.getItemsTable("tablaCuadruplas");
-    //Check if ins_array has elements.
-    if (!ins_array || index >= ins_array.length) {
-        return null;
-    }
-
-    return (ins_array[index].children[1].innerText);
-}
-
-/**
- * Function to calc next instruction using try-catch enclosure to deal with 
- *  the exception. This function is an auxiliar one to reduce code complexity.
- */
-function calcNextIns() {
-    try {
-        consumeInstruccion();
-    } catch (e) {
-        showCatchedErr(e);
-    }
-}
 
 View.btn_sigInstruccion.addEventListener('click', (e) => {
     calcNextIns();
@@ -169,7 +132,6 @@ function backInst() {
  *  line by line (not by instructions).
  */
 View.btn_prevLinea.addEventListener('click', (e) => {
-    //FIXME!
     const insToGoal = State.getPreviousPosition();
     //Check we are not in first line already.
     if (insToGoal === null) { return; }
@@ -187,11 +149,11 @@ View.btn_prevLinea.addEventListener('click', (e) => {
  * For "Código fuente" button.
  */
 View.btn_sigLinea.addEventListener('click', (e) => {
-    //FIXME!
     let continuo = true;
     const line = getActiveLine();
     //check if there is a line to work with:
-    if (line === -1) {
+    //checking conditional ... before !line, now line === -1, what looks doesn't work
+    if (line == -1) {
         console.log("btn_sigLinea got line: ", line);
         return; 
      } 
@@ -215,6 +177,76 @@ View.btn_sigLinea.addEventListener('click', (e) => {
 View.btn_ejecucionCompleta.addEventListener('click', (e) => {
     while (isNextInstruction()) { calcNextIns(); }
 })
+
+
+/** ====== MY ADDED AUXILIARY FUNCTIONS ====== */
+
+
+/**
+ * Auxiliary procedure that indicates when no more instructions nor lines availables.
+ * @return True if there is another one & the machine is not halted. Otherwise False.
+ */
+function isNextInstruction() {
+    //Firstly get a copy as a local variable from the table
+    const elementInstruccion = Tables.getItemsTable("tablaCuadruplas");
+    //Is the index a valid one?
+    return (
+            state.running &&
+            elementInstruccion &&
+            state.indice >= 0 &&
+            state.indice < elementInstruccion.length
+        );
+}
+
+/**
+ * This function returns the number line indicated into the string of the current line from the source code.
+ *  When the function cannot determinate the Line number, it returns -1.
+ * <p> Note: This function doesn't take the line from State, cause it's use to update the state.
+ * @return {number} number into the line description. Otherwise: -1.
+ */
+function getActiveLine() {
+    let lineStr = getIns(state.indice)
+    let line = -1;
+    
+    if(!lineStr) return line;
+    //Only accept LIN or HALT operands.
+    if (lineStr.startsWith("LIN") ) {
+        line = Number.parseInt(lineStr.substring(4, lineStr.indexOf("[")), 10);
+    } else if(lineStr.startsWith("[HALT")){
+        halt();
+    }
+    
+    return line;
+}
+
+
+/**
+ * Returns the instruction aimed by the index. The function checks if the index is valid.
+ *  The instruction are located at children node number 1 into the "tablaCuadruplas" table.
+ * @param {number} index of the instruction into the array.
+ * @return {string|null} the content at that index. Null if there are not instructions.
+ */
+function getIns(index) {
+    let ins_array = Tables.getItemsTable("tablaCuadruplas");
+    //Check if ins_array has elements.
+    if (!ins_array || index >= ins_array.length) {
+        return null;
+    }
+
+    return (ins_array[index].children[1].innerText);
+}
+
+/**
+ * Function to calc next instruction using try-catch enclosure to deal with 
+ *  the exception. This function is an auxiliar one to reduce code complexity.
+ */
+function calcNextIns() {
+    try {
+        consumeInstruccion();
+    } catch (e) {
+        showCatchedErr(e);
+    }
+}
 
 //TODO: PINTA ZONE
 
@@ -429,44 +461,11 @@ function pintaCallStack() {
     }
 }
 
-//TODO: ADDED AUXILIARY FUNCTIONS
-
-
-/**
- * Auxiliary procedure that indicates when no more instructions nor lines availables.
- * @return True if there is another one. Otherwise False.
- */
-function isNextInstruction() {
-    //Firstly get a copy as a local variable from the table
-    const elementInstruccion = Tables.getItemsTable("tablaCuadruplas");
-    //Is the index a valid one?
-    if (!elementInstruccion || state.indice >= elementInstruccion.length) {
-        return false;
-    }
-    //Returns the results based on the active index (manipulated in consumeInstruccion() ).
-    return getIns(state.indice) != "[HALT null, null, null]";
-}
-
-/**
- * This function returns the number line indicated into the string of the current line from the source code.
- *  When the function cannot determinate the Line number, it returns -1.
- * <p> Note: This function doesn't take the line from State, cause it's use to update the state.
- * @return {number} number into the line description. Otherwise: -1.
- */
-function getActiveLine() {
-    let lineStr = getIns(state.indice)
-    let line = -1;
-    //Comparing with startWith instead indexOf("LIN" == 0) for clearence purpose.
-    if (lineStr.startsWith("LIN")) {
-        line = Number.parseInt(lineStr.substring(4, lineStr.indexOf("[")), 10);
-    }
-    return line;
-}
 
 
 function inicializaFase1() {
-    intermedio = [];
     mapaCadenas = [];
+    State.intermedioReset();
     State.resetState();
     pintaTablas();
     //FIXME: Somehow it is needed to do not show browser buttons at begginig. Solve it to remove this line.
@@ -569,240 +568,243 @@ function traeEnlaceDeAcceso(nombreProcOFunc) {
     return enlaceAcceso;
 }
 
-
+function halt(){
+    Tables.coloreaTodasInstrucciones();
+    state.running = false;
+    console.warn("HALT");
+    //DELETEME: State.showLogState();
+}
 
 
 //TODO: Function extremally big, try to factorize or modularize it.
 
 function consumeInstruccion() {
     let qLinea, qcuadrupla, qOperacion, qp1, qp2, qp3;
-    //We need an extra control for more lines due otherwise it
-    //  stops when !isNextInstruction is false. So disabled buttons ocurrs too soon.
-    let more = true;
-    //When get this situation (no more inst) it is due to we have gotten HALT state.
-    if (!isNextInstruction()) {
-        Tables.coloreaTodasInstrucciones();
-        state.lineaActual++;
-        state.indice++;
-        State.addLog(state.indice, state.lineaActual);
-        more = false;                                                               //stop calculating.
-    } else {
-        qcuadrupla = getIns(state.indice);
-        qLinea = 0;
-        Tables.setPaintSourceCode(true);
-        //FIXME: Here is a bug when transformed into startWith function instead indexOf with jQuery. I guess it may be a bug in JQuery ver
-        if (qcuadrupla.indexOf('[') != 0) {
-            //Extraigo la parte de la línea si existe
-            qLinea = qcuadrupla.slice(0, qcuadrupla.indexOf('['));
-            qcuadrupla = qcuadrupla.replace(qLinea, '');
-        }
-        //Elimino caracteres no necesarios
-        qcuadrupla = qcuadrupla.replace(/[^a-zA-Z 0-9._]+/g, '');
-        //divido la cuadrupla
-        let splitstring = qcuadrupla.split(" ");
-        qOperacion = splitstring[0];
+    qcuadrupla = getIns(state.indice);
+    qLinea = 0;
+    Tables.setPaintSourceCode(true);
+    //
+    if (!qcuadrupla.startsWith('[')) {
+        //Extraigo la parte de la línea si existe
+        qLinea = qcuadrupla.slice(0, qcuadrupla.indexOf('['));
+        qcuadrupla = qcuadrupla.replace(qLinea, '');
+    }
+    //Elimino caracteres no necesarios
+    qcuadrupla = qcuadrupla.replace(/[^a-zA-Z 0-9._]+/g, '');
+    //divido la cuadrupla
+    let splitstring = qcuadrupla.split(" ");
+    qOperacion = splitstring[0];
+    //Check if it is end of program (HALT) then do not read nulls
+    if(qOperacion !== "[HALT"){
         qp1 = splitstring[1];
         qp2 = splitstring[2];
         qp3 = splitstring[3];
+    }
+    
+    //Ejecuto instrucción
 
-        //Ejecuto instrucción
+    switch (qOperacion) {
+        case "HALT":
+            halt();
+            break;
+        case "STARTGLOBAL":
+        case "STARTSUBPROGRAMAP":
+        case "STARTSUBPROGRAMAF":
+            //MOVE .SP,.R0
+            state.regR0 = State.posPila();
+            //PUSH #-1 VALOR RETORNO
+            state.mapPila.set(state.regSP, -1);
+            State.decSP();
+            //PUSH .SR ESTADO MAQUINA
+            state.mapPila.set(state.regSP, state.regSR);
+            State.decSP();
+            //PUSH .IX ENLACE CONTROL
+            state.mapPila.set(state.regSP, state.regIX);
+            State.decSP();
+            //PUSH  .IX ENLACE ACCESO
+            state.mapPila.set(state.regSP, 0);
+            State.decSP();
+            break;
+        //case "VARGLOBAL":
+        case "VAR":
+            state.mapPila.set(state.regSP, Number.parseInt(qp2,10));
+            state.arrMem.unshift([State.posPila(), qp1]);
+            State.decSP();
+            break;
+        case "PARAM":
+            state.mapPila.set(state.regSP, State.recuperaValor(qp1));
+            State.decSP();
+            break;
+        case "PUNTEROGLOBAL":
+        case "PUNTEROLOCAL":
+            for (let [key, value] of parserUned.yy.tablaAmbitos) {
 
-        switch (qOperacion) {
-            case "STARTGLOBAL":
-            case "STARTSUBPROGRAMAP":
-            case "STARTSUBPROGRAMAF":
-                //MOVE .SP,.R0
-                state.regR0 = State.posPila();
-                //PUSH #-1 VALOR RETORNO
-                state.mapPila.set(state.regSP, -1);
-                State.decSP();
-                //PUSH .SR ESTADO MAQUINA
-                state.mapPila.set(state.regSP, state.regSR);
-                State.decSP();
-                //PUSH .IX ENLACE CONTROL
-                state.mapPila.set(state.regSP, state.regIX);
-                State.decSP();
-                //PUSH  .IX ENLACE ACCESO
-                state.mapPila.set(state.regSP, 0);
-                State.decSP();
-                break;
-            //case "VARGLOBAL":
-            case "VAR":
-                state.mapPila.set(state.regSP, Number.parseInt(qp2,10));
-                state.arrMem.unshift([State.posPila(), qp1]);
-                State.decSP();
-                break;
-            case "PARAM":
-                state.mapPila.set(state.regSP, State.recuperaValor(qp1));
-                State.decSP();
-                break;
-            case "PUNTEROGLOBAL":
-            case "PUNTEROLOCAL":
-                for (let [key, value] of parserUned.yy.tablaAmbitos) {
-
-                    if (value.nombre == qp3) {
-                        //Guardo en el ArrMem los parámetros con la posición que les toca
-                        //El valor en state.mapPila ya se lo metí con PARAM
-                        if (value.parametros.length != 0) {
-                            for (let i = 0;i < value.parametros.length;i++) {
-                                state.arrMem.unshift([State.posParametro(state.regR0 - i), value.parametros[i]]);
-                            }
+                if (value.nombre == qp3) {
+                    //Guardo en el ArrMem los parámetros con la posición que les toca
+                    //El valor en state.mapPila ya se lo metí con PARAM
+                    if (value.parametros.length != 0) {
+                        for (let i = 0;i < value.parametros.length;i++) {
+                            state.arrMem.unshift([State.posParametro(state.regR0 - i), value.parametros[i]]);
                         }
+                    }
 
-                        //Guardo los temporales tanto en state.mapPila como en state.arrMem
-                        if (value.temporales.length != 0) {
-                            for (const element of value.temporales) {
-                                state.mapPila.set(state.regSP, 0);
-                                state.arrMem.unshift([State.posPila(), element]);
-                                State.decSP();
-                            }
+                    //Guardo los temporales tanto en state.mapPila como en state.arrMem
+                    if (value.temporales.length != 0) {
+                        for (const element of value.temporales) {
+                            state.mapPila.set(state.regSP, 0);
+                            state.arrMem.unshift([State.posPila(), element]);
+                            State.decSP();
                         }
-
-                        //Creo una llamada en la pila de llamadas
-                        state.arrPilaLlamadas.unshift(new pilaLLamada(qp3, state.regR0, value.parametros, State.traeEnlaceDeControl(), traeEnlaceDeAcceso(qp3), value.numVariables, value.temporales.length));
-                        //Relleno el enlace de control en la pila  pos EC  #-2[.IX]
-                        state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA - 2), state.arrPilaLlamadas[0].EnlaceControl);
-                        //Relleno el enlace de acceso en la pila  pos EC  #-3[.IX]
-                        state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA - 3), state.arrPilaLlamadas[0].EnlaceAcceso);
-
                     }
-                }
-                break;
-            case "MV":
-                //Ej: T_1-->-8
-                //;Quadruple - [MV T_1, 5, null]
-                //MOVE #5, #-8[.IX]
-                { const n = Number.parseInt(qp2, 10);
-                    state.mapPila.set(
-                        State.posMem(State.recuperaPosicionMemoria(qp1)),
-                        Number.isNaN(n) ? State.recuperaValor(qp2) : n
-                    );
-                break; }
-            case "MVA":
-                //Ej: T_0-->-7,
-                //;Quadruple - [MVA T_0, A, null]
-                //SUB .IX, #4
-                //MOVE .A, #-7[.IX]
-                state.regA = state.regIX + State.recuperaPosicionMemoria(qp2);
-                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
-                break;
-            case "STP":
-                //Ej:T_0 -->-7, T_1-->-8
-                //;Quadruple - [STP T_0, T_1, null]
-                //MOVE #-7[.IX], .R1
-                //MOVE #-8[.IX], [.R1]
-                state.regR1 = State.recuperaValor(qp1);
-                state.mapPila.set(State.posMem(state.regR1), State.recuperaValor(qp2));
-                break;
-            case "MVP":
-                //r  01  02
-                //EJ:
-                //"MOVE " + o1 + "," + ".R0\n"
-                //"MOVE [.R0]," + r
-                state.regR1 = State.recuperaValor(qp2);
-                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regR1);
-                break;
-            case "ADD":
-                //EJ:
-                //ADD T_8, T_6, T_7]
-                //ADD #-18[.IX], #-19[.IX]
-                //MOVE .A,#-20[.IX]
-                state.regA = State.recuperaValor(qp2) + State.recuperaValor(qp3);
-                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
-                break;
-            case "SUB":
-                //EJ:
-                //[SUB T_8, T_6, T_7]
-                //SUB #-18[.IX], #-19[.IX]
-                //MOVE .A,#-20[.IX]
-                state.regA = State.recuperaValor(qp2) - State.recuperaValor(qp3);
-                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
-                break;
-            case "EQ": //comprara los valores del 2º y 3º parámetro. Si son iguales le asigno un 1 al primer parámetro y sino un 0.
-                if (State.recuperaValor(qp2) == State.recuperaValor(qp3)) {
-                    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 1);
-                }
-                else {
-                    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 0);
-                }
-                break;
-            case "BRF":
-                //EJ:
-                //[BRF T_14, L_1, null]
-                //Si el valor del primer parámetro es cero salto a la posición de la etiqueta que viene en el segundo parámetro
-                //CMP #0, #-26[.IX]
-                //BZ /L_1
-                if (State.recuperaValor(qp1) == 0) {
-                    state.indice = Tables.traePosicionEtiqueta(qp2); //Salto a la linea donde esté la etiqueta del segundo parametro
-                }
-                break;
-            case "BR":
-                //[BR L_1, null, null]
-                state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
-                break;
-            case "INL":
-                //No hace nada, solo para indicar etiquetas a donde saltar
-                break;
-            case "WRITEINT":
-                consolaSalida.textContent = consolaSalida.textContent + State.recuperaValor(qp1) + String.fromCharCode(13);
-                break;
-            case "WRITETXT":
-                //.slice(1, -1) --> quito el primer y último caracter de la cadena que son las comillas ""
-                //String.fromCharCode(13) --> retorno de carro
-                consolaSalida.textContent = consolaSalida.textContent + recuperaValorCadena(qp2).slice(1, -1) + String.fromCharCode(13);
-                break;
-            case "CALL":
-                //DIRECCION DE RETORNO
-                state.mapPila.set(state.regSP, state.indice);
-                State.decSP();
-                state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
-                Tables.setPaintSourceCode(false);
-                break;
-            case "FINSUBPROGRAMA":
-                state.indice = State.traeDireccionRetornoRA(qp1);  //Salto a la linea de la "Direción de retorno" del RA.
-                break;
-            case "EXIT":
-                state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA), State.recuperaValor(qp1));
-                break;
-            //case "RETORNO":
-            //    alert('AQUI NO ENTRA. NO SE USA ESTA INSTRUCCION');
-            //    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)),  state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)) );
-            //  break;
-            case "DEVCALL":
-                //Eliminamos de state.arrMem los valores del RA que cerramos
-                { state.arrMem = state.arrMem.filter(reg => reg[0] > state.arrPilaLlamadas[0].inicioRA);
 
-                //Guardamos en temporal el valor de la salida del RA
-                if (qp2 != "null") {
-                    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)), state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)));
+                    //Creo una llamada en la pila de llamadas
+                    state.arrPilaLlamadas.unshift(new pilaLLamada(qp3, state.regR0, value.parametros, State.traeEnlaceDeControl(), traeEnlaceDeAcceso(qp3), value.numVariables, value.temporales.length));
+                    //Relleno el enlace de control en la pila  pos EC  #-2[.IX]
+                    state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA - 2), state.arrPilaLlamadas[0].EnlaceControl);
+                    //Relleno el enlace de acceso en la pila  pos EC  #-3[.IX]
+                    state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA - 3), state.arrPilaLlamadas[0].EnlaceAcceso);
+
                 }
+            }
+            break;
+        case "MV":
+            //Ej: T_1-->-8
+            //;Quadruple - [MV T_1, 5, null]
+            //MOVE #5, #-8[.IX]
+            { const n = Number.parseInt(qp2, 10);
+                state.mapPila.set(
+                    State.posMem(State.recuperaPosicionMemoria(qp1)),
+                    Number.isNaN(n) ? State.recuperaValor(qp2) : n
+                );
+            break; }
+        case "MVA":
+            //Ej: T_0-->-7,
+            //;Quadruple - [MVA T_0, A, null]
+            //SUB .IX, #4
+            //MOVE .A, #-7[.IX]
+            state.regA = state.regIX + State.recuperaPosicionMemoria(qp2);
+            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
+            break;
+        case "STP":
+            //Ej:T_0 -->-7, T_1-->-8
+            //;Quadruple - [STP T_0, T_1, null]
+            //MOVE #-7[.IX], .R1
+            //MOVE #-8[.IX], [.R1]
+            state.regR1 = State.recuperaValor(qp1);
+            state.mapPila.set(State.posMem(state.regR1), State.recuperaValor(qp2));
+            break;
+        case "MVP":
+            //r  01  02
+            //EJ:
+            //"MOVE " + o1 + "," + ".R0\n"
+            //"MOVE [.R0]," + r
+            state.regR1 = State.recuperaValor(qp2);
+            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regR1);
+            break;
+        case "ADD":
+            //EJ:
+            //ADD T_8, T_6, T_7]
+            //ADD #-18[.IX], #-19[.IX]
+            //MOVE .A,#-20[.IX]
+            state.regA = State.recuperaValor(qp2) + State.recuperaValor(qp3);
+            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
+            break;
+        case "SUB":
+            //EJ:
+            //[SUB T_8, T_6, T_7]
+            //SUB #-18[.IX], #-19[.IX]
+            //MOVE .A,#-20[.IX]
+            state.regA = State.recuperaValor(qp2) - State.recuperaValor(qp3);
+            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
+            break;
+        case "EQ": //comprara los valores del 2º y 3º parámetro. Si son iguales le asigno un 1 al primer parámetro y sino un 0.
+            if (State.recuperaValor(qp2) == State.recuperaValor(qp3)) {
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 1);
+            }
+            else {
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 0);
+            }
+            break;
+        case "BRF":
+            //EJ:
+            //[BRF T_14, L_1, null]
+            //Si el valor del primer parámetro es cero salto a la posición de la etiqueta que viene en el segundo parámetro
+            //CMP #0, #-26[.IX]
+            //BZ /L_1
+            if (State.recuperaValor(qp1) == 0) {
+                state.indice = Tables.traePosicionEtiqueta(qp2); //Salto a la linea donde esté la etiqueta del segundo parametro
+            }
+            break;
+        case "BR":
+            //[BR L_1, null, null]
+            state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
+            break;
+        case "INL":
+            //No hace nada, solo para indicar etiquetas a donde saltar
+            break;
+        case "WRITEINT":
+            View.txtAreaConsolaSalida.textContent = View.txtAreaConsolaSalida.textContent + State.recuperaValor(qp1) + String.fromCharCode(13);
+            break;
+        case "WRITETXT":
+            //.slice(1, -1) --> quito el primer y último caracter de la cadena que son las comillas ""
+            //String.fromCharCode(13) --> retorno de carro
+            View.txtAreaConsolaSalida.textContent = View.txtAreaConsolaSalida.textContent + recuperaValorCadena(qp2).slice(1, -1) + String.fromCharCode(13);
+            break;
+        case "CALL":
+            //DIRECCION DE RETORNO
+            state.mapPila.set(state.regSP, state.indice);
+            State.decSP();
+            state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
+            Tables.setPaintSourceCode(false);
+            break;
+        case "FINSUBPROGRAMA":
+            state.indice = State.traeDireccionRetornoRA(qp1);  //Salto a la linea de la "Direción de retorno" del RA.
+            break;
+        case "EXIT":
+            state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA), State.recuperaValor(qp1));
+            break;
+        //case "RETORNO":
+        //    alert('AQUI NO ENTRA. NO SE USA ESTA INSTRUCCION');
+        //    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)),  state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)) );
+        //  break;
+        case "DEVCALL":
+            //Eliminamos de state.arrMem los valores del RA que cerramos
+            { state.arrMem = state.arrMem.filter(reg => reg[0] > state.arrPilaLlamadas[0].inicioRA);
 
-                //Eliminamos de la pila los valores del RA que cerramos
-                let k = State.posMem(state.arrPilaLlamadas[0].inicioRA);
-                for (let clave of state.mapPila.keys()) {
-                    if (clave <= k) {
-                        state.mapPila.delete(clave);
-                    }
-                };
+            //Guardamos en temporal el valor de la salida del RA
+            if (qp2 != "null") {
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)), state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)));
+            }
 
-                state.regSP = State.posMem(state.arrPilaLlamadas[0].inicioRA);
-                //Eliminamos la llamada de la pila de llamadas
-                state.arrPilaLlamadas.shift();
-                break; }
-            default:
-                //COMPROBACION DE QUE TODAS LAS INSTRUCCIONES ESTAN HECHAS
-                alert('FALTA HACER INSTRUCCION ' + qOperacion);
-        }
+            //Eliminamos de la pila los valores del RA que cerramos
+            let k = State.posMem(state.arrPilaLlamadas[0].inicioRA);
+            for (let clave of state.mapPila.keys()) {
+                if (clave <= k) {
+                    state.mapPila.delete(clave);
+                }
+            };
 
-        pintaTablas();
-        //TODO: Check if order matters to reduce lines (activeLine)
+            state.regSP = State.posMem(state.arrPilaLlamadas[0].inicioRA);
+            //Eliminamos la llamada de la pila de llamadas
+            state.arrPilaLlamadas.shift();
+            break; }
+        default:
+            //COMPROBACION DE QUE TODAS LAS INSTRUCCIONES ESTAN HECHAS
+            alert('FALTA HACER INSTRUCCION ' + qOperacion);
+    }
+
+    pintaTablas();
+    //TODO: Check if order matters to reduce lines (activeLine)
+    if(state.running){
         Tables.coloreaInstrucciones(state.indice, getActiveLine());
         state.lineaActual = getActiveLine();
-        State.addLog(state.indice, state.lineaActual);
-        state.indice += 1;
-    }
+    } 
+    
+    State.addLog(state.indice, state.lineaActual);
+    state.indice += 1;
+    
     //Disable the browsing buttons that correspond with the index in process.
-    View.enableControlButtons(more,(state.indice != 0));
+    View.enableControlButtons(state.running,(state.indice != 0));
 }
 
 /**

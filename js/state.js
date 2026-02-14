@@ -7,6 +7,7 @@
 export const state = {
     posLine: 0,
     lineaActual: -1,
+    running: true,
     /** Increase each time an instruction is consumed. */
     indice: 0,
     //
@@ -32,6 +33,9 @@ export const lineNumbersDiv = document.getElementById('line-numbers');
 *The association is : [Consumed Instructions, Line reached]
 */
 const logState = [];
+
+const intermedio = [];
+
 
 //Functions.
 
@@ -272,6 +276,38 @@ export function addLog(insNumber, lineNumber) {
 }
 
 /**
+ * Introduce a data line into 'intermedio' array.
+ * @param {string} dataLine line to add to the intermedio.
+ */
+export function intermedioPush(dataLine){
+    intermedio.push(dataLine);
+}
+
+/**
+ * It reset the intermedio to a empty state.
+ */
+export function intermedioReset(){
+    intermedio.length = 0;
+}
+
+/**
+ * Init the intermedio clearing it from any value and adding the initial line
+ *  signal to Stop (end of the code).
+ */
+export function intermedioInit(){
+    intermedioReset();
+    intermedioPush("LIN 1 [STARTGLOBAL null, null, null]");                     ////"addQuadruple("STARTGLOBAL");"
+}
+
+/**
+ * Temporal function to get intermedio.
+ * It is required by now to dump its values into ListaCuadriculas in compilador.js
+ */
+export function getIntermedio(){
+    return intermedio;
+}
+
+/**
  * It returns the previous line position to the current one.
  *  When the logState has not enough items or there is not a line change in execution, it returns null.
  * @return {number|null} previous line number calculated in the logState. Otherwise null.
@@ -318,6 +354,7 @@ export function showLogState() {
     console.log(lines);
     const prevPos = getPreviousPosition();
     console.log("Previous position at index: ", (prevPos !== null) ? prevPos : "none");
+    console.log("Index is: ", state.indice);
 
 }
 
@@ -342,5 +379,9 @@ export function resetState() {
     //state.listaCuadruplas = []; //This cannot be uncomment. Used in compiled yet.
     state.arrPilaLlamadas = [];
     state.arrMem = [];
+    state.running = true;
     logState.length = 0;
+    
+    //intermedioReset();  //Cannot be used by now. In compilador.js it does a dump & reset state into listaCuadruplas and continue working.
+    // so if it is cleared, then lose its values and cannot work properly the APP.
 }

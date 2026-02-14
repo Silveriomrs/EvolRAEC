@@ -25,8 +25,19 @@ export const cajaCodFuente = document.getElementById('cajaCodigoFuente');
 
 const selector = document.getElementById("num-ejercicio");
 export const cajaMsjCompilado = document.getElementById('resultadoCompilacion');
+
+export const txtAreaConsolaSalida = document.getElementById('consolaSalida');
 export const cajaSimbolos = document.getElementById('cajaSimbolo');
 export const cajaTipos = document.getElementById('cajaTipo');
+
+//Containers
+export const containerCompileBox = document.getElementById('ContenedorResultadoCompilacion');
+
+export const containerFase2A = document.getElementById("Fase2A");
+    
+
+export const containerFase2B = document.getElementById("Fase2B");
+
 
 // Start to load the exercises option into the selector.
 initSelectorOptions();
@@ -93,15 +104,15 @@ export function resetFirstPart() {
     cajaMsjCompilado.textContent = '';
     //TODO: Removing pintaTablas() From this point to check it it works to decouple this part from control
 
-    document.getElementById("ContenedorResultadoCompilacion").style.display = 'none';
-    document.getElementById("Fase2A").style.display = 'none';
-    document.getElementById("Fase2B").style.display = 'none';
+    containerCompileBox.style.display = 'none';
+    containerFase2A.style.display = 'none';
+    containerFase2B.style.display = 'none';
 }
 
 export function inicializaFase2() {
     document.getElementById("ContenedorResultadoCompilacion").style.display = 'block';
-    document.getElementById("Fase2A").style.display = 'block';
-    document.getElementById("Fase2B").style.display = 'block';
+    containerFase2A.style.display = 'block';
+    containerFase2B.style.display = 'block';
     //Buttons
     btn_sigInstruccion.style.display = 'inline-block';
     btn_prevInstruccion.style.display = 'inline-block';
@@ -153,6 +164,19 @@ export function activateTab(href) {
     //Shows the right referenced selector.
     const content = document.querySelector(href);
     if (content) content.classList.add('active');
+}
+
+/**
+ * TODO: finish this function and also comment it properly, 
+ * by now it is used only for showing err messages when compiling the source code.
+ */
+export function showMSGCompilerBox(msg){
+    View.containerCompileBox.style.display = 'block';
+    View.cajaCodFuente.disabled = false;
+    View.cajaCodFuente.style.backgroundColor = "red";
+    View.cajaMsjCompilado.textContent = msg;
+    View.cajaMsjCompilado.style.backgroundColor = "red";
+    
 }
 
 

@@ -12,7 +12,10 @@ export const colorMalva = "rgb(140, 100, 200)";         //Morado
 export const colorInstruccion = "rgb(51, 204, 255)";    //Celeste
 export const NOCOLOR = '';
 
-export const tbl_pilaLlamadas = document.getElementById('tablaPilaLLamadas');
+export const TBL_CallStack  = document.getElementById('tablaPilaLLamadas');
+//Const not used by now.
+//const TBL_Cuadruplas        = document.getElementById("tablaCuadruplas");
+//const TBL_SourceCode        = document.getElementById("tablaCodigoFuente");
 
 let elementInstruccion = [];  //TODO: It may fail since it was LET and now const in order to export it. Some functions create a new one.
 
@@ -149,7 +152,7 @@ export function traePosicionEtiqueta(etiq) {
 
     //FIXME: bad design, it may enter an infite loop due to while condition.
     do
-        if (elementInstruccion && elementInstruccion[i].innerText.includes('INL ' + etiq)) {
+        if (elementInstruccion?.[i].innerText.includes('INL ' + etiq)) {
             encontrado = true;
         } else {
             i += 1;
