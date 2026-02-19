@@ -59,7 +59,7 @@ View.btn_compilar.addEventListener('click', (e) => {
         parserUned.yy = intercambioCompilador();
         state.listaCuadruplas = parserUned.parse(codigoUsuario);
 
-        //state.posLine = 0;
+        state.posLine = 0;
         View.cajaCodFuente.disabled = true;
         View.cajaCodFuente.style.backgroundColor = Tables.COLOR_LIGHTGREEN;
         View.inicializaFase2();

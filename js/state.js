@@ -315,19 +315,18 @@ export function getIntermedio(){
 export function getPreviousPosition() {
     const size = logState.length;
     if (size < 2) return null;
-
     const lastLine = logState[size - 1].line;
     let readLine = lastLine;
     let index = size - 1;
     //
-    while (index >= 1) {
-        readLine = logState[index - 1].line;
+    while (index >= 0) {
+        readLine = logState[index].line;
         if (lastLine !== readLine) {
-            return logState[index - 1].ins;
+            return logState[index].ins;
         }
         index--;
     }
-
+    
     return null;
 }
 
