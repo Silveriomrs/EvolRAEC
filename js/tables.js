@@ -3,6 +3,7 @@
  * Mainly it unload other modules of code that should be grouped here.
  */
 
+
 export const colorRojo = "rgb(255, 255, 0)";            //Rojo
 export const colorResalte = "rgb(255, 255, 0)";         //Amarillo
 export const colorResalte2 = "rgb(0, 255, 0)";          //Verde
@@ -20,6 +21,9 @@ export const TBL_CallStack  = document.getElementById('tablaPilaLLamadas');
 let elementInstruccion = [];  //TODO: It may fail since it was LET and now const in order to export it. Some functions create a new one.
 
 let pintoCodFuente = true;
+
+//PORTING ZONE
+
 
 //TODO AUX ZONE
 
@@ -296,7 +300,7 @@ export function crearTablaCodFuenteyCuadruplas(datosTabla, cajaCodFuente) {
  */
 export function remarkElement(table, col, from, to, color){
     //Lineas estado del cómputo
-    const elements = Tables.getItemsTable(table);
+    const elements = getItemsTable(table);
 
     if (elements && elements.length > 1) {
         let i = 1;

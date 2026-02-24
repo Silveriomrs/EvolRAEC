@@ -12,7 +12,6 @@ import parserUned from './parserUned.js';
 import * as State from './state.js';                                            //States used in compilator
 import * as Tables from './tables.js';
 import * as View from './viewElements.js'
-import { initIcons } from './icons.js';                                         //Icons for the icons
 
 const state = State.state;
 
@@ -132,11 +131,11 @@ function backInst() {
  *  line by line (not by instructions).
  */
 View.btn_prevLinea.addEventListener('click', (e) => {
-    const insToGoal = State.getPreviousPosition();
-    //Check we are not in first line already.
-    if (insToGoal === null) { return; }
-    //compile to reset counters.
+    const insToGoal = State.getPreviousLine();
+    //compile to reset counters and set buttons states.
     View.btn_compilar.click();
+    //Check it was not the first line already.
+    if (insToGoal === null) { return; }
     //Finally give as many steps comsuming instructions as we need.
     while (state.indice <= insToGoal) {
         calcNextIns();
@@ -156,7 +155,7 @@ View.btn_sigLinea.addEventListener('click', (e) => {
     if (line == -1) {
         console.log("btn_sigLinea got line: ", line);
         return; 
-     } 
+     }
         
     state.lineaActual = line;
     //A line is componsed by some instructions. So to execute 1 line, all the instructions must be run. 
@@ -167,7 +166,9 @@ View.btn_sigLinea.addEventListener('click', (e) => {
             continuo = false;
         }
     }
-
+    //DELETEME: Debugging
+    State.showLogState();
+    
     View.activateTab('#tabCodigoFuente');
 })
 
@@ -191,11 +192,11 @@ function isNextInstruction() {
     const elementInstruccion = Tables.getItemsTable("tablaCuadruplas");
     //Is the index a valid one?
     return (
-            state.running &&
-            elementInstruccion &&
-            state.indice >= 0 &&
-            state.indice < elementInstruccion.length
-        );
+        state.running &&
+        elementInstruccion &&
+        state.indice >= 0 &&
+        state.indice < elementInstruccion.length
+    );
 }
 
 /**
@@ -254,7 +255,7 @@ function calcNextIns() {
 function pintaTablas() {
     pintaTablaPila();
     pintaTablaVariables();
-    pintaCallStack();
+    pintaCallStack(state.arrPilaLlamadas);
 }
 
 /**
@@ -378,6 +379,40 @@ function pintaTablaPila() {
     });
 }
 
+/**
+ * The function create and set the initial format of the Call Stack Table.
+ * @param {array} callStackArray the datas in the status module with the Stack of calls.
+ */
+export function pintaCallStack(callStackArray) {
+
+    Tables.limpiaTabla("tablaPilaLlamadas");
+
+    if (callStackArray.length != 0) {
+        const columns = ['Llamada proc-fun', 'Inicio RA', 'Dir.'];
+        const tablaPilaLlamadas = Tables.createTable(columns);
+
+        let cuerpoTabla = document.createElement('tbody');
+        let i = 0;
+
+        do {
+            //create cells names array
+            const cellsNames = [callStackArray[i].nombreProcOFunc, callStackArray[i].inicioRA, State.posMem(callStackArray[i].inicioRA)];
+            //create row
+            const fila = Tables.createRow(cellsNames);
+            //add it to the table
+            cuerpoTabla.appendChild(fila);
+            i += 1;
+        } while (i < callStackArray.length);
+
+        Tables.setAttTable(tablaPilaLlamadas, "tablaPilaLlamadas", cuerpoTabla, "divpilaLlamadas");
+        //Add event listener.
+        $('#tablaPilaLlamadas tr').on('click', function() {
+            let dato1 = $(this).find('td:first').html();
+            let dato2 = $(this).find('td:last').html();
+            clickPilaLlamadas(dato1, dato2);
+        });
+    }
+}
 
 function pintaTablaVariables() {
     let muestroTemporales = View.opt_mostrarTemp.checked;
@@ -427,40 +462,6 @@ function pintaTablaVariables() {
         Tables.clickTablaVariables(dato);
     });
 }
-
-
-
-function pintaCallStack() {
-
-    Tables.limpiaTabla("tablaPilaLlamadas");
-
-    if (state.arrPilaLlamadas.length != 0) {
-        const columns = ['Llamada proc-fun', 'Inicio RA', 'Dir.'];
-        const tablaPilaLlamadas = Tables.createTable(columns);
-
-        let cuerpoTabla = document.createElement('tbody');
-        let i = 0;
-
-        do {
-            //create cells names array
-            const cellsNames = [state.arrPilaLlamadas[i].nombreProcOFunc, state.arrPilaLlamadas[i].inicioRA, State.posMem(state.arrPilaLlamadas[i].inicioRA)];
-            //create row
-            const fila = Tables.createRow(cellsNames);
-            //add it to the table
-            cuerpoTabla.appendChild(fila);
-            i += 1;
-        } while (i < state.arrPilaLlamadas.length);
-
-        Tables.setAttTable(tablaPilaLlamadas, "tablaPilaLlamadas", cuerpoTabla, "divpilaLlamadas");
-        //Add event listener.
-        $('#tablaPilaLlamadas tr').on('click', function() {
-            let dato1 = $(this).find('td:first').html();
-            let dato2 = $(this).find('td:last').html();
-            clickPilaLlamadas(dato1, dato2);
-        });
-    }
-}
-
 
 
 function inicializaFase1() {
@@ -604,32 +605,98 @@ function consumeInstruccion() {
     //Ejecuto instrucción
 
     switch (qOperacion) {
+        case "ADD":
+            //EJ:
+            //ADD T_8, T_6, T_7]
+            //ADD #-18[.IX], #-19[.IX]
+            //MOVE .A,#-20[.IX]
+            state.regA = State.recuperaValor(qp2) + State.recuperaValor(qp3);
+            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
+            break;
+        case "BR":
+            //[BR L_1, null, null]
+            state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
+            break;
+        case "BRF":
+            //EJ:
+            //[BRF T_14, L_1, null]
+            //Si el valor del primer parámetro es cero salto a la posición de la etiqueta que viene en el segundo parámetro
+            //CMP #0, #-26[.IX]
+            //BZ /L_1
+            if (State.recuperaValor(qp1) == 0) {
+                state.indice = Tables.traePosicionEtiqueta(qp2); //Salto a la linea donde esté la etiqueta del segundo parametro
+            }
+            break;
+        case "CALL":
+            //DIRECCION DE RETORNO
+            state.mapPila.set(state.regSP, state.indice);
+            State.decSP();
+            state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
+            Tables.setPaintSourceCode(false);
+            break;  
+        case "DEVCALL":
+            //Eliminamos de state.arrMem los valores del RA que cerramos
+            { state.arrMem = state.arrMem.filter(reg => reg[0] > state.arrPilaLlamadas[0].inicioRA);
+
+            //Guardamos en temporal el valor de la salida del RA
+            if (qp2 != "null") {
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)), state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)));
+            }
+
+            //Eliminamos de la pila los valores del RA que cerramos
+            let k = State.posMem(state.arrPilaLlamadas[0].inicioRA);
+            for (let clave of state.mapPila.keys()) {
+                if (clave <= k) {
+                    state.mapPila.delete(clave);
+                }
+            };
+
+            state.regSP = State.posMem(state.arrPilaLlamadas[0].inicioRA);
+            //Eliminamos la llamada de la pila de llamadas
+            state.arrPilaLlamadas.shift();
+            break; }
+        case "EQ": //comprara los valores del 2º y 3º parámetro. Si son iguales le asigno un 1 al primer parámetro y sino un 0.
+            if (State.recuperaValor(qp2) == State.recuperaValor(qp3)) {
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 1);
+            }
+            else {
+                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 0);
+            }
+            break;
+        case "EXIT":
+            state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA), State.recuperaValor(qp1));
+            break;
+        case "FINSUBPROGRAMA":
+            state.indice = State.traeDireccionRetornoRA(qp1);  //Salto a la linea de la "Direción de retorno" del RA.
+            break;
         case "HALT":
             halt();
             break;
-        case "STARTGLOBAL":
-        case "STARTSUBPROGRAMAP":
-        case "STARTSUBPROGRAMAF":
-            //MOVE .SP,.R0
-            state.regR0 = State.posPila();
-            //PUSH #-1 VALOR RETORNO
-            state.mapPila.set(state.regSP, -1);
-            State.decSP();
-            //PUSH .SR ESTADO MAQUINA
-            state.mapPila.set(state.regSP, state.regSR);
-            State.decSP();
-            //PUSH .IX ENLACE CONTROL
-            state.mapPila.set(state.regSP, state.regIX);
-            State.decSP();
-            //PUSH  .IX ENLACE ACCESO
-            state.mapPila.set(state.regSP, 0);
-            State.decSP();
+        case "MV":
+            //Ej: T_1-->-8
+            //;Quadruple - [MV T_1, 5, null]
+            //MOVE #5, #-8[.IX]
+            { const n = Number.parseInt(qp2, 10);
+                state.mapPila.set(
+                    State.posMem(State.recuperaPosicionMemoria(qp1)),
+                    Number.isNaN(n) ? State.recuperaValor(qp2) : n
+                );
+            break; }
+        case "MVA":
+            //Ej: T_0-->-7,
+            //;Quadruple - [MVA T_0, A, null]
+            //SUB .IX, #4
+            //MOVE .A, #-7[.IX]
+            state.regA = state.regIX + State.recuperaPosicionMemoria(qp2);
+            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
             break;
-        //case "VARGLOBAL":
-        case "VAR":
-            state.mapPila.set(state.regSP, Number.parseInt(qp2,10));
-            state.arrMem.unshift([State.posPila(), qp1]);
-            State.decSP();
+        case "MVP":
+            //r  01  02
+            //EJ:
+            //"MOVE " + o1 + "," + ".R0\n"
+            //"MOVE [.R0]," + r
+            state.regR1 = State.recuperaValor(qp2);
+            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regR1);
             break;
         case "PARAM":
             state.mapPila.set(state.regSP, State.recuperaValor(qp1));
@@ -667,23 +734,23 @@ function consumeInstruccion() {
                 }
             }
             break;
-        case "MV":
-            //Ej: T_1-->-8
-            //;Quadruple - [MV T_1, 5, null]
-            //MOVE #5, #-8[.IX]
-            { const n = Number.parseInt(qp2, 10);
-                state.mapPila.set(
-                    State.posMem(State.recuperaPosicionMemoria(qp1)),
-                    Number.isNaN(n) ? State.recuperaValor(qp2) : n
-                );
-            break; }
-        case "MVA":
-            //Ej: T_0-->-7,
-            //;Quadruple - [MVA T_0, A, null]
-            //SUB .IX, #4
-            //MOVE .A, #-7[.IX]
-            state.regA = state.regIX + State.recuperaPosicionMemoria(qp2);
-            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
+        case "STARTGLOBAL":
+        case "STARTSUBPROGRAMAP":
+        case "STARTSUBPROGRAMAF":
+            //MOVE .SP,.R0
+            state.regR0 = State.posPila();
+            //PUSH #-1 VALOR RETORNO
+            state.mapPila.set(state.regSP, -1);
+            State.decSP();
+            //PUSH .SR ESTADO MAQUINA
+            state.mapPila.set(state.regSP, state.regSR);
+            State.decSP();
+            //PUSH .IX ENLACE CONTROL
+            state.mapPila.set(state.regSP, state.regIX);
+            State.decSP();
+            //PUSH  .IX ENLACE ACCESO
+            state.mapPila.set(state.regSP, 0);
+            State.decSP();
             break;
         case "STP":
             //Ej:T_0 -->-7, T_1-->-8
@@ -693,22 +760,6 @@ function consumeInstruccion() {
             state.regR1 = State.recuperaValor(qp1);
             state.mapPila.set(State.posMem(state.regR1), State.recuperaValor(qp2));
             break;
-        case "MVP":
-            //r  01  02
-            //EJ:
-            //"MOVE " + o1 + "," + ".R0\n"
-            //"MOVE [.R0]," + r
-            state.regR1 = State.recuperaValor(qp2);
-            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regR1);
-            break;
-        case "ADD":
-            //EJ:
-            //ADD T_8, T_6, T_7]
-            //ADD #-18[.IX], #-19[.IX]
-            //MOVE .A,#-20[.IX]
-            state.regA = State.recuperaValor(qp2) + State.recuperaValor(qp3);
-            state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
-            break;
         case "SUB":
             //EJ:
             //[SUB T_8, T_6, T_7]
@@ -717,30 +768,19 @@ function consumeInstruccion() {
             state.regA = State.recuperaValor(qp2) - State.recuperaValor(qp3);
             state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), state.regA);
             break;
-        case "EQ": //comprara los valores del 2º y 3º parámetro. Si son iguales le asigno un 1 al primer parámetro y sino un 0.
-            if (State.recuperaValor(qp2) == State.recuperaValor(qp3)) {
-                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 1);
-            }
-            else {
-                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp1)), 0);
-            }
-            break;
-        case "BRF":
-            //EJ:
-            //[BRF T_14, L_1, null]
-            //Si el valor del primer parámetro es cero salto a la posición de la etiqueta que viene en el segundo parámetro
-            //CMP #0, #-26[.IX]
-            //BZ /L_1
-            if (State.recuperaValor(qp1) == 0) {
-                state.indice = Tables.traePosicionEtiqueta(qp2); //Salto a la linea donde esté la etiqueta del segundo parametro
-            }
-            break;
-        case "BR":
-            //[BR L_1, null, null]
-            state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
-            break;
         case "INL":
             //No hace nada, solo para indicar etiquetas a donde saltar
+            break;
+        //case "RETORNO":
+        //    alert('AQUI NO ENTRA. NO SE USA ESTA INSTRUCCION');
+        //    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)),  state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)) );
+        //  break;
+
+        //case "VARGLOBAL":
+        case "VAR":
+            state.mapPila.set(state.regSP, Number.parseInt(qp2,10));
+            state.arrMem.unshift([State.posPila(), qp1]);
+            State.decSP();
             break;
         case "WRITEINT":
             View.txtAreaConsolaSalida.textContent = View.txtAreaConsolaSalida.textContent + State.recuperaValor(qp1) + String.fromCharCode(13);
@@ -750,44 +790,6 @@ function consumeInstruccion() {
             //String.fromCharCode(13) --> retorno de carro
             View.txtAreaConsolaSalida.textContent = View.txtAreaConsolaSalida.textContent + recuperaValorCadena(qp2).slice(1, -1) + String.fromCharCode(13);
             break;
-        case "CALL":
-            //DIRECCION DE RETORNO
-            state.mapPila.set(state.regSP, state.indice);
-            State.decSP();
-            state.indice = Tables.traePosicionEtiqueta(qp1);//Salto a la linea donde esté la etiqueta del primer parametro
-            Tables.setPaintSourceCode(false);
-            break;
-        case "FINSUBPROGRAMA":
-            state.indice = State.traeDireccionRetornoRA(qp1);  //Salto a la linea de la "Direción de retorno" del RA.
-            break;
-        case "EXIT":
-            state.mapPila.set(State.posMem(state.arrPilaLlamadas[0].inicioRA), State.recuperaValor(qp1));
-            break;
-        //case "RETORNO":
-        //    alert('AQUI NO ENTRA. NO SE USA ESTA INSTRUCCION');
-        //    state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)),  state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)) );
-        //  break;
-        case "DEVCALL":
-            //Eliminamos de state.arrMem los valores del RA que cerramos
-            { state.arrMem = state.arrMem.filter(reg => reg[0] > state.arrPilaLlamadas[0].inicioRA);
-
-            //Guardamos en temporal el valor de la salida del RA
-            if (qp2 != "null") {
-                state.mapPila.set(State.posMem(State.recuperaPosicionMemoria(qp2)), state.mapPila.get(State.posMem(state.arrPilaLlamadas[0].inicioRA)));
-            }
-
-            //Eliminamos de la pila los valores del RA que cerramos
-            let k = State.posMem(state.arrPilaLlamadas[0].inicioRA);
-            for (let clave of state.mapPila.keys()) {
-                if (clave <= k) {
-                    state.mapPila.delete(clave);
-                }
-            };
-
-            state.regSP = State.posMem(state.arrPilaLlamadas[0].inicioRA);
-            //Eliminamos la llamada de la pila de llamadas
-            state.arrPilaLlamadas.shift();
-            break; }
         default:
             //COMPROBACION DE QUE TODAS LAS INSTRUCCIONES ESTAN HECHAS
             alert('FALTA HACER INSTRUCCION ' + qOperacion);
@@ -804,7 +806,7 @@ function consumeInstruccion() {
     state.indice += 1;
     
     //Disable the browsing buttons that correspond with the index in process.
-    View.enableControlButtons(state.running,(state.indice != 0));
+    View.enableControlButtons((state.indice != 0), state.running);
 }
 
 /**
@@ -854,5 +856,4 @@ document.addEventListener('DOMContentLoaded', () => {
     Tables.initTableToggles();
 });
 
-//Init the icons (for buttons)
-initIcons();
+

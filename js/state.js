@@ -8,7 +8,7 @@ export const state = {
     posLine: 0,
     lineaActual: -1,
     running: true,
-    /** Increase each time an instruction is consumed. */
+    /** Increased each time an instruction is consumed. */
     indice: 0,
     //
     regSP: 0,
@@ -25,6 +25,8 @@ export const state = {
 };
 
 // Consts
+let steps = 0;
+
 export const maxAddress = 65535;
 export const tamannoFijoRA = 4;
 // Auxiliars elements
@@ -42,73 +44,84 @@ const intermedio = [];
 /** ====== new imported functions ====== */
 
 export function traeDescripcionPosicion(pos, dir) {
+    let txt = '';
     let callStackSize = state.arrPilaLlamadas.length;
+    if (callStackSize === 0) {return txt;}
+    
 
-    if (callStackSize != 0) {
-        for (let i = 0;i <= callStackSize - 1;i++) {
-            let voyPor, valRet, EsMaq, EC, EA, ParamDesde, ParamHasta, DireRet, VarDesde, VarHasta, TempDesde, TempHasta, qcorrespondeALlamada;
-            let a = posMem(state.arrPilaLlamadas[i].inicioRA);
+    for (let i = 0; i < callStackSize ; i++) {
+        let voyPor, EsMaq, EC, EA, ParamDesde, ParamHasta, DireRet, VarDesde, VarHasta, TempDesde, TempHasta;
+        //Alias to simplify the code
+        const call = state.arrPilaLlamadas[i];                                  
+        const valRet = posMem(call.inicioRA);
+        const hasParams = call.parametros.length != 0;
+        const hasVars = call.numVariables != 0;
+        const hasTemps = call.numTemporales != 0;
 
-            if (pos <= a) {
-                qcorrespondeALlamada = state.arrPilaLlamadas[i].nombreProcOFunc;
-                valRet = posMem(state.arrPilaLlamadas[i].inicioRA);
-                EsMaq = valRet - 1;
-                EC = EsMaq - 1;
-                EA = EC - 1;
-                voyPor = EA;
+        if (pos <= valRet) {
+            //DELETEME: not used: let qcorrespondeALlamada = state.arrPilaLlamadas[i].nombreProcOFunc;
+            EsMaq = valRet - 1;
+            EC = EsMaq - 1;
+            EA = EC - 1;
+            voyPor = EA;           
 
-                if (state.arrPilaLlamadas[i].parametros.length != 0) {
-                    ParamDesde = voyPor - 1;
-                    ParamHasta = ParamDesde - state.arrPilaLlamadas[i].parametros.length + 1;
-                    voyPor = ParamHasta;
-                }
-
-                if (i != callStackSize - 1) {// al del main no le pongo dirección de retorno
-                    DireRet = voyPor - 1;
-                    voyPor = DireRet;
-                }
-
-                if (state.arrPilaLlamadas[i].numVariables != 0) {
-                    VarDesde = voyPor - 1;
-                    VarHasta = VarDesde - state.arrPilaLlamadas[i].numVariables + 1;
-                    voyPor = VarHasta;
-                }
-
-                if (state.arrPilaLlamadas[i].numTemporales != 0) {
-                    TempDesde = voyPor - 1;
-                    TempHasta = TempDesde - state.arrPilaLlamadas[i].numTemporales + 1;
-                    //DELETEME: This last assignation has no sense. It is no more used.
-                    voyPor = TempHasta;
-                }
-
-                if (pos == valRet) {
-                    return 'Valor retorno'
-                } else if (pos == EsMaq) {
-                    return 'Estado máquina'
-                } else if (pos == EC) {
-                    if (state.arrPilaLlamadas[i].inicioRA == 0)
-                        return 'Enlace control'
-                    else
-                        return 'Enlace control --> ' + posMem(dir)
-                } else if (pos == EA) {
-                    if (state.arrPilaLlamadas[i].inicioRA == 0)
-                        return 'Enlace acceso'
-                    else
-                        return 'Enlace acceso --> ' + posMem(dir)
-                } else if ((state.arrPilaLlamadas[i].parametros.length != 0) && (ParamDesde >= pos) && (ParamHasta <= pos)) {
-                    return 'Parámetro --> ' + recuperaVariableArrMem(pos)
-                } else if (pos == DireRet) {
-                    return 'Dir. retorno'
-                } else if ((state.arrPilaLlamadas[i].numVariables != 0) && (VarDesde >= pos) && (VarHasta <= pos)) {
-                    return 'Variable --> ' + recuperaVariableArrMem(pos)
-                } else if ((state.arrPilaLlamadas[i].numTemporales != 0) && (TempDesde >= pos) && (TempHasta <= pos)) {
-                    return 'Temporal --> ' + recuperaVariableArrMem(pos)
-                } else { return '' }
-
+            if (hasParams) {
+                ParamDesde = voyPor - 1;
+                ParamHasta = ParamDesde - call.parametros.length + 1;
+                voyPor = ParamHasta;
             }
+
+            if (i != callStackSize - 1) {// al del main no le pongo dirección de retorno
+                DireRet = voyPor - 1;
+                voyPor = DireRet;
+            }
+
+            if (hasVars) {
+                VarDesde = voyPor - 1;
+                VarHasta = VarDesde - call.numVariables + 1;
+                voyPor = VarHasta;
+            }
+
+            if (hasTemps) {
+                TempDesde = voyPor - 1;
+                TempHasta = TempDesde - call.numTemporales + 1;
+                //DELETEME: This last assignation has no sense. It is no more used.
+                //voyPor = TempHasta;
+            }
+
+            //I prefer Switch-case statement than IF's with direct returns.
+            switch(pos){
+                case valRet:
+                    txt =  'Valor retorno';
+                    break;
+                case EsMaq:
+                    txt = 'Estado máquina';
+                    break;
+                case EC:
+                    txt = (call.inicioRA == 0)? 'Enlace control' : 'Enlace control --> ' + posMem(dir);
+                    break;
+                case EA:
+                    txt = (call.inicioRA == 0)? 'Enlace acceso' : 'Enlace acceso --> ' + posMem(dir);
+                    break;
+                case DireRet:
+                    txt = 'Dir. retorno';
+                    break;
+                default:
+                    //It is not the best practice but accomplish its puporse for interval cases.
+                    if (hasParams && (ParamDesde >= pos) && (ParamHasta <= pos)) {
+                        txt = 'Parámetro --> ' + recuperaVariableArrMem(pos);
+                    } else if (hasVars && (VarDesde >= pos) && (VarHasta <= pos)) {
+                        txt =  'Variable --> ' + recuperaVariableArrMem(pos);
+                    } else if (hasTemps && (TempDesde >= pos) && (TempHasta <= pos)) {
+                        txt =  'Temporal --> ' + recuperaVariableArrMem(pos);
+                    }
+            }
+            //Avoid the rest of the loop if it was in RANK and found (or not).
+            return txt;
         }
     }
-    return '';
+    //Final return, nothing was found or not in rank.
+    return txt;
 }
 
 export function perteneceRAReducido(qDesc) {
@@ -221,7 +234,7 @@ export function traeEnlaceDeControl() {
 */
 export function traeDireccionRetornoRA(nombreProcOFunc) {
     let i;
-    //TODO: FIXME: this conditional has a asignation instead comparator. I change nombreprocfunc = nombreproc for ... == ...
+    //FIXME: this conditional has a asignation instead comparator. I change nombreprocfunc = nombreproc for ... == ...
     if (state.arrPilaLlamadas[0].nombreProcOFunc == nombreProcOFunc) {
         i = state.mapPila.get(posMem(state.arrPilaLlamadas[0].inicioRA - tamannoFijoRA - state.arrPilaLlamadas[0].parametros.length));
     } else {
@@ -261,19 +274,6 @@ export function decSP() {
     }
 }
 
-/**
- * This function add to the State log, the pair of index that define each execution of an instruction and line.
- *  a lines is composed by 1 or more instructions. It stores how many instructions are required to reach an specific
- *  code line. Taken from intermediate code from the compiled source, what implies no comments line are considered.
- * @param {number} insNumber define the number of instruction to reach that point of the process.
- * @param {number} lineNumber define the line of the source code associate with the amount of instructions consumed to get there.
- */
-export function addLog(insNumber, lineNumber) {
-    logState.push({
-        ins: insNumber,
-        line: Number.parseInt(lineNumber, 10)
-    })
-}
 
 /**
  * Introduce a data line into 'intermedio' array.
@@ -312,7 +312,12 @@ export function getIntermedio(){
  *  When the logState has not enough items or there is not a line change in execution, it returns null.
  * @return {number|null} previous line number calculated in the logState. Otherwise null.
  */
-export function getPreviousPosition() {
+export function getPreviousLine() {
+    let i = getPreviousLineIndex();
+    return (i !== null)? logState[i].ins : i;
+}
+
+function getPreviousLineIndex(){
     const size = logState.length;
     if (size < 2) return null;
     const lastLine = logState[size - 1].line;
@@ -322,11 +327,11 @@ export function getPreviousPosition() {
     while (index >= 0) {
         readLine = logState[index].line;
         if (lastLine !== readLine) {
-            return logState[index].ins;
+            return index;
         }
         index--;
     }
-    
+
     return null;
 }
 
@@ -335,26 +340,53 @@ export function getPreviousPosition() {
  *  the instructions index changes and the lines index changes.
  */
 export function showLogState() {
-    const size = logState.length;
-    let inst = "Instr [";
-    let lines = "Lines [";
-    for (let i = 0;i < size;i++) {
-        inst += logState[i].ins;
-        lines += logState[i].line;
-        if (i < size - 1) {
-            inst += ",";
-            lines += ",";
-        }
-    }
+    const colWidth = 4;
+    let header = "index".padEnd(8);
+    logState.forEach((_, i) => {
+        header += String(i).padStart(colWidth);
+    });
+    
+    console.log(header);
+    
+    const fields = ["step", "ins", "line"];
+    fields.forEach((field,index) => {
+        let row = field.padEnd(8);
+        logState.forEach(entry => {
+            row += String(entry[field]).padStart(colWidth);
+        });
+        
+        const bg = (index % 2 === 0)?
+                      "background: #121; color: #eee;"
+                    : "background: #211; color: #eee;";
+        console.log("%c" + row, bg);
+    });
 
-    inst += "]";
-    lines += "]";
-    console.log(inst);
-    console.log(lines);
-    const prevPos = getPreviousPosition();
-    console.log("Previous position at index: ", (prevPos !== null) ? prevPos : "none");
+    
+    const prevPos = getPreviousLine();
+    const prevIndex = getPreviousLineIndex();
+    //TODO: const numberOfSteps = 
+    console.log("Steps to previous: ", (prevIndex !== null) ? logState[prevIndex].step : "none");
+    console.log("Previous line at index: ", (prevPos !== null) ? prevPos : "none");
     console.log("Index is: ", state.indice);
 
+    
+}
+
+/**
+ * This function add to the State log, the pair of index that define each execution of an instruction and line.
+ *  a lines is composed by 1 or more instructions. It stores how many instructions are required to reach an specific
+ *  code line. Taken from intermediate code from the compiled source, what implies no comments line are considered.
+ * @param {number} insNumber define the number of instruction to reach that point of the process.
+ * @param {number} lineNumber define the line of the source code associate with the amount of instructions consumed to get there.
+ */
+export function addLog(insNumber, lineNumber) {
+    steps++;
+    
+    logState.push({
+        step: steps,
+        ins: insNumber,
+        line: Number.parseInt(lineNumber, 10)
+    })
 }
 
 export function clearLogState() {
@@ -380,6 +412,7 @@ export function resetState() {
     state.arrMem = [];
     state.running = true;
     logState.length = 0;
+    steps = 0;
     
     //intermedioReset();  //Cannot be used by now. In compilador.js it does a dump & reset state into listaCuadruplas and continue working.
     // so if it is cleared, then lose its values and cannot work properly the APP.

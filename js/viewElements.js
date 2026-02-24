@@ -4,7 +4,8 @@
  *  to set, inicialize and change their attributes and listeners.
  */
 
-import * as Exercises from './exercises.js';
+import * as Exercises from './exercises.js';                                    //Predefined exercises
+import { initIcons } from './icons.js';                                         //Icons for the icons
 
 
 // DOM Elements
@@ -41,7 +42,8 @@ export const containerFase2B = document.getElementById("Fase2B");
 
 // Start to load the exercises option into the selector.
 initSelectorOptions();
-
+// Start loading icons for the buttons.
+initIcons();
 
 /**
  * Initiate the properties and assing IDs and Values to each option defined (exercise)
@@ -107,6 +109,7 @@ export function resetFirstPart() {
     containerCompileBox.style.display = 'none';
     containerFase2A.style.display = 'none';
     containerFase2B.style.display = 'none';
+    //Init the icons (for buttons)
 }
 
 export function inicializaFase2() {
@@ -121,18 +124,18 @@ export function inicializaFase2() {
     //
     btn_ejecucionCompleta.style.display = 'block';
     //
-    enableControlButtons(true,false);
+    enableControlButtons(false, true);
 }
 
 
 /**
  * Auxiliary procedure to set the browser buttons as enable or disable.
  * Main use: When no more instructions/lines to process.
- * @param {boolean} enFwd True to enable the Fordward buttons, otherwise False.
  * @param {boolean} enBck True to enable the Back buttons, otherwise False.
+ * @param {boolean} enFwd True to enable the Fordward buttons, otherwise False.
  * 
  **/
-export function enableControlButtons(enFwd,enBck) {
+export function enableControlButtons(enBck,enFwd) {
     btn_sigInstruccion.disabled = !enFwd;
     btn_sigLinea.disabled = !enFwd;
     btn_ejecucionCompleta.disabled = !enFwd;
