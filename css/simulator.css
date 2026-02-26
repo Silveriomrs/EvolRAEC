@@ -200,6 +200,40 @@ svg {
     padding-left: 5px;
 }
 
+/* =========================================
+   Execution controls panel BCK & FWD BTTNs
+   ========================================= */
+   
+#ExecPanel {
+    /* Vertical definition
+     Makes relative the position to the frame But when on a scroll reach 
+     the top (0) it get sticky */   
+    position: sticky;
+    top: 0;
+
+    background-color: #f5f5f5;                          /* light colour */
+    z-index: 100;                                       /* Ensure to be above of any other content to avoid overlaying the tables */
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+/* =========================================
+   Execution controls panel BCK & FWD BTTNs
+   ========================================= */
+
+#ExecControls {
+    /* Horizontal definition */
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    
+    padding: 10px 0;                             /* inner space with borders*/
+}
+
+
 /* ========================================
               BASIC ATTR BUTTONS
    ======================================== */

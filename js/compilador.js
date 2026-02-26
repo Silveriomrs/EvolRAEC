@@ -5,6 +5,8 @@
    Version : 1.0
    Fecha   : 01/01/2023
    Descripción: Manejo compilador y código final.
+   
+   Revision: 1.2
 */
 
 import { intercambioCompilador, pilaLLamada } from './API.js';
@@ -595,10 +597,16 @@ function traeEnlaceDeAcceso(nombreProcOFunc) {
     return enlaceAcceso;
 }
 
+/**
+ * Procedement for HALT label. It stops the machine and paint the tables properly.
+ */
 function halt(){
     Tables.coloreaTodasInstrucciones();
     state.running = false;
     console.warn("HALT");
+    //TODO: it is required due halt() is used in next for SourceCode->getActiveLine, that stops before process halt label.
+    //otherwise the buttons doesn't get update properly.
+    View.enableControlButtons((state.indice != 0), state.running);
 }
 
 

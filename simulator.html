@@ -83,23 +83,26 @@
             <input type="checkbox" id="mostrarVisibles" name="mostrarVisibles" value="Mostrar sólo variables visibles"
                 checked>
         </div>
-
-        <br><br>
+        <br>
 
     </div>
 
     <!-- Area for main bottoms Stepping process back and forward -->
 
     <div id="Fase2B" class="center">
-        <ul class="tabs">
-            <li><a href="#tabCodigoFuente">Código Fuente</a></li>
-            <li><a href="#tabTablaCuadruplas">Código intermedio</a></li>
-        </ul>
-        
-        <!-- CONTROLS REWD and FWD -->
-        <div id="ExecControls">
-            <button class="button-15" id="btn_back" data-icon="prev">Anterior</button>
-            <button class="button-15" id="btn_next" data-icon="next">Siguiente </button>
+        <!-- Upper panel to control execution mode TABs & BTTNs -->
+        <div id="ExecPanel">
+	        <!-- TABS to control the execution mode -->
+	        <ul class="tabs">
+	            <li><a href="#tabCodigoFuente">Código Fuente</a></li>
+	            <li><a href="#tabTablaCuadruplas">Código intermedio</a></li>
+	        </ul>
+	        
+	        <!-- CONTROLS REWD and FWD -->
+	        <div id="ExecControls">
+	            <button class="button-15" id="btn_back" data-icon="prev">Anterior</button>
+	            <button class="button-15" id="btn_next" data-icon="next">Siguiente </button>
+	        </div>
         </div>
 
         <!-- Part of the table to show results of compilation in table format -->
