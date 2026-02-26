@@ -29,13 +29,16 @@ The original project belongs to the author Ing. Jaime Alcalá and its director D
 - [ ] Implement full STATE encapsulation.
 - [ ] Implement snapshoot navigation instead step to step one.
 - [ ] Restructure and clear HTMLs files.
-- [ ] Restructure & clear CSS.
+- [X] Restructure & clear CSS.
 - [X] Separete Icons into a JS file.
 - [ ] WCAG 2.0 certification.
 - [ ] WCAG 2.1 certification.
 - [ ] Deep final tests.
 
 ## Changelog:
+
+**26.02.26**
+Major stable release with update & refactoring. Now buttons are simplified and removed double references and buttons. Refactored by alphabet the main function into compilador.js consumeInstruccion(). Decopling many functions to better places (yet not finished... long work). Now Browsing is more confortable with fixed buttons on the view and back and foward buttons behave properly (bugs fixed).
 
 **12.02.26**
 Created Table.js to host all attributes and functions related with the tables. Also moved many functions related with status module. First check and it works fine, it requires more refactoring, descriptions (doc) and improvements but big part of the work is done.

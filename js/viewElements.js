@@ -12,10 +12,8 @@ import { initIcons } from './icons.js';                                         
 export const btn_compilar = document.getElementById('btn_Compilar');
 const btn_reiniciar = document.getElementById('btn_Reiniciar');
 const btn_cargaActividad = document.getElementById('btn_CargaActividad');
-export const btn_sigInstruccion = document.getElementById("btn_sigInstruccion");
-export const btn_prevInstruccion = document.getElementById("btn_prevInstruccion");
-export const btn_prevLinea = document.getElementById("btn_prevLinea");
-export const btn_sigLinea = document.getElementById("btn_sigLinea");
+export const btn_back = document.getElementById("btn_back");
+export const btn_next = document.getElementById("btn_next");
 export const btn_ejecucionCompleta = document.getElementById("btn_ejecucionCompleta");
 
 export const opt_mostrarTemp = document.getElementById('mostrarTemp');
@@ -36,8 +34,10 @@ export const containerCompileBox = document.getElementById('ContenedorResultadoC
 
 export const containerFase2A = document.getElementById("Fase2A");
     
-
 export const containerFase2B = document.getElementById("Fase2B");
+
+// Tabs
+const tabs = document.querySelectorAll('.tabs a');
 
 
 // Start to load the exercises option into the selector.
@@ -117,13 +117,11 @@ export function inicializaFase2() {
     containerFase2A.style.display = 'block';
     containerFase2B.style.display = 'block';
     //Buttons
-    btn_sigInstruccion.style.display = 'inline-block';
-    btn_prevInstruccion.style.display = 'inline-block';
-    btn_sigLinea.style.display = 'inline-block';
-    btn_prevLinea.style.display = 'inline-block';
+    btn_next.style.display = 'inline-block';
+    btn_back.style.display = 'inline-block';
     //
     btn_ejecucionCompleta.style.display = 'block';
-    //
+    //Enable Control Buttons (full compile, next & back)
     enableControlButtons(false, true);
 }
 
@@ -133,25 +131,28 @@ export function inicializaFase2() {
  * Main use: When no more instructions/lines to process.
  * @param {boolean} enBck True to enable the Back buttons, otherwise False.
  * @param {boolean} enFwd True to enable the Fordward buttons, otherwise False.
- * 
  **/
 export function enableControlButtons(enBck,enFwd) {
-    btn_sigInstruccion.disabled = !enFwd;
-    btn_sigLinea.disabled = !enFwd;
+    //Check if there is an Active Tab.
+    const at = getActiveTabId() !== null;
     btn_ejecucionCompleta.disabled = !enFwd;
-    //TODO: Add controls to keep disable back bottons when we are in line 0.
-    btn_prevInstruccion.disabled = !enBck;
-    btn_prevLinea.disabled = !enBck;
+    //FIXME: this version doesn't work since doesn't detect the select tab at beggining.
+    // it requires a better structure.
+//    btn_back.disabled = !(at && enBck);
+//    btn_next.disabled = !(at && enFwd);
+    //Buttons Logic
+    btn_back.disabled = !enBck;
+    btn_next.disabled = !enFwd;
 }
 
 /**
  * It select the referenced tab and deselect the others.
  *  The efect is a refresh for advance/back bottons.
- * @param {string} href
+ * @param {string} href ID of the tab to activate.
  */
 export function activateTab(href) {
     // Clear actives tabs
-    document.querySelectorAll('.tabs a').forEach(tab =>
+    tabs.forEach(tab =>
         tab.classList.remove('active')
     );
 
@@ -159,7 +160,7 @@ export function activateTab(href) {
     const tab = document.querySelector(`.tabs a[href="${href}"]`);
     if (tab) tab.classList.add('active');
 
-    // Remove each contains (hide).
+    // Hide each contains.
     document.querySelectorAll('.tab-content').forEach(content =>
         content.classList.remove('active')
     );
@@ -168,6 +169,31 @@ export function activateTab(href) {
     const content = document.querySelector(href);
     if (content) content.classList.add('active');
 }
+
+
+export function getActiveTabId() {
+    const activeTab = document.querySelector('.tabs a.active');
+    //No tab active? returns null.
+    if (!activeTab) return null;
+    // returns href. ie: "#tabCodigoFuente"
+    return activeTab.getAttribute('href').substring(1);
+}
+
+
+/**
+ * Listener for every TAB.
+ *  It takes the selected tab, prevent to active it (yet it needs to de-activate the rest to avoid 2 actives at once),
+ */
+function changeActiveTab(e) {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute('href');
+    activateTab(href);
+}
+
+// Add 'click' event to every TAB
+tabs.forEach(tab => tab.addEventListener('click', changeActiveTab));
+
+
 
 /**
  * TODO: finish this function and also comment it properly, 
@@ -178,8 +204,7 @@ export function showMSGCompilerBox(msg){
     View.cajaCodFuente.disabled = false;
     View.cajaCodFuente.style.backgroundColor = "red";
     View.cajaMsjCompilado.textContent = msg;
-    View.cajaMsjCompilado.style.backgroundColor = "red";
-    
+    View.cajaMsjCompilado.style.backgroundColor = "red";  
 }
 
 

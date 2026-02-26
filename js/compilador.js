@@ -95,19 +95,9 @@ View.btn_compilar.addEventListener('click', (e) => {
             state.posLine = error.hash.loc.first_line;
         }
     }
-})
-
-
-
-View.btn_sigInstruccion.addEventListener('click', (e) => {
-    calcNextIns();
-    View.activateTab('#tabTablaCuadruplas');
-})
-
-
-View.btn_prevInstruccion.addEventListener('click', (e) => {
-    backInst();
-    View.activateTab('#tabTablaCuadruplas');
+    
+    //Activate the default TAB (source code tab)
+    View.activateTab("#tabCodigoFuente");
 })
 
 /**
@@ -127,10 +117,11 @@ function backInst() {
 }
 
 /**
- * This listener is for the button back for the table "Código Fuente" where the execution is
- *  line by line (not by instructions).
+ * The procedure take back a line of execution from the current one.
+ *  This procedure is associated to the button listener BACK. and operates over
+ *  the table associated to the <b>Source Code</b>.
  */
-View.btn_prevLinea.addEventListener('click', (e) => {
+function lineBCK(){
     const stepsToGoal = State.getPreviousLineStep();
     //compile to reset counters and set buttons states.
     View.btn_compilar.click();
@@ -140,20 +131,21 @@ View.btn_prevLinea.addEventListener('click', (e) => {
     while (State.getCurrentStep() < stepsToGoal) {
         calcNextIns();
     }
-    //Remark/activate its tab on the list.
-    View.activateTab('#tabCodigoFuente');
-})
+}
+
 
 /**
- * For "Código fuente" button.
+ * The procedure execute the next line of the source code.
+ *  This procedure is associated to the button listener NEXT, and operates over
+ *  the table associated to the <b>Source Code</b>.
  */
-View.btn_sigLinea.addEventListener('click', (e) => {
+function lineFWD(){
     let continuo = true;
     const line = getActiveLine();
     //check if there is a line to work with:
     //checking conditional ... before !line, now line === -1, what looks doesn't work
     if (line == -1) {
-        console.log("btn_sigLinea got line: ", line);
+        console.log("btn_next (line) got line: ", line);
         return; 
      }
         
@@ -166,11 +158,45 @@ View.btn_sigLinea.addEventListener('click', (e) => {
             continuo = false;
         }
     }
-    //DELETEME: Debugging
-    State.showLogState();
+}
+
+/**
+ * Listener for Back button that detect the active Tab and refresh its value (active or disable)
+ *  at the end of the process.
+ */
+View.btn_back.addEventListener('click', (e) => {
+    const tab = View.getActiveTabId();
+    if(!tab) return;
     
-    View.activateTab('#tabCodigoFuente');
+    if (tab === "tabTablaCuadruplas"){
+        //Ins
+        backInst();
+    } else if (tab === "tabCodigoFuente"){
+        //Line
+        lineBCK();
+    }
+    
+    //Back functions clears the active tabs so we need to restore it.
+    //Remark/activate its tab on the list.
+    View.activateTab('#' + tab);
 })
+
+/**
+ * Listener for Next button. It proceed with the next line/instruction to calc
+ *  depending on the active tab.
+ */
+View.btn_next.addEventListener('click', (e) => {
+    const tab = View.getActiveTabId();
+    if (tab === "tabTablaCuadruplas"){
+        //Ins
+        calcNextIns();
+        //DELETEME: View.activateTab('#tabTablaCuadruplas');
+    } else if (tab === "tabCodigoFuente"){
+        //Line
+        lineFWD();
+    }
+})
+
 
 /**
  * Execute the full compilation of the code.
@@ -573,7 +599,6 @@ function halt(){
     Tables.coloreaTodasInstrucciones();
     state.running = false;
     console.warn("HALT");
-    //DELETEME: State.showLogState();
 }
 
 
@@ -805,7 +830,7 @@ function consumeInstruccion() {
     State.addLog(state.indice, state.lineaActual);
     state.indice += 1;
     
-    //Disable the browsing buttons that correspond with the index in process.
+    //Update the browsing buttons that correspond with the index in process.
     View.enableControlButtons((state.indice != 0), state.running);
 }
 
@@ -827,33 +852,8 @@ function showCatchedErr(error) {
 $('#cajaCodigoFuente').numberedtextarea();
 
 
-// Obtener las pestañas y el contenido
-const tabs = document.querySelectorAll('.tabs a');
-const tabContents = document.querySelectorAll('.tab-content');
-
-
-// Función para cambiar la pestaña activa
-function changeActiveTab(e) {
-    e.preventDefault();
-
-    // Cambiar la clase active de la pestaña seleccionada
-    tabs.forEach(tab => tab.classList.remove('active'));
-
-    e.target.classList.add('active');
-
-    // Cambiar la clase active del contenido correspondiente
-    tabContents.forEach(tabContent => tabContent.classList.remove('active'));
-    const href = e.target.getAttribute('href');
-    const tabContent = document.querySelector(href);
-    tabContent.classList.add('active');
-}
-
-// Agregar el evento click a cada pestaña
-tabs.forEach(tab => tab.addEventListener('click', changeActiveTab));
-
 // Add the listener to the tables for toggle them on click.
 document.addEventListener('DOMContentLoaded', () => {
     Tables.initTableToggles();
 });
-
 
