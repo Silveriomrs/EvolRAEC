@@ -131,13 +131,13 @@ function backInst() {
  *  line by line (not by instructions).
  */
 View.btn_prevLinea.addEventListener('click', (e) => {
-    const insToGoal = State.getPreviousLine();
+    const stepsToGoal = State.getPreviousLineStep();
     //compile to reset counters and set buttons states.
     View.btn_compilar.click();
     //Check it was not the first line already.
-    if (insToGoal === null) { return; }
+    if (stepsToGoal === -1) { return; }
     //Finally give as many steps comsuming instructions as we need.
-    while (state.indice <= insToGoal) {
+    while (State.getCurrentStep() < stepsToGoal) {
         calcNextIns();
     }
     //Remark/activate its tab on the list.

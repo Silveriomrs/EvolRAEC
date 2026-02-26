@@ -308,15 +308,39 @@ export function getIntermedio(){
 }
 
 /**
- * It returns the previous line position to the current one.
- *  When the logState has not enough items or there is not a line change in execution, it returns null.
- * @return {number|null} previous line number calculated in the logState. Otherwise null.
+ * It returns the current processing step.
+ *  The function returns 0 if the logState is null or is empty.
+ * @returns {number} Current steps in the state.
  */
-export function getPreviousLine() {
-    let i = getPreviousLineIndex();
-    return (i !== null)? logState[i].ins : i;
+export function getCurrentStep(){
+    return steps;
 }
 
+/**
+ * It returns the previous line of code calculated which is stored in the logState.
+ *  When the logState has not enough items or there is not a line change in execution, it returns -1.
+ * @return {number} previous code line calculated.
+ */
+function getPreviousCodeLine() {
+    let i = getPreviousLineIndex();
+    return (i !== null)? logState[i].line : -1;
+}
+
+/**
+ * It returns the Steps to the previous line of code calculated.
+ *  When the logState has not enough items or there is not a line change in execution, it returns -1.
+ * @return {number} previous code line calculated.
+ */
+export function getPreviousLineStep(){
+    let i = getPreviousLineIndex();
+    return (i !== null)? logState[i].step : -1;
+}
+
+/**
+ * It returns index at the previous number line of code calculated that differs from the current one.
+ *  When the logState has not enough items or there is not a line change in execution, it returns null.
+ * @return {number|null} the index to the previous code line. Otherwise null.
+ */
 function getPreviousLineIndex(){
     const size = logState.length;
     if (size < 2) return null;
@@ -362,14 +386,12 @@ export function showLogState() {
     });
 
     
-    const prevPos = getPreviousLine();
-    const prevIndex = getPreviousLineIndex();
-    //TODO: const numberOfSteps = 
-    console.log("Steps to previous: ", (prevIndex !== null) ? logState[prevIndex].step : "none");
-    console.log("Previous line at index: ", (prevPos !== null) ? prevPos : "none");
+    const prevPos = getPreviousCodeLine();
+    const prevStep = getPreviousLineStep();
+    //
+    console.log("Steps to previous: ", (prevStep !== -1) ? prevStep : "none");
+    console.log("Previous code line calculated: ", prevPos);
     console.log("Index is: ", state.indice);
-
-    
 }
 
 /**

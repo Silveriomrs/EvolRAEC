@@ -95,7 +95,15 @@
             <li><a href="#tabCodigoFuente">Código Fuente</a></li>
             <li><a href="#tabTablaCuadruplas">Código intermedio</a></li>
         </ul>
+        
+        <!-- CONTROLS REWD and FWD -->
+        <div id="ExecControls">
+            <button class="button-15" id="btn_prevInstruccion" data-icon="prev">Anterior</button>
+            <button class="button-15" id="btn_sigInstruccion" data-icon="next">Siguiente </button>
 
+            <button class="button-15" id="btn_prevLinea" data-icon="prev">Anterior</button>
+            <button class="button-15" id="btn_sigLinea" data-icon="next">Siguiente </button>
+        </div>
 
         <!-- Part of the table to show results of compilation in table format -->
         <div class="divtablaspilavar">
@@ -122,14 +130,10 @@
 
             <div style="display:block;">
                 <div id="tabTablaCuadruplas" class="tab-content">
-                    <button class="button-15" id="btn_prevInstruccion" data-icon="prev">Anterior</button>
-                    <button class="button-15" id="btn_sigInstruccion" data-icon="next">Siguiente </button>
                     <table id="tablaCuadruplas" border="1"></table>
                 </div>
 
                 <div id="tabCodigoFuente" class="tab-content">
-                    <button class="button-15" id="btn_prevLinea" data-icon="prev">Anterior</button>
-                    <button class="button-15" id="btn_sigLinea" data-icon="next">Siguiente </button>
                     <table id="tablaCodigoFuente" border="1"></table>
                 </div>
             </div>
